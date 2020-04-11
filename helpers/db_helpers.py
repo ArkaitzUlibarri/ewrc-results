@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+import config
 
 def selectEvents(database):
 
@@ -9,12 +10,12 @@ def selectEvents(database):
 		db = sqlite3.connect(database)
 		cursor = db.cursor()
 
-		for season in range(1973,datetime.datetime.now().year + 1):
+		for season in range(config.startSeason, datetime.datetime.now().year + 1):
 
 			cursor.execute("SELECT id FROM events WHERE season=? ORDER BY season_event_id", (season,))
-		 
+
 			rows = cursor.fetchall()
-		 	
+
 			event_ids_list = []
 
 			for row in rows:
@@ -37,9 +38,9 @@ def selectDrivers(database):
 		cursor = db.cursor()
 
 		cursor.execute("SELECT DISTINCT driver_id FROM scratchs")
-		 
+
 		rows = cursor.fetchall()
-		 	
+
 		driver_ids_list = []
 
 		for row in rows:
@@ -65,7 +66,7 @@ def rallyWinners(database,season):
 			LEFT JOIN drivers on results.driver_id = drivers.id 
 			WHERE events.season=? and results.result like '1' 
 			ORDER BY season_event_id""", (season,))
-		 
+
 		return cursor.fetchall()
 
 	except Exception as e:
@@ -87,7 +88,7 @@ def driversStats(database,season,table):
 			WHERE event_id in (select id from events where season = :season)
 			GROUP BY driver_id
 			ORDER BY cuenta DESC""", {"season":season})
-		 
+
 		return cursor.fetchall()
 
 	except Exception as e:
@@ -114,7 +115,7 @@ def driversResults(database,season,result):
 			WHERE results.season is :season and """ + condition +"""
 			GROUP BY drivers.fullname
 			ORDER BY cuenta DESC""", {"season":season})
-		 
+
 		return cursor.fetchall()
 
 	except Exception as e:

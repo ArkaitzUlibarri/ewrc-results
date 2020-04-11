@@ -2,21 +2,22 @@ import os
 import sys
 import requests
 import sqlite3
+import config
 from pyquery import PyQuery as pq
-from helpers.header import Header
-from helpers.result import Result
+from models.driver import Driver
+from models.result import Result
 from helpers.db_helpers import selectDrivers		
 
 def main(driverlist):
 	currentfile = os.path.basename(__file__)
 	currentfilename = os.path.splitext(currentfile)[0]
 
-	os.system("cls")	# Clear console
+	#os.system("cls")	# Clear console
 
 	for id in driverlist:
 
-		url = "https://www.ewrc-results.com/"+ currentfilename + "/"+ str(id) +"/1"
-		
+		url = "https://www.ewrc-results.com/"+ currentfilename + "/"+ str(id) +"/" + config.profile
+
 		try:
 			response = requests.get(url)
 		except requests.exceptions.RequestException as e:
@@ -30,7 +31,7 @@ def main(driverlist):
 			if(doc("main > div").eq(0).hasClass("profile")):
 
 				#Header
-				driver = Header(doc,id)
+				driver = Driver(doc,id)
 				drivertuple = (driver.id,driver.fullname,driver.name,driver.lastname,driver.birthdate,driver.deathdate,driver.nationality)
 				print(drivertuple)
 
@@ -42,7 +43,7 @@ def main(driverlist):
 				values = [v.text() for v in doc.items("div.profile-stats > div.profile-stats-item > table > tr > td.bold")]
 
 				try:
-					db = sqlite3.connect('wrc.db')
+					db = sqlite3.connect(config.database + '.db')
 					cursor = db.cursor()	
 
 					db.execute("INSERT INTO drivers (id,fullname,name,lastname,birthdate,deathdate,nationality) VALUES (?,?,?,?,?,?,?)",drivertuple);
@@ -66,5 +67,5 @@ def main(driverlist):
 				finally:
 					db.close()
 
-driver_ids_list = selectDrivers('wrc.db')
+driver_ids_list = selectDrivers(config.database + '.db')
 main(driver_ids_list)

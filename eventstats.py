@@ -3,6 +3,7 @@ import sys
 import requests
 import sqlite3
 import datetime
+import config
 from pyquery import PyQuery as pq
 from helpers.db_helpers import selectEvents
 
@@ -11,7 +12,7 @@ currentfilename = os.path.splitext(currentfile)[0]
 
 os.system("cls")	# Clear console
 
-event_ids_dict = selectEvents('wrc.db')
+event_ids_dict = selectEvents(config.database + '.db')
 
 for key in event_ids_dict:
 	print(key)
@@ -31,7 +32,7 @@ for key in event_ids_dict:
 			doc = pq(response.text)
 
 			try:
-				db = sqlite3.connect('wrc.db')
+				db = sqlite3.connect(config.database + '.db')
 				cursor = db.cursor()
 				
 				#Eventstats

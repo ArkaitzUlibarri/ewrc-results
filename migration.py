@@ -1,11 +1,12 @@
 import os
 import sqlite3
+import config
 
 os.system("cls")  # Clear console
 
 try:
 
-    db = sqlite3.connect('wrc.db')
+    db = sqlite3.connect(config.database + '.db')
 
     cursor = db.cursor()
 

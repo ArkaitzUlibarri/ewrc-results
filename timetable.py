@@ -7,9 +7,9 @@ from pyquery import PyQuery as pq
 currentfile = os.path.basename(__file__)
 currentfilename = os.path.splitext(currentfile)[0]
 
-os.system("cls")	# Clear console
+os.system("cls")  # Clear console
 
-url = "https://www.ewrc-results.com/"+ currentfilename + "/"+ "53052-rally-sweden-2019/"
+url = "https://www.ewrc-results.com/" + currentfilename + "/" + "533" + "/"
 
 try:
 	print(url)

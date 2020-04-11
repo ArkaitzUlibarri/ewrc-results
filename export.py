@@ -1,4 +1,5 @@
 import os
+import config
 from pptx import Presentation
 from pptx.util import Cm
 from helpers.db_helpers import rallyWinners,driversStats,driversResults
@@ -7,7 +8,7 @@ os.system("cls")	# Clear console
 
 #Config
 season = str(1993)
-databaseName = 'wrc.db'
+databaseName = config.database + '.db'
 
 def createTable(data):
 	rows,cols = len(data) + 1, len(data[0])

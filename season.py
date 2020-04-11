@@ -3,8 +3,9 @@ import sys
 import requests
 import sqlite3
 import datetime
+import config
 from pyquery import PyQuery as pq
-from helpers.event import Event
+from models.event import Event
 
 def readStandings(doc):
 	clasificaciones = doc("table.points.table_h")
@@ -24,11 +25,11 @@ def readStats(doc):
 currentfile = os.path.basename(__file__)
 currentfilename = os.path.splitext(currentfile)[0]
 
-os.system("cls")	# Clear console
+#os.system("cls")	# Clear console
 
-for season in range(1973,datetime.datetime.now().year + 1):
+for season in range(config.startSeason, datetime.datetime.now().year + 1):
 
-	url = "https://www.ewrc-results.com/"+ currentfilename + "/"+ str(season) +"/1-wrc/"
+	url = "https://www.ewrc-results.com/" + currentfilename + "/" + str(season) + "/" + config.database + "/"
 
 	try:
 		print(url)
@@ -42,7 +43,7 @@ for season in range(1973,datetime.datetime.now().year + 1):
 		doc = pq(response.text)
 
 		try:
-			db = sqlite3.connect('wrc.db')
+			db = sqlite3.connect(config.database + '.db')
 			cursor = db.cursor()
 			
 			#Eventos
