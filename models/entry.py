@@ -23,3 +23,10 @@ class Entry():
 
         #self.championship = row("td.startlist-m").text()
         #self.sections = row("td.startlist-sections").text()
+
+    def getTuple(self):
+        self.tuple = (self.event_id, self.car_number, self.driver_id, self.codriver_id, self.team, self.car, self.plate, self.category)
+
+        #print(self.tuple)
+
+        return self.tuple

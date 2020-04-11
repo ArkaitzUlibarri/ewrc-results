@@ -5,6 +5,8 @@ import sqlite3
 import datetime
 import config
 from pyquery import PyQuery as pq
+from models.scratch import Scratch
+from models.leader import Leader
 from helpers.db_helpers import selectEvents
 
 currentfile = os.path.basename(__file__)
@@ -18,7 +20,7 @@ for key in event_ids_dict:
 	print(key)
 	for event_id in event_ids_dict[key]:
 
-		url = "https://www.ewrc-results.com/"+ currentfilename + "/" + str(event_id) + "/"
+		url = "https://www.ewrc-results.com/" + currentfilename + "/" + str(event_id) + "/"
 
 		try:
 			print(url)
@@ -34,35 +36,27 @@ for key in event_ids_dict:
 			try:
 				db = sqlite3.connect(config.database + '.db')
 				cursor = db.cursor()
-				
-				#Eventstats
-				scratches = doc("div.stats-wins").eq(0)
-				leads = doc("div.stats-leads").eq(0)
-				
-				for tr in scratches('tr').items():
-					stage_number = tr("td:first > a").text()
-					stage = tr("td.stats-stage1 > a").text()
-					tr("td:last").remove()
 
-					drivers = tr("td:last > a").items()
-					driver_id = None
-					for driver in drivers:
-						if(driver_id != driver.attr('href').split('/')[2].split('-')[0]):
-							driver_id = driver.attr('href').split('/')[2].split('-')[0]
-							scratch_tuple = (event_id,stage_number,stage,driver_id)
-							db.execute("INSERT INTO scratchs (event_id,stage_number,stage_name,driver_id) VALUES (?,?,?,?)",scratch_tuple);
+				# Eventstats - Scratches
+				scratches = doc("div.stats-wins").eq(0)
+
+				for tr in scratches('tr').items():
+					tr("td:last").remove()  # Empty
+					drivers = set(tr("td:last > a").map(lambda i, e: pq(e).attr('href').split('/')[2].split('-')[0]))
+					for driver_id in drivers:
+						if driver_id:
+							scratch = Scratch(tr,event_id, driver_id)
+							db.execute("INSERT INTO scratchs (event_id,stage_number,stage_name,driver_id) VALUES (?,?,?,?)", scratch.getTuple());
+
+				# Eventstats - Leaders
+				leads = doc("div.stats-leads").eq(0)
 
 				for tr in leads('tr').items():
-					stage_number = tr("td:first > a").text()
-					stage = tr("td.stats-stage2 > a").text()
-					
-					drivers = tr("td:last > a").items()
-					driver_id = None
-					for driver in drivers:
-						if(driver_id != driver.attr('href').split('/')[2].split('-')[0]):
-							driver_id = driver.attr('href').split('/')[2].split('-')[0]
-							leader_tuple = (event_id,stage_number,stage,driver_id)
-							db.execute("INSERT INTO leaders (event_id,stage_number,stage_name,driver_id) VALUES (?,?,?,?)",leader_tuple);
+					drivers = set(tr("td:last > a").map(lambda i, e: pq(e).attr('href').split('/')[2].split('-')[0]))
+					for driver_id in drivers:
+						if driver_id:
+							leader = Leader(tr,event_id,driver_id)
+							db.execute("INSERT INTO leaders (event_id,stage_number,stage_name,driver_id) VALUES (?,?,?,?)", leader.getTuple());
 
 				db.commit()
 

@@ -20,11 +20,11 @@ class Event():
 		if not self.isCanceled(item):
 			event_info = item(".event-info").text().split(u'\u2022')
 
-			self.dates = event_info[0]
+			self.dates = event_info[0].strip()
 			entries_info = event_info[1].split('-')[1].split('/')
 
-			self.entries = entries_info[0]
-			self.finish = entries_info[1]
+			self.entries = entries_info[0].strip()
+			self.finish = entries_info[1].strip()
 		else:
 			self.dates = None
 			self.entries = None
@@ -34,7 +34,7 @@ class Event():
 		self.event_id = item(".season-event-name a").attr('href').split('/')[2].split('-')[0]
 
 	def getEventName(self,item):
-		event_name = item(".season-event-name").text()
+		event_name = item(".season-event-name").text().strip()
 
 		self.edition = None
 		self.name = event_name
@@ -53,3 +53,10 @@ class Event():
 
 	def printData(self):
 		print(self.event_id + " " + self.season + " " + str(self.season_event_id) + " " + self.rally_name)
+
+	def getTuple(self):
+		self.tuple = (self.event_id, self.season, self.season_event_id, self.edition, self.name, self.asphalt, self.gravel, self.snow, self.ice, self.dates, self.entries, self.finish)
+
+		#print(self.tuple)
+
+		return self.tuple

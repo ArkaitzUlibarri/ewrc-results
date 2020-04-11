@@ -19,3 +19,10 @@ class Driver():
 		self.deathdate = ""
 		if len(dates) == 2:
 			self.deathdate = dates[1]
+
+	def getTuple(self):
+		self.tuple = (self.id, self.fullname, self.name, self.lastname, self.birthdate, self.deathdate, self.nationality)
+
+		#print(self.tuple)
+
+		return self.tuple

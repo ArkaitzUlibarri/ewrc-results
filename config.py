@@ -3,10 +3,10 @@
 """ Configuración general del proyecto """
 
 # database name
-database = "26-belgium"
+database = "1-wrc"
 
 # start season
-startSeason = 1980
+startSeason = 1973
 
 # profile
-profile = "26"
+profile = "1"

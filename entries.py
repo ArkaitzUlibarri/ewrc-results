@@ -10,7 +10,7 @@ from helpers.db_helpers import selectEvents
 currentfile = os.path.basename(__file__)
 currentfilename = os.path.splitext(currentfile)[0]
 
-os.system("cls")	# Clear console
+os.system("cls")  # Clear console
 
 event_ids_dict = selectEvents(config.database + '.db')
 
@@ -34,16 +34,15 @@ for key in event_ids_dict:
 				db = sqlite3.connect(config.database + '.db')
 				cursor = db.cursor()
 				
-				#Entries
+				# Entries
 				startlist = doc("div.startlist")
-				startlist('td.startlist-sections > span.r8_bold_red').parents('tr').remove()#Remove course cars
-				first_category = startlist("tr:first > td.td_cent").text()#First car category
+				startlist('td.startlist-sections > span.r8_bold_red').parents('tr').remove()  # Remove course cars
+				first_category = startlist("tr:first > td.td_cent").text()  # First car category
 
 				for tr in startlist('tr').items():
 					entry = Entry(event_id,tr)
-					entry_tuple = (entry.event_id,entry.car_number,entry.driver_id,entry.codriver_id,entry.team,entry.car,entry.plate,entry.category)
 					if(entry.driver_id):
-						db.execute("INSERT INTO entries (event_id,car_number,driver_id,codriver_id,team,car,plate,category) VALUES (?,?,?,?,?,?,?,?)",entry_tuple);
+						db.execute("INSERT INTO entries (event_id,car_number,driver_id,codriver_id,team,car,plate,category) VALUES (?,?,?,?,?,?,?,?)", entry.getTuple());
 
 				db.commit()
 

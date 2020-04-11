@@ -46,12 +46,11 @@ for season in range(config.startSeason, datetime.datetime.now().year + 1):
 			db = sqlite3.connect(config.database + '.db')
 			cursor = db.cursor()
 			
-			#Eventos
+			#Events
 			events = doc.items(".season-event")
 			for index,event in enumerate(events,start=1):
 				rally = Event(season,event,index)
-				rallytuple = (rally.event_id,rally.season,rally.season_event_id,rally.edition,rally.name,rally.asphalt,rally.gravel,rally.snow,rally.ice,rally.dates,rally.entries,rally.finish)
-				db.execute("INSERT INTO events (id,season,season_event_id,edition,name,asphalt,gravel,snow,ice,dates,entries,finish) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",rallytuple);
+				db.execute("INSERT INTO events (id,season,season_event_id,edition,name,asphalt,gravel,snow,ice,dates,entries,finish) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", rally.getTuple());
 
 			db.commit()
 

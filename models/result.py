@@ -1,6 +1,6 @@
 class Result():
-	def __init__(self,driver,season,tr):
-		self.driver = driver
+	def __init__(self,driver_id,season,tr):
+		self.driver_id = driver_id
 		self.codriver = tr("div.profile-start-codriver").text()
 		self.season = int(season.text())
 		self.event_id = tr("div.profile-start-event > a").attr('href').split('/')[2].split('-')[0]
@@ -22,3 +22,10 @@ class Result():
 
 		self.result = result
 		self.class_result = class_result
+
+	def getTuple(self):
+		self.tuple = (self.event_id, self.driver_id, self.codriver, self.season, self.number, self.car, self.plate, self.team, self.category, self.result)
+
+		#print(self.tuple)
+
+		return self.tuple
