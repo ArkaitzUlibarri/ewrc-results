@@ -8,7 +8,6 @@ class Event():
 		self.getEventName(item)
 		self.getEventSurface(item)
 		self.getEventInfo(item)
-		#table = item(".tablefull") #TODO
 
 	def isCanceled(self,item):
 		for div in item.items("div"):
@@ -50,9 +49,6 @@ class Event():
 		self.gravel = "gravel" in info
 		self.snow = "snow" in info
 		self.ice = "ice" in info
-
-	def printData(self):
-		print(self.event_id + " " + self.season + " " + str(self.season_event_id) + " " + self.rally_name)
 
 	def getTuple(self):
 		self.tuple = (self.event_id, self.season, self.season_event_id, self.edition, self.name, self.asphalt, self.gravel, self.snow, self.ice, self.dates, self.entries, self.finish)

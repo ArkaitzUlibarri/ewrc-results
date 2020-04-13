@@ -8,61 +8,51 @@ from models.driver import Driver
 from models.result import Result
 from helpers.db_helpers import selectDrivers		
 
-def main(driverlist):
-	currentfile = os.path.basename(__file__)
-	currentfilename = os.path.splitext(currentfile)[0]
+currentfile = os.path.basename(__file__)
+currentfilename = os.path.splitext(currentfile)[0]
 
-	#os.system("cls")	# Clear console
+os.system("cls")  # Clear console
 
-	for id in driverlist:
+driverlist = selectDrivers(config.database + '.db')
 
-		url = "https://www.ewrc-results.com/"+ currentfilename + "/"+ str(id) +"/" + config.profile
+for driver_id in driverlist:
+
+	url = "https://www.ewrc-results.com/" + currentfilename + "/" + str(driver_id) + "/" + config.profile
+
+	try:
+		print(url)
+		response = requests.get(url)
+	except requests.exceptions.RequestException as e:
+		print(e)
+		sys.exit(1)
+
+	if response.status_code == 200:
+
+		doc = pq(response.text)
 
 		try:
-			print(url)
-			response = requests.get(url)
-		except requests.exceptions.RequestException as e:
-			print(e)
-			sys.exit(1)
-
-		if response.status_code == 200:
-
-			doc = pq(response.text)
+			db = sqlite3.connect(config.database + '.db')
+			cursor = db.cursor()
 
 			if(doc("main > div").eq(0).hasClass("profile")):
 
-				#Header
-				driver = Driver(doc,id)
+				#Header - Driver Info
+				driver = Driver(doc,driver_id)
+				db.execute("INSERT INTO drivers (id,fullname,name,lastname,birthdate,deathdate,nationality) VALUES (?,?,?,?,?,?,?)", driver.getTuple());
 
-				#Titles
-				titles = [t.text() for t in doc.items("div.profile-titles > div.profile-titles-overall > div.profile-titles-line > div.profile-titles-item")]
+				#Salidas-WRC
+				for season in doc.items("div.profile-season"):
 
-				#Estadisticas-WRC
-				keys = [k.text().replace(":","") for k in doc.items("div.profile-stats > div.profile-stats-item > table> tr > td.td_right")]
-				values = [v.text() for v in doc.items("div.profile-stats > div.profile-stats-item > table > tr > td.bold")]
+					starts = season.nextAll('div.profile-starts').eq(0)
 
-				try:
-					db = sqlite3.connect(config.database + '.db')
-					cursor = db.cursor()	
+					for start in starts('div.profile-start-line').items():
+						result = Result(driver.id, season, start)
+						db.execute("INSERT INTO results (event_id,driver_id,codriver_id,season,dorsal,car,plate,team,chassis,category,result) VALUES (?,?,?,?,?,?,?,?,?,?,?)", result.getTuple());
 
-					db.execute("INSERT INTO drivers (id,fullname,name,lastname,birthdate,deathdate,nationality) VALUES (?,?,?,?,?,?,?)", driver.getTuple());
+			db.commit()
 
-					#Salidas-WRC
-					for season in doc.items("div.profile-season"):
-
-						starts = season.nextAll('div.profile-starts').eq(0)
-
-						for start in starts('div.profile-start-line').items():
-							result = Result(driver.id,season,start)
-							db.execute("INSERT INTO results (event_id,driver_id,codriver,season,dorsal,car,plate,team,category,result) VALUES (?,?,?,?,?,?,?,?,?,?)", result.getTuple());
-
-					db.commit()
-
-				except Exception as e:
-					db.rollback()	
-					raise e
-				finally:
-					db.close()
-
-driver_ids_list = selectDrivers(config.database + '.db')
-main(driver_ids_list)
+		except Exception as e:
+			db.rollback()	
+			raise e
+		finally:
+			db.close()

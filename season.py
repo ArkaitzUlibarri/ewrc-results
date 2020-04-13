@@ -25,7 +25,7 @@ def readStats(doc):
 currentfile = os.path.basename(__file__)
 currentfilename = os.path.splitext(currentfile)[0]
 
-#os.system("cls")	# Clear console
+os.system("cls")  # Clear console
 
 for season in range(config.startSeason, datetime.datetime.now().year + 1):
 

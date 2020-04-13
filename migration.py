@@ -30,21 +30,22 @@ try:
         name TEXT NOT NULL,
         lastname TEXT NOT NULL,
         birthdate TEXT NOT NULL,
-        deathdate TEXT NOT NULL,
+        deathdate TEXT,
         nationality TEXT NOT NULL)''')
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS results(
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         event_id INTEGER NOT NULL,
         driver_id INTEGER NOT NULL,
-        codriver TEXT NOT NULL,
+        codriver_id INTEGER,
         season INTEGER NOT NULL,
         dorsal TEXT,
         car TEXT NOT NULL,
-        plate TEXT,
         team TEXT,
+        plate TEXT,
+        chassis TEXT,
         category TEXT,
-        result TEXT NOT NULL,
+        result TEXT,
         FOREIGN KEY(driver_id) REFERENCES drivers(id),
         FOREIGN KEY(event_id) REFERENCES events(id),
         CONSTRAINT results_unique UNIQUE (event_id,driver_id))''')
@@ -72,12 +73,13 @@ try:
     cursor.execute('''CREATE TABLE IF NOT EXISTS entries(
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         event_id INTEGER NOT NULL,
-        car_number TEXT NOT NULL,
+        car_number TEXT,
         driver_id INTEGER NOT NULL,
         codriver_id INTEGER,
-        team TEXT,
         car TEXT,
+        team TEXT,
         plate TEXT,
+        tyres TEXT,
         category TEXT,
         FOREIGN KEY(driver_id) REFERENCES drivers(id),
         FOREIGN KEY(event_id) REFERENCES events(id))''')

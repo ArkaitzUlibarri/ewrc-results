@@ -12,12 +12,11 @@ from helpers.db_helpers import selectEvents
 currentfile = os.path.basename(__file__)
 currentfilename = os.path.splitext(currentfile)[0]
 
-os.system("cls")	# Clear console
+os.system("cls")  # Clear console
 
 event_ids_dict = selectEvents(config.database + '.db')
 
 for key in event_ids_dict:
-	print(key)
 	for event_id in event_ids_dict[key]:
 
 		url = "https://www.ewrc-results.com/" + currentfilename + "/" + str(event_id) + "/"
