@@ -54,13 +54,46 @@ def selectDrivers(database):
 	finally:
 		db.close()
 
+def selectCodrivers(database):
+
+	try:
+		db = sqlite3.connect(database)
+		cursor = db.cursor()
+
+		cursor.execute("""SELECT DISTINCT entries.codriver_id
+			FROM entries
+			INNER JOIN scratchs on entries.driver_id = scratchs.driver_id
+			WHERE entries.codriver_id IS NOT NULL
+			ORDER BY entries.codriver_id""")
+
+		rows = cursor.fetchall()
+
+		driver_ids_list = []
+
+		for row in rows:
+			driver_ids_list.append(row[0])
+
+		return driver_ids_list
+
+	except Exception as e:
+		db.rollback()	
+		raise e
+	finally:
+		db.close()
+
 def rallyWinners(database,season):
 
 	try:
 		db = sqlite3.connect(database)
 		cursor = db.cursor()
 
-		cursor.execute("""SELECT events.season_event_id as ID,events.edition,events.name,drivers.fullname,results.car,results.team
+		cursor.execute("""SELECT 
+			events.season_event_id as ID,
+			events.edition,
+			events.name,
+			drivers.fullname,
+			results.car,
+			results.team
 			FROM events 
 			LEFT JOIN results on events.id = results.event_id 
 			LEFT JOIN drivers on results.driver_id = drivers.id 

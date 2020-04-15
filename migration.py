@@ -29,7 +29,16 @@ try:
         fullname TEXT NOT NULL,
         name TEXT NOT NULL,
         lastname TEXT NOT NULL,
-        birthdate TEXT NOT NULL,
+        birthdate TEXT,
+        deathdate TEXT,
+        nationality TEXT NOT NULL)''')
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS codrivers(
+        id INTEGER NOT NULL PRIMARY KEY,
+        fullname TEXT NOT NULL,
+        name TEXT NOT NULL,
+        lastname TEXT NOT NULL,
+        birthdate TEXT,
         deathdate TEXT,
         nationality TEXT NOT NULL)''')
 
@@ -47,8 +56,9 @@ try:
         category TEXT,
         result TEXT,
         FOREIGN KEY(driver_id) REFERENCES drivers(id),
+        FOREIGN KEY(codriver_id) REFERENCES codrivers(id),
         FOREIGN KEY(event_id) REFERENCES events(id),
-        CONSTRAINT results_unique UNIQUE (event_id,driver_id))''')
+        CONSTRAINT results_unique UNIQUE (event_id,driver_id,codriver_id))''')
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS scratchs(
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -82,6 +92,7 @@ try:
         tyres TEXT,
         category TEXT,
         FOREIGN KEY(driver_id) REFERENCES drivers(id),
+        FOREIGN KEY(codriver_id) REFERENCES codrivers(id),
         FOREIGN KEY(event_id) REFERENCES events(id))''')
 
     db.commit()
