@@ -46,8 +46,8 @@ for key in event_ids_dict:
 						if driver_id:
 							scratch = Scratch(tr,event_id, driver_id)
 							db.execute('''INSERT INTO scratchs 
-							(event_id,stage_number,stage_name,driver_id) 
-							VALUES (?,?,?,?)''', scratch.getTuple());
+							(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at) 
+							VALUES (?,?,?,?,?,?,?)''', scratch.getTuple());
 
 				# Eventstats - Leaders
 				leads = doc("div.stats-leads").eq(0)
@@ -58,8 +58,8 @@ for key in event_ids_dict:
 						if driver_id:
 							leader = Leader(tr,event_id,driver_id)
 							db.execute('''INSERT INTO leaders 
-							(event_id,stage_number,stage_name,driver_id) 
-							VALUES (?,?,?,?)''', leader.getTuple());
+							(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at) 
+							VALUES (?,?,?,?,?,?,?)''', leader.getTuple());
 
 				db.commit()
 

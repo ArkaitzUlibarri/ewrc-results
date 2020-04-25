@@ -1,3 +1,5 @@
+import datetime
+
 class Event():
 
 	def __init__(self,season,item,index):
@@ -8,6 +10,7 @@ class Event():
 		self.getEventName(item)
 		self.getEventSurface(item)
 		self.getEventInfo(item)
+		self.setTimestamps()
 
 	def isCanceled(self,item):
 		for div in item.items("div"):
@@ -50,8 +53,13 @@ class Event():
 		self.snow = "snow" in info
 		self.ice = "ice" in info
 
+	def setTimestamps(self):
+		self.created_at = datetime.datetime.now()
+		self.updated_at = datetime.datetime.now()
+		self.deleted_at = None
+		
 	def getTuple(self):
-		self.tuple = (self.event_id, self.season, self.season_event_id, self.edition, self.name, self.asphalt, self.gravel, self.snow, self.ice, self.dates, self.entries, self.finish)
+		self.tuple = (self.event_id, self.season, self.season_event_id, self.edition, self.name, self.asphalt, self.gravel, self.snow, self.ice, self.dates, self.entries, self.finish, self.created_at, self.updated_at, self. deleted_at)
 
 		#print(self.tuple)
 

@@ -5,6 +5,7 @@ class Driver():
 		self.getNames(doc)
 		self.getNationality(doc)
 		self.getDates(doc)
+		self.setTimestamps()
 
 	def getNames(self, doc):
 		self.fullname = doc(".profile > h1").text()
@@ -33,8 +34,13 @@ class Driver():
 	def hasNumbers(self,inputString):
 		return any(char.isdigit() for char in inputString)
 
+	def setTimestamps(self):
+		self.created_at = datetime.datetime.now()
+		self.updated_at = datetime.datetime.now()
+		self.deleted_at = None
+
 	def getTuple(self):
-		self.tuple = (self.id, self.fullname, self.name, self.lastname, self.birthdate, self.deathdate, self.nationality)
+		self.tuple = (self.id, self.fullname, self.name, self.lastname, self.birthdate, self.deathdate, self.nationality, self.created_at, self.updated_at, self. deleted_at)
 
 		#print(self.tuple)
 

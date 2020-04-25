@@ -38,8 +38,8 @@ for codriver_id in codriverlist:
 				#Header - Codriver Info
 				codriver = Driver(doc,codriver_id)
 				db.execute('''INSERT INTO codrivers 
-				(id,fullname,name,lastname,birthdate,deathdate,nationality) 
-				VALUES (?,?,?,?,?,?,?)''', codriver.getTuple());
+				(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at) 
+				VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.getTuple());
 
 			db.commit()
 

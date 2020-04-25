@@ -22,7 +22,10 @@ try:
         ice BOOLEAN NOT NULL,
         dates TEXT,
         entries TEXT,
-        finish TEXT)''')
+        finish TEXT,
+        created_at timestamp,
+        updated_at timestamp,
+        deleted_at timestamp)''')
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS drivers(
         id INTEGER NOT NULL PRIMARY KEY,
@@ -31,7 +34,10 @@ try:
         lastname TEXT NOT NULL,
         birthdate TEXT,
         deathdate TEXT,
-        nationality TEXT NOT NULL)''')
+        nationality TEXT NOT NULL,
+        created_at timestamp,
+        updated_at timestamp,
+        deleted_at timestamp)''')
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS codrivers(
         id INTEGER NOT NULL PRIMARY KEY,
@@ -40,7 +46,10 @@ try:
         lastname TEXT NOT NULL,
         birthdate TEXT,
         deathdate TEXT,
-        nationality TEXT NOT NULL)''')
+        nationality TEXT NOT NULL,
+        created_at timestamp,
+        updated_at timestamp,
+        deleted_at timestamp)''')
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS results(
         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -55,6 +64,9 @@ try:
         chassis TEXT,
         category TEXT,
         result TEXT,
+        created_at timestamp,
+        updated_at timestamp,
+        deleted_at timestamp,
         FOREIGN KEY(driver_id) REFERENCES drivers(id),
         FOREIGN KEY(codriver_id) REFERENCES codrivers(id),
         FOREIGN KEY(event_id) REFERENCES events(id),
@@ -66,6 +78,9 @@ try:
         stage_number TEXT NOT NULL,
         stage_name TEXT NOT NULL,
         driver_id INTEGER NOT NULL,
+        created_at timestamp,
+        updated_at timestamp,
+        deleted_at timestamp,
         FOREIGN KEY(driver_id) REFERENCES drivers(id),
         FOREIGN KEY(event_id) REFERENCES events(id),
         CONSTRAINT scratchs_unique UNIQUE (event_id,stage_number,driver_id))''')
@@ -76,6 +91,9 @@ try:
         stage_number TEXT NOT NULL,
         stage_name TEXT NOT NULL,
         driver_id INTEGER NOT NULL,
+        created_at timestamp,
+        updated_at timestamp,
+        deleted_at timestamp,
         FOREIGN KEY(driver_id) REFERENCES drivers(id),
         FOREIGN KEY(event_id) REFERENCES events(id),
         CONSTRAINT leaders_unique UNIQUE (event_id,stage_number,driver_id))''')
@@ -91,6 +109,9 @@ try:
         plate TEXT,
         tyres TEXT,
         category TEXT,
+        created_at timestamp,
+        updated_at timestamp,
+        deleted_at timestamp,
         FOREIGN KEY(driver_id) REFERENCES drivers(id),
         FOREIGN KEY(codriver_id) REFERENCES codrivers(id),
         FOREIGN KEY(event_id) REFERENCES events(id))''')

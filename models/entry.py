@@ -3,7 +3,7 @@ class Entry():
     def __init__(self, event_id, row):
 
         self.event_id = event_id
-        
+
         self.car_number = None
         if(row('td:not([class]):first').text()[1:]):
             self.car_number = row('td:not([class]):first').text()[1:]
@@ -35,8 +35,15 @@ class Entry():
         #self.championship = row("td.startlist-m").text()
         #self.sections = row("td.startlist-sections").text()
 
+        self.setTimestamps()
+
+    def setTimestamps(self):
+        self.created_at = datetime.datetime.now()
+        self.updated_at = datetime.datetime.now()
+        self.deleted_at = None
+
     def getTuple(self):
-        self.tuple = (self.event_id, self.car_number, self.driver_id, self.codriver_id, self.team, self.car, self.plate, self.tyres, self.category)
+        self.tuple = (self.event_id, self.car_number, self.driver_id, self.codriver_id, self.team, self.car, self.plate, self.tyres, self.category, self.created_at, self.updated_at, self. deleted_at)
 
         #print(self.tuple)
 
