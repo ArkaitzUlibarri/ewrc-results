@@ -35,7 +35,9 @@ for season in range(config.startSeason, datetime.datetime.now().year + 1):
 			events = doc.items(".season-event")
 			for index,event in enumerate(events,start=1):
 				rally = Event(season,event,index)
-				db.execute("INSERT INTO events (id,season,season_event_id,edition,name,asphalt,gravel,snow,ice,dates,entries,finish) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", rally.getTuple());
+				db.execute('''INSERT INTO events 
+				(id,season,season_event_id,edition,name,asphalt,gravel,snow,ice,dates,entries,finish) 
+				VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''', rally.getTuple());
 
 			db.commit()
 

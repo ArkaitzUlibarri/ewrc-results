@@ -38,7 +38,9 @@ for driver_id in driverlist:
 
 				#Header - Driver Info
 				driver = Driver(doc,driver_id)
-				db.execute("INSERT INTO drivers (id,fullname,name,lastname,birthdate,deathdate,nationality) VALUES (?,?,?,?,?,?,?)", driver.getTuple());
+				db.execute('''INSERT INTO drivers 
+				(id,fullname,name,lastname,birthdate,deathdate,nationality) 
+				VALUES (?,?,?,?,?,?,?)''', driver.getTuple());
 
 				#Salidas-WRC
 				for season in doc.items("div.profile-season"):
@@ -47,7 +49,9 @@ for driver_id in driverlist:
 
 					for start in starts('div.profile-start-line').items():
 						result = Result(driver.id, season, start)
-						db.execute("INSERT INTO results (event_id,driver_id,codriver_id,season,dorsal,car,plate,team,chassis,category,result) VALUES (?,?,?,?,?,?,?,?,?,?,?)", result.getTuple());
+						db.execute('''INSERT INTO results 
+						(event_id,driver_id,codriver_id,season,dorsal,car,plate,team,chassis,category,result) 
+						VALUES (?,?,?,?,?,?,?,?,?,?,?)''', result.getTuple());
 
 			db.commit()
 
