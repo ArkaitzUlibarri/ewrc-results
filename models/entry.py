@@ -1,3 +1,5 @@
+import datetime
+
 class Entry():
 
     def __init__(self, event_id, row):

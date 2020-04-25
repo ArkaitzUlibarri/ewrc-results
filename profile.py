@@ -50,13 +50,13 @@ for driver_id in driverlist:
 					for start in starts('div.profile-start-line').items():
 						result = Result(driver.id, season, start)
 						db.execute('''INSERT INTO results 
-						(event_id,driver_id,codriver_id,season,dorsal,car,plate,team,chassis,category,result,created_at,updated_at,deleted_at) 
+						(event_id,driver_id,codriver_id,season,dorsal,car,plate,team,chassis,category,result,created_at,updated_at,deleted_at)
 						VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', result.getTuple());
 
 			db.commit()
 
 		except Exception as e:
-			db.rollback()	
+			db.rollback()
 			raise e
 		finally:
 			db.close()
