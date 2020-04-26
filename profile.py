@@ -39,7 +39,7 @@ for driver_id in driverlist:
 				#Header - Driver Info
 				driver = Driver(doc,driver_id)
 				db.execute('''INSERT INTO drivers 
-				(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at)) 
+				(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at)
 				VALUES (?,?,?,?,?,?,?,?,?,?)''', driver.getTuple());
 
 				#Salidas-WRC
