@@ -1,8 +1,7 @@
 import sqlite3
 import datetime
-import config
 
-def selectEvents(database):
+def selectEvents(database, startSeason):
 
 	event_ids_dict = {}
 
@@ -10,7 +9,7 @@ def selectEvents(database):
 		db = sqlite3.connect(database)
 		cursor = db.cursor()
 
-		for season in range(config.startSeason, datetime.datetime.now().year + 1):
+		for season in range(startSeason, datetime.datetime.now().year + 1):
 
 			cursor.execute("SELECT id FROM events WHERE season=? ORDER BY season_event_id", (season,))
 

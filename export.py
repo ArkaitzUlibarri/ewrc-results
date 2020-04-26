@@ -2,7 +2,7 @@ import os
 import config
 from pptx import Presentation
 from pptx.util import Cm
-from helpers.db_helpers import rallyWinners,driversStats,driversResults
+from database.helper import rallyWinners,driversStats,driversResults
 
 os.system("cls")	# Clear console
 

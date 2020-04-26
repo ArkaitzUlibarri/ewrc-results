@@ -9,7 +9,7 @@ currentfilename = os.path.splitext(currentfile)[0]
 
 os.system("cls")  # Clear console
 
-url = "https://www.ewrc-results.com/" + currentfilename + "/" + "533" + "/"
+url = config.base_url + currentfilename + "/" + "533" + "/"
 
 try:
 	print(url)
