@@ -7,6 +7,7 @@ from database.helper import selectCodrivers
 from pages import season
 from pages import entries
 from pages import eventstats
+from pages import photo
 from pages import profile
 from pages import coprofile
 
@@ -26,7 +27,7 @@ season.insertEvents(app.base_url, dbPath, app.database, app.startSeason)
 event_ids_dict = selectEvents(dbPath, app.startSeason)
 entries.insertEntries(app.base_url,dbPath,event_ids_dict)
 
-# EventStats
+# Event Stats
 eventstats.insertEventStats(app.base_url,dbPath,event_ids_dict)
 
 # Drivers & Results
@@ -36,3 +37,6 @@ profile.insertDriversAndResults(app.base_url, dbPath, driverlist, app.category)
 # Codrivers
 codriverlist = selectCodrivers(dbPath)
 coprofile.insertCodrivers(app.base_url, dbPath, codriverlist, app.category)
+
+# Event Photos
+photo.insertEventPhotos(app.base_url,dbPath,event_ids_dict)

@@ -115,6 +115,14 @@ def migrate(dbPath):
             FOREIGN KEY(codriver_id) REFERENCES codrivers(id),
             FOREIGN KEY(event_id) REFERENCES events(id))''')
 
+        cursor.execute('''CREATE TABLE IF NOT EXISTS images(
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            event_id INTEGER NOT NULL,
+            created_at timestamp,
+            updated_at timestamp,
+            deleted_at timestamp,
+            FOREIGN KEY(event_id) REFERENCES events(id))''')
+
         db.commit()
 
     except Exception as e:

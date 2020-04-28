@@ -2,10 +2,9 @@ import os
 import sys
 import requests
 import sqlite3
-import config
 from pyquery import PyQuery as pq
 from models.driver import Driver
-from models.result import Result		
+from models.result import Result
 
 
 def insertDriversAndResults(base_url, dbPath, driverlist, category):

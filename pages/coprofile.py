@@ -2,7 +2,6 @@ import os
 import sys
 import requests
 import sqlite3
-import config
 from pyquery import PyQuery as pq
 from models.driver import Driver	
 
