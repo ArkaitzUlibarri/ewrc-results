@@ -2,6 +2,7 @@ import os
 import sys
 import requests
 import sqlite3
+import shutil
 from pyquery import PyQuery as pq
 from models.image import Image
 
@@ -32,7 +33,26 @@ def insertEventPhotos(base_url, dbPath, event_ids_dict):
 					# Event Photos
 					for photo in doc("div.foto-image").items():
 						image_id = photo.find('a').attr('href').split('/')[1]
-						image = Image(event_id, image_id)
+						image = Image(event_id, image_id, base_url)
+
+						# Image URL
+						image_response = requests.get(image.url)
+						if image_response.status_code == 200:
+							image_url = pq(image_response.text).find('img').attr('src')
+							extension = image_url.rsplit('.')[-1]
+
+							image_content = requests.get(image_url,stream = True)
+
+							# Create target Directory if don't exist
+							if not os.path.exists(os.path.join('storage', str(event_id))):
+								os.mkdir(os.path.join('storage', str(event_id)))
+
+							storage_path = os.path.join('storage', str(event_id), image_id + '.' + extension)
+					
+							with open(storage_path,'wb+') as out_file:
+								shutil.copyfileobj(image_content.raw, out_file)
+							del image_content
+
 						db.execute('''INSERT INTO images 
                         (id,event_id,created_at,updated_at,deleted_at) 
                         VALUES (?,?,?,?,?)''', image.getTuple());
