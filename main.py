@@ -1,6 +1,7 @@
 import os
 from config import app
 from database.migration import migrate
+from database.seeders.championshipPoints import seeder
 from database.helper import selectEvents
 from database.helper import selectDrivers
 from database.helper import selectCodrivers
@@ -19,6 +20,7 @@ dbPath = os.path.join(packageDir,'database', app.database + '.db')
 
 # Migrations
 migrate(dbPath)
+seeder(dbPath)
 
 # Events
 season.insertEvents(app.base_url, dbPath, app.database, app.startSeason)

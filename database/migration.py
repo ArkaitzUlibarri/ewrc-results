@@ -123,6 +123,32 @@ def migrate(dbPath):
             deleted_at timestamp,
             FOREIGN KEY(event_id) REFERENCES events(id))''')
 
+        cursor.execute('''CREATE TABLE IF NOT EXISTS driver_points(
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            season INTEGER NOT NULL UNIQUE,
+            overall_position_scoring json NOT NULL,
+            created_at timestamp,
+            updated_at timestamp,
+            deleted_at timestamp)''')
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS powerstage_points(
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            season INTEGER NOT NULL UNIQUE,
+            overall_position_scoring json NOT NULL,
+            created_at timestamp,
+            updated_at timestamp,
+            deleted_at timestamp)''')
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS manufacturer_points(
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            season INTEGER NOT NULL UNIQUE,
+            overall_position_scoring json NOT NULL,
+            group_position_scoring json,
+            comments TEXT,
+            created_at timestamp,
+            updated_at timestamp,
+            deleted_at timestamp)''')
+
         db.commit()
 
     except Exception as e:
