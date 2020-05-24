@@ -1,14 +1,9 @@
 import os
-import config
+import json
+from config import app
 from pptx import Presentation
 from pptx.util import Cm
-from database.helper import rallyWinners,driversStats,driversResults
-
-os.system("cls")	# Clear console
-
-#Config
-season = str(1993)
-databaseName = config.database + '.db'
+from database.stats import *
 
 def createTable(data):
 	rows,cols = len(data) + 1, len(data[0])
@@ -24,12 +19,28 @@ def writeTableBody(table,data):
 		for colIndex,cell in enumerate(row, start=0):
 			table.cell(rowIndex, colIndex).text = str(cell)
 
+# Clear console
+os.system("cls")	
+
+packageDir  = os.path.abspath(os.path.dirname(__file__))
+db = os.path.join(packageDir,'database', app.database + '.db')
+
+#Config
+season = str(1993)
+
 #Queries
-scratchs = driversStats(databaseName,season,'scratchs')
-leaders = driversStats(databaseName,season,'leaders')
-winners = driversResults(databaseName,season,'winners')
-podiums = driversResults(databaseName,season,'podiums')
-results = rallyWinners(databaseName,season)
+scratchs = driversScratchs(db,season)
+leaders = driversLeaders(db,season)
+winners = driversWinners(db,season)
+podiums = driversPodiums(db,season)
+results = rallyWinners(db,season)
+
+# TODO
+#driverPointsSystem = driversChampionshipPointsSystem(db,season)
+#fullResultsByDriver = fullResultsByDriver(db,season,1398)
+
+#print(scratchs)
+#print(json.loads(driverPointsSystem))
 
 #create PPT
 prs = Presentation()

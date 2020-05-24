@@ -16,29 +16,29 @@ from pages import coprofile
 os.system("cls") 
 
 packageDir  = os.path.abspath(os.path.dirname(__file__))
-dbPath = os.path.join(packageDir,'database', app.database + '.db')
+db = os.path.join(packageDir,'database', app.database + '.db')
 
 # Migrations
-migrate(dbPath)
-seeder(dbPath)
+migrate(db)
+seeder(db)
 
 # Events
-season.insertEvents(app.base_url, dbPath, app.database, app.startSeason)
+season.insertEvents(app.base_url, db, app.database, app.startSeason)
 
 # Entries
-event_ids_dict = selectEvents(dbPath, app.startSeason)
-entries.insertEntries(app.base_url,dbPath,event_ids_dict)
+event_ids_dict = selectEvents(db, app.startSeason)
+entries.insertEntries(app.base_url,db,event_ids_dict)
 
 # Event Stats
-eventstats.insertEventStats(app.base_url,dbPath,event_ids_dict)
+eventstats.insertEventStats(app.base_url,db,event_ids_dict)
 
 # Drivers & Results
-driverlist = selectDrivers(dbPath)
-profile.insertDriversAndResults(app.base_url, dbPath, driverlist, app.category)
+driverlist = selectDrivers(db)
+profile.insertDriversAndResults(app.base_url, db, driverlist, app.category)
 
 # Codrivers
-codriverlist = selectCodrivers(dbPath)
-coprofile.insertCodrivers(app.base_url, dbPath, codriverlist, app.category)
+codriverlist = selectCodrivers(db)
+coprofile.insertCodrivers(app.base_url, db, codriverlist, app.category)
 
 # Event Photos
-photo.insertEventPhotos(app.base_url,dbPath,event_ids_dict)
+photo.insertEventPhotos(app.base_url,db,event_ids_dict)
