@@ -3,3 +3,4 @@ backups/
 storage/*
 *.db
 *.pptx
+/.idea/

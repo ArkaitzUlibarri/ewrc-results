@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-""" Configuración general del proyecto """
+""" Project main configuration """
 
 # base url
 base_url = "https://www.ewrc-results.com"

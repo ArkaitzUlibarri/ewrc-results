@@ -12,11 +12,11 @@ from pages import photo
 from pages import profile
 from pages import coprofile
 
- # Clear console
-os.system("cls") 
+# Clear console
+os.system("cls")
 
-packageDir  = os.path.abspath(os.path.dirname(__file__))
-db = os.path.join(packageDir,'database', app.database + '.db')
+packageDir = os.path.abspath(os.path.dirname(__file__))
+db = os.path.join(packageDir, 'database', app.database + '.db')
 
 # Migrations
 migrate(db)
@@ -27,10 +27,10 @@ season.insertEvents(app.base_url, db, app.database, app.startSeason)
 
 # Entries
 event_ids_dict = selectEvents(db, app.startSeason)
-entries.insertEntries(app.base_url,db,event_ids_dict)
+entries.insertEntries(app.base_url, db, event_ids_dict)
 
 # Event Stats
-eventstats.insertEventStats(app.base_url,db,event_ids_dict)
+eventstats.insertEventStats(app.base_url, db, event_ids_dict)
 
 # Drivers & Results
 driverlist = selectDrivers(db)
@@ -41,4 +41,4 @@ codriverlist = selectCodrivers(db)
 coprofile.insertCodrivers(app.base_url, db, codriverlist, app.category)
 
 # Event Photos
-photo.insertEventPhotos(app.base_url,db,event_ids_dict)
+photo.insertEventPhotos(app.base_url, db, event_ids_dict)
