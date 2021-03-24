@@ -17,7 +17,7 @@ base_url = "https://www.ewrc-results.com"
 database = "1-wrc"
 
 # start season
-startSeason = 1973
+start_season = 1973
 
 # profile category
 category = "1"

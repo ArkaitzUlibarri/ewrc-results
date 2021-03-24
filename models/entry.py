@@ -37,14 +37,14 @@ class Entry():
         #self.championship = row("td.startlist-m").text()
         #self.sections = row("td.startlist-sections").text()
 
-        self.setTimestamps()
+        self.set_timestamps()
 
-    def setTimestamps(self):
+    def set_timestamps(self):
         self.created_at = datetime.datetime.now()
         self.updated_at = datetime.datetime.now()
         self.deleted_at = None
 
-    def getTuple(self):
+    def get_tuple(self):
         self.tuple = (self.event_id, self.car_number, self.driver_id, self.codriver_id, self.team, self.car, self.plate, self.tyres, self.category, self.created_at, self.updated_at, self. deleted_at)
 
         #print(self.tuple)

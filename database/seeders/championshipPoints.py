@@ -4,18 +4,18 @@ import os
 import sqlite3
 
 
-def seeder(dbPath):
-    packageDir = os.path.abspath(os.path.dirname(__file__))
+def seeder(db_path):
+    package_dir = os.path.abspath(os.path.dirname(__file__))
 
     # Opening JSON file 
-    f = open(os.path.join(packageDir, 'championshipPoints.json'), )
+    f = open(os.path.join(package_dir, 'championshipPoints.json'), )
 
     # returns JSON object as a dictionary
     data = json.load(f)
 
     try:
 
-        db = sqlite3.connect(dbPath)
+        db = sqlite3.connect(db_path)
         cursor = db.cursor()
 
         for item in data['manufacturers']:

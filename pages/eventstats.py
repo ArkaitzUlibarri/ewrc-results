@@ -6,7 +6,7 @@ from pyquery import PyQuery as pq
 from models.scratch import Scratch
 from models.leader import Leader
 
-def insertEventStats(base_url, dbPath, event_ids_dict):
+def insert_event_stats(base_url, db_path, event_ids_dict):
 	currentfile = os.path.basename(__file__)
 	currentfilename = os.path.splitext(currentfile)[0]
 
@@ -27,7 +27,7 @@ def insertEventStats(base_url, dbPath, event_ids_dict):
 				doc = pq(response.text)
 
 				try:
-					db = sqlite3.connect(dbPath)
+					db = sqlite3.connect(db_path)
 					cursor = db.cursor()
 
 					# Eventstats - Scratches
@@ -41,7 +41,7 @@ def insertEventStats(base_url, dbPath, event_ids_dict):
 								scratch = Scratch(tr,event_id, driver_id)
 								db.execute('''INSERT INTO scratchs 
 								(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at) 
-								VALUES (?,?,?,?,?,?,?)''', scratch.getTuple());
+								VALUES (?,?,?,?,?,?,?)''', scratch.get_tuple());
 
 					# Eventstats - Leaders
 					leads = doc("div.stats-leads").eq(0)
@@ -53,7 +53,7 @@ def insertEventStats(base_url, dbPath, event_ids_dict):
 								leader = Leader(tr,event_id,driver_id)
 								db.execute('''INSERT INTO leaders 
 								(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at) 
-								VALUES (?,?,?,?,?,?,?)''', leader.getTuple());
+								VALUES (?,?,?,?,?,?,?)''', leader.get_tuple());
 
 					db.commit()
 

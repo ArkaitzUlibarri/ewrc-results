@@ -45,14 +45,14 @@ class Result():
 
 		self.result = result
 		self.class_result = class_result
-		self.setTimestamps()
+		self.set_timestamps()
 
-	def setTimestamps(self):
+	def set_timestamps(self):
 		self.created_at = datetime.datetime.now()
 		self.updated_at = datetime.datetime.now()
 		self.deleted_at = None
 
-	def getTuple(self):
+	def get_tuple(self):
 		self.tuple = (self.event_id, self.driver_id, self.codriver_id, self.season, self.number, self.car, self.plate, self.team, self.chassis, self.category, self.result, self.created_at, self.updated_at, self. deleted_at)
 
 		#print(self.tuple)

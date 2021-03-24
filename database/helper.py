@@ -1,7 +1,7 @@
 import sqlite3
 import datetime
 
-def selectEvents(database, startSeason):
+def select_events(database, start_season):
 
 	event_ids_dict = {}
 
@@ -9,7 +9,7 @@ def selectEvents(database, startSeason):
 		db = sqlite3.connect(database)
 		cursor = db.cursor()
 
-		for season in range(startSeason, datetime.datetime.now().year + 1):
+		for season in range(start_season, datetime.datetime.now().year + 1):
 
 			cursor.execute("SELECT id FROM events WHERE season=? ORDER BY season_event_id", (season,))
 
@@ -30,7 +30,7 @@ def selectEvents(database, startSeason):
 	finally:
 		db.close()
 
-def selectDrivers(database):
+def select_drivers(database):
 
 	try:
 		db = sqlite3.connect(database)
@@ -53,7 +53,7 @@ def selectDrivers(database):
 	finally:
 		db.close()
 
-def selectCodrivers(database):
+def select_codrivers(database):
 
 	try:
 		db = sqlite3.connect(database)

@@ -6,7 +6,7 @@ from pyquery import PyQuery as pq
 from models.driver import Driver	
 
 
-def insertCodrivers(base_url, dbPath, codriverlist, category):
+def insert_codrivers(base_url, db_path, codriverlist, category):
 	currentfile = os.path.basename(__file__)
 	currentfilename = os.path.splitext(currentfile)[0]
 
@@ -26,7 +26,7 @@ def insertCodrivers(base_url, dbPath, codriverlist, category):
 			doc = pq(response.text)
 
 			try:
-				db = sqlite3.connect(dbPath)
+				db = sqlite3.connect(db_path)
 				cursor = db.cursor()
 
 				if(doc("main > div").eq(0).hasClass("profile")):
@@ -35,7 +35,7 @@ def insertCodrivers(base_url, dbPath, codriverlist, category):
 					codriver = Driver(doc,codriver_id)
 					db.execute('''INSERT INTO codrivers 
 					(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at) 
-					VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.getTuple());
+					VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.get_tuple());
 
 				db.commit()
 

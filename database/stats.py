@@ -1,7 +1,7 @@
 import sqlite3
 import datetime
 
-def rallyWinners(database,season):
+def rally_winners(database,season):
 
 	try:
 		db = sqlite3.connect(database)
@@ -28,7 +28,7 @@ def rallyWinners(database,season):
 	finally:
 		db.close()
 
-def driversChampionshipPointsSystem(database,season):
+def drivers_championship_points_system(database,season):
 
 	try:
 		db = sqlite3.connect(database)
@@ -48,7 +48,7 @@ def driversChampionshipPointsSystem(database,season):
 	finally:
 		db.close()
 
-def driversStats(database,season,table):
+def drivers_stats(database,season,table):
 
 	try:
 		db = sqlite3.connect(database)
@@ -70,13 +70,13 @@ def driversStats(database,season,table):
 	finally:
 		db.close()
 
-def driversScratchs(database,season):
-	return driversStats(database,season,'scratchs')
+def drivers_scratchs(database,season):
+	return drivers_stats(database,season,'scratchs')
 
-def driversLeaders(database,season):
-	return driversStats(database,season,'leaders')
+def drivers_leaders(database,season):
+	return drivers_stats(database,season,'leaders')
 
-def driversResults(database,season,result):
+def drivers_results(database,season,result):
 
 	if(result == "winners"):
 		condition = "(result = '1')"
@@ -103,20 +103,22 @@ def driversResults(database,season,result):
 	finally:
 		db.close()
 
-def driversPodiums(database,season):
-	return driversResults(database,season,'podiums')
+def drivers_podiums(database,season):
+	return drivers_results(database,season,'podiums')
 
-def driversWinners(database,season):
-	return driversResults(database,season,'winners')
+def drivers_winners(database,season):
+	return drivers_results(database,season,'winners')
 
-def fullResultsByDriver(database,season,driver_id):
+def full_results_by_driver(database,season,driver_id):
 
 	try:
 		db = sqlite3.connect(database)
 		db.row_factory = sqlite3.Row
 		cursor = db.cursor()
 
-		cursor.execute("""SELECT events.season_event_id as ID,events.edition,events.name,results.dorsal,drivers.fullname,codrivers.fullname,results.plate,results.car,results.team,results.result
+		cursor.execute("""
+			SELECT events.season_event_id as ID,events.edition,events.name,
+			results.dorsal,drivers.fullname,codrivers.fullname,results.plate,results.car,results.team,results.result
 			FROM events
 			LEFT JOIN results on events.id = results.event_id
 			LEFT JOIN drivers on results.driver_id = drivers.id
