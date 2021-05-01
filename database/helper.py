@@ -2,6 +2,31 @@ import sqlite3
 import datetime
 
 
+def select_event(database, event_id):
+    event_ids_dict = {}
+
+    db = sqlite3.connect(database)
+
+    try:
+
+        cursor = db.cursor()
+
+        cursor.execute("SELECT id,season FROM events WHERE id=?", (event_id,))
+
+        row = cursor.fetchone()
+
+        print(row)
+
+        event_ids_dict[row[1]] = [row[0]]
+
+        return event_ids_dict
+
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
+
 def select_events(database, start_season):
     event_ids_dict = {}
 

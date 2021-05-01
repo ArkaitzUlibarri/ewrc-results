@@ -1,11 +1,11 @@
-import os
 import sqlite3
+
 
 def migrate(db_path):
 
-    try:
+    db = sqlite3.connect(db_path)
 
-        db = sqlite3.connect(db_path)
+    try:
 
         cursor = db.cursor()
 

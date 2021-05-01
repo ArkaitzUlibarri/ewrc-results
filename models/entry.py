@@ -1,6 +1,14 @@
 import datetime
 
 
+def get_href_id(a_tag):
+    return a_tag.attr('href').split('/')[2].split('-')[0]
+
+
+def get_tyres(img_tag):
+    return img_tag.attr('src').split('/')[5].split('.')[0].upper()
+
+
 class Entry:
 
     def __init__(self, event_id, row):
@@ -8,35 +16,34 @@ class Entry:
         self.event_id = event_id
 
         self.car_number = None
-        if row('td:not([class]):first').text()[1:]:
-            self.car_number = row('td:not([class]):first').text()[1:]
+        if row('td:first').text()[1:]:
+            self.car_number = row('td:first').text()[1:]
 
-        self.driver_id = row('td:not([class])').eq(1).find('a').attr('href').split('/')[2].split('-')[0]
-
+        entry = row('td.startlist-entry')
+        self.driver_id = get_href_id(entry.find('div.startlist-driver').eq(0).find('a'))
         self.codriver_id = None
-        if row('td:not([class]):last > a').attr('href'):
-            self.codriver_id = row('td:not([class]):last').find('a').attr('href').split('/')[2].split('-')[0]
+        if row('div.startlist-driver:last > a').attr('href'):
+            self.codriver_id = get_href_id(entry.find('div.startlist-driver').eq(1).find('a'))
 
-        self.car = row("td.bold").clone().find('span').remove().end().text()
+        self.car = row("td.font-weight-bold.lh-130").clone().find('span').remove().end().text()
 
         self.team = None
-        if row("td.bold").find('span.r8'):
-            self.team = row("td.bold").find('span.r8').text()
+        if row("td.font-weight-bold.lh-130").find('span'):
+            self.team = row("td.font-weight-bold.lh-130").find('span').text()
 
         self.plate = None
-        if row("td.startlist-team").find("span.startlist-chassis"):
-            self.plate = row("td.startlist-team").find("span.startlist-chassis").find('a').text().replace('[', '').replace(']', '')
+        if row("td.startlist-team > a"):
+            self.plate = row("td.startlist-team").find('a').text()
 
         self.tyres = None
-        if row("td.startlist-team").find("div.startlist-tyre-position"):
-            self.tyres = row("td.startlist-team").find("div.startlist-tyre-position").find('img').attr('src').split('/')[3].split('.')[0].title()
+        if row("td.startlist-team > img"):
+            self.tyres = get_tyres(row("td.startlist-team").find('img'))
 
         self.category = None
-        if row("td:not(.startlist-m):not(.startlist-sections):last").text():
-            self.category = row("td:not(.startlist-m):not(.startlist-sections):last").text()
+        if row("td.fs-091:first").text():
+            self.category = row("td.fs-091:first").text()
 
-        # self.championship = row("td.startlist-m").text()
-        # self.sections = row("td.startlist-sections").text()
+        # self.championship = row("td.entry-sct").text()
 
         self.set_timestamps()
 

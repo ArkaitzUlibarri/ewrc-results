@@ -32,9 +32,8 @@ def insert_entries(base_url, db_path, event_ids_dict):
 					cursor = db.cursor()
 
 					# Entries
-					startlist = doc("div.startlist")
-					startlist('td.startlist-sections > span.r8_bold_red').parents('tr').remove()  # Remove course cars
-					first_category = startlist("tr:first > td.td_cent").text()  # First car category
+					startlist = doc("table.results")
+					startlist('td.entry-sct > span.text-danger').parents('tr').remove()  # Remove course cars
 
 					for tr in startlist('tr').items():
 						entry = Entry(event_id, tr)

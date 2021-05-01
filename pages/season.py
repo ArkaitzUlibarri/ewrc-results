@@ -26,8 +26,10 @@ def insert_events(base_url, db_path, db_name, start_season):
 
 			doc = pq(response.text)
 
+			db = sqlite3.connect(db_path)
+
 			try:
-				db = sqlite3.connect(db_path)
+
 				cursor = db.cursor()
 
 				# Events
@@ -36,7 +38,7 @@ def insert_events(base_url, db_path, db_name, start_season):
 					rally = Event(season, event, index)
 					db.execute('''REPLACE INTO events 
 					(id,season,season_event_id,edition,name,asphalt,gravel,snow,ice,dates,entries,finish,created_at,updated_at,deleted_at) 
-					VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', rally.get_tuple());
+					VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', rally.get_tuple())
 
 				db.commit()
 
