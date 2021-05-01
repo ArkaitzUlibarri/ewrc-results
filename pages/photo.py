@@ -6,14 +6,15 @@ import shutil
 from pyquery import PyQuery as pq
 from models.image import Image
 
+
 def insert_event_photos(base_url, db_path, event_ids_dict):
-	currentfile = os.path.basename(__file__)
-	currentfilename = os.path.splitext(currentfile)[0]
+	current_file = os.path.basename(__file__)
+	current_file_name = os.path.splitext(current_file)[0]
 
 	for key in event_ids_dict:
 		for event_id in event_ids_dict[key]:
 
-			url = base_url + "/" + currentfilename + "/" + str(event_id) + "/"
+			url = base_url + "/" + current_file_name + "/" + str(event_id) + "/"
 
 			try:
 				print(url)
@@ -41,7 +42,7 @@ def insert_event_photos(base_url, db_path, event_ids_dict):
 							image_url = pq(image_response.text).find('img').attr('src')
 							extension = image_url.rsplit('.')[-1]
 
-							image_content = requests.get(image_url,stream = True)
+							image_content = requests.get(image_url, stream=True)
 
 							# Create target Directory if don't exist
 							if not os.path.exists(os.path.join('storage', str(event_id))):
@@ -49,7 +50,7 @@ def insert_event_photos(base_url, db_path, event_ids_dict):
 
 							storage_path = os.path.join('storage', str(event_id), image_id + '.' + extension)
 					
-							with open(storage_path,'wb+') as out_file:
+							with open(storage_path, 'wb+') as out_file:
 								shutil.copyfileobj(image_content.raw, out_file)
 							del image_content
 

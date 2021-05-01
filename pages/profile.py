@@ -7,13 +7,13 @@ from models.driver import Driver
 from models.result import Result
 
 
-def insert_profiles(base_url, db_path, driverlist, category):
-	currentfile = os.path.basename(__file__)
-	currentfilename = os.path.splitext(currentfile)[0]
+def insert_profiles(base_url, db_path, driver_list, category):
+	current_file = os.path.basename(__file__)
+	current_file_name = os.path.splitext(current_file)[0]
 
-	for driver_id in driverlist:
+	for driver_id in driver_list:
 
-		url = base_url + "/" + currentfilename + "/" + str(driver_id) + "/" + category
+		url = base_url + "/" + current_file_name + "/" + str(driver_id) + "/" + category
 
 		try:
 			print(url)
@@ -30,15 +30,15 @@ def insert_profiles(base_url, db_path, driverlist, category):
 				db = sqlite3.connect(db_path)
 				cursor = db.cursor()
 
-				if(doc("main > div").eq(0).hasClass("profile")):
+				if doc("main > div").eq(0).hasClass("profile"):
 
-					#Header - Driver Info
-					driver = Driver(doc,driver_id)
+					# Header - Driver Info
+					driver = Driver(doc, driver_id)
 					db.execute('''INSERT INTO drivers 
 					(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at)
 					VALUES (?,?,?,?,?,?,?,?,?,?)''', driver.get_tuple());
 
-					#Salidas-WRC
+					# Starts-WRC
 					for season in doc.items("div.profile-season"):
 
 						starts = season.nextAll('div.profile-starts').eq(0)

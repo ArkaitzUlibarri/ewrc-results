@@ -13,9 +13,10 @@ def seeder(db_path):
     # returns JSON object as a dictionary
     data = json.load(f)
 
+    db = sqlite3.connect(db_path)
+
     try:
 
-        db = sqlite3.connect(db_path)
         cursor = db.cursor()
 
         for item in data['manufacturers']:

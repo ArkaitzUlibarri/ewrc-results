@@ -1,81 +1,87 @@
 import sqlite3
 import datetime
 
+
 def select_events(database, start_season):
+    event_ids_dict = {}
 
-	event_ids_dict = {}
+    db = sqlite3.connect(database)
 
-	try:
-		db = sqlite3.connect(database)
-		cursor = db.cursor()
+    try:
 
-		for season in range(start_season, datetime.datetime.now().year + 1):
+        cursor = db.cursor()
 
-			cursor.execute("SELECT id FROM events WHERE season=? ORDER BY season_event_id", (season,))
+        for season in range(start_season, datetime.datetime.now().year + 1):
 
-			rows = cursor.fetchall()
+            cursor.execute("SELECT id FROM events WHERE season=? ORDER BY season_event_id", (season,))
 
-			event_ids_list = []
+            rows = cursor.fetchall()
 
-			for row in rows:
-				event_ids_list.append(row[0])
+            event_ids_list = []
 
-			event_ids_dict[season] = event_ids_list
+            for row in rows:
+                event_ids_list.append(row[0])
 
-		return event_ids_dict
+            event_ids_dict[season] = event_ids_list
 
-	except Exception as e:
-		db.rollback()	
-		raise e
-	finally:
-		db.close()
+        return event_ids_dict
+
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
+
 
 def select_drivers(database):
+    db = sqlite3.connect(database)
 
-	try:
-		db = sqlite3.connect(database)
-		cursor = db.cursor()
+    try:
 
-		cursor.execute("SELECT DISTINCT driver_id FROM scratchs")
+        cursor = db.cursor()
 
-		rows = cursor.fetchall()
+        cursor.execute("SELECT DISTINCT driver_id FROM scratchs")
 
-		driver_ids_list = []
+        rows = cursor.fetchall()
 
-		for row in rows:
-			driver_ids_list.append(row[0])
+        driver_ids_list = []
 
-		return driver_ids_list
+        for row in rows:
+            driver_ids_list.append(row[0])
 
-	except Exception as e:
-		db.rollback()	
-		raise e
-	finally:
-		db.close()
+        return driver_ids_list
+
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
+
 
 def select_codrivers(database):
+    db = sqlite3.connect(database)
 
-	try:
-		db = sqlite3.connect(database)
-		cursor = db.cursor()
+    try:
 
-		cursor.execute("""SELECT DISTINCT entries.codriver_id
+        cursor = db.cursor()
+
+        cursor.execute("""SELECT DISTINCT entries.codriver_id
 			FROM entries
 			INNER JOIN scratchs on entries.driver_id = scratchs.driver_id
 			WHERE entries.codriver_id IS NOT NULL
 			ORDER BY entries.codriver_id""")
 
-		rows = cursor.fetchall()
+        rows = cursor.fetchall()
 
-		driver_ids_list = []
+        driver_ids_list = []
 
-		for row in rows:
-			driver_ids_list.append(row[0])
+        for row in rows:
+            driver_ids_list.append(row[0])
 
-		return driver_ids_list
+        return driver_ids_list
 
-	except Exception as e:
-		db.rollback()	
-		raise e
-	finally:
-		db.close()
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()

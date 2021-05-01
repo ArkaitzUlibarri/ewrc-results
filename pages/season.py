@@ -29,11 +29,11 @@ def insert_events(base_url, db_path, db_name, start_season):
 			try:
 				db = sqlite3.connect(db_path)
 				cursor = db.cursor()
-				
-				#Events
+
+				# Events
 				events = doc.items(".season-event")
-				for index,event in enumerate(events,start=1):
-					rally = Event(season,event,index)
+				for index, event in enumerate(events, start=1):
+					rally = Event(season, event, index)
 					db.execute('''REPLACE INTO events 
 					(id,season,season_event_id,edition,name,asphalt,gravel,snow,ice,dates,entries,finish,created_at,updated_at,deleted_at) 
 					VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', rally.get_tuple());

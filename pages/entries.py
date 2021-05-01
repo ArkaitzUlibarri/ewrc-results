@@ -5,14 +5,15 @@ import sqlite3
 from pyquery import PyQuery as pq
 from models.entry import Entry
 
+
 def insert_entries(base_url, db_path, event_ids_dict):
-	currentfile = os.path.basename(__file__)
-	currentfilename = os.path.splitext(currentfile)[0]
+	current_file = os.path.basename(__file__)
+	current_file_name = os.path.splitext(current_file)[0]
 
 	for key in event_ids_dict:
 		for event_id in event_ids_dict[key]:
 
-			url = base_url + "/" + currentfilename + "/" + str(event_id) + "/"
+			url = base_url + "/" + current_file_name + "/" + str(event_id) + "/"
 
 			try:
 				print(url)
@@ -24,9 +25,10 @@ def insert_entries(base_url, db_path, event_ids_dict):
 			if response.status_code == 200:
 
 				doc = pq(response.text)
+				db = sqlite3.connect(db_path)
 
 				try:
-					db = sqlite3.connect(db_path)
+
 					cursor = db.cursor()
 
 					# Entries
@@ -36,7 +38,7 @@ def insert_entries(base_url, db_path, event_ids_dict):
 
 					for tr in startlist('tr').items():
 						entry = Entry(event_id, tr)
-						if(entry.driver_id):
+						if entry.driver_id:
 							db.execute('''INSERT INTO entries 
 							(event_id,car_number,driver_id,codriver_id,team,car,plate,tyres,category,created_at,updated_at,deleted_at)
 							VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''', entry.get_tuple());

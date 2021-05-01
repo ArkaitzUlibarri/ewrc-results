@@ -30,30 +30,42 @@ def insert_event_stats(base_url, db_path, event_ids_dict):
 					db = sqlite3.connect(db_path)
 					cursor = db.cursor()
 
-					# Eventstats - Scratches
+					# EventStats - Scratches
 					scratches = doc("div.stats-wins").eq(0)
 
 					for tr in scratches('tr').items():
-						tr("td:last").remove()  # Empty
+
+						if tr("td:last").hasClass('text-danger'):
+							pass
+						else:
+							tr("td:last").remove()  # Empty
+
 						drivers = set(tr("td:last > a").map(lambda i, e: pq(e).attr('href').split('/')[2].split('-')[0]))
+
+						if len(drivers) == 0:
+							drivers = set([])
+
 						for driver_id in drivers:
-							if driver_id:
-								scratch = Scratch(tr,event_id, driver_id)
-								db.execute('''INSERT INTO scratchs 
-								(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at) 
-								VALUES (?,?,?,?,?,?,?)''', scratch.get_tuple());
+							scratch = Scratch(tr,event_id, driver_id)
+							db.execute('''INSERT INTO scratchs 
+							(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at) 
+							VALUES (?,?,?,?,?,?,?)''', scratch.get_tuple());
 
 					# Eventstats - Leaders
 					leads = doc("div.stats-leads").eq(0)
 
 					for tr in leads('tr').items():
+
 						drivers = set(tr("td:last > a").map(lambda i, e: pq(e).attr('href').split('/')[2].split('-')[0]))
+
+						if len(drivers) == 0:
+							drivers = set([])
+
 						for driver_id in drivers:
-							if driver_id:
-								leader = Leader(tr,event_id,driver_id)
-								db.execute('''INSERT INTO leaders 
-								(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at) 
-								VALUES (?,?,?,?,?,?,?)''', leader.get_tuple());
+							leader = Leader(tr,event_id,driver_id)
+							db.execute('''INSERT INTO leaders 
+							(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at) 
+							VALUES (?,?,?,?,?,?,?)''', leader.get_tuple());
 
 					db.commit()
 

@@ -1,8 +1,9 @@
 import datetime
 
-class Driver():
 
-	def __init__(self,doc,id):
+class Driver:
+
+	def __init__(self, doc, id):
 		self.id = id
 		self.get_names(doc)
 		self.get_nationality(doc)
@@ -18,12 +19,12 @@ class Driver():
 	def get_dates(self, doc):
 		self.birthdate = None
 		self.deathdate = None
-		dates = [d.text().replace(". ","-") for d in doc.items("div.profile-header-data > table > tr > td > b")]
+		dates = [d.text().replace(". ", "-") for d in doc.items("div.profile-header-data > table > tr > td > b")]
 		for date in dates:
-			if(self.has_numbers(date)):
-				if(self.birthdate == None):
+			if self.has_numbers(date):
+				if self.birthdate is None:
 					self.birthdate = date
-				elif(self.deathdate == None):
+				elif self.deathdate is None:
 					self.deathdate = date
 
 	def get_nationality(self, doc):
@@ -33,7 +34,7 @@ class Driver():
 		else:
 			self.nationality = nationality[0]
 
-	def has_numbers(self,input_string):
+	def has_numbers(self, input_string):
 		return any(char.isdigit() for char in input_string)
 
 	def set_timestamps(self):
@@ -44,6 +45,6 @@ class Driver():
 	def get_tuple(self):
 		self.tuple = (self.id, self.fullname, self.name, self.lastname, self.birthdate, self.deathdate, self.nationality, self.created_at, self.updated_at, self. deleted_at)
 
-		#print(self.tuple)
+		# print(self.tuple)
 
 		return self.tuple
