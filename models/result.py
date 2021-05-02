@@ -1,49 +1,56 @@
 import datetime
 
 
+def get_href_id(a_tag):
+    return a_tag.attr('href').split('/')[2].split('-')[0]
+
+
+def get_chassis(text):
+    return text.replace('[chassis ', '').replace(']', '')
+
+
 class Result:
     def __init__(self, driver_id, season, row):
+
+        event = row("div.profile-start-event")
+        codriver = row("div.profile-start-codriver")
+        number = row("div.profile-start-number")
+        car = row("div.profile-start-car")
+        team = car.find('span.font-weight-normal')
+        car_info = car.find('span.startlist-chassis')
+        category = row("div.profile-start-cat")
+
         self.driver_id = driver_id
         self.season = int(season.text())
-
-        self.event_id = row("div.profile-start-event").find('a').attr('href').split('/')[2].split('-')[0]
-
+        self.event_id = get_href_id(event.find('a'))
         self.codriver_id = None
-        if row("div.profile-start-codriver").find('a'):
-            self.codriver_id = row("div.profile-start-codriver").find('a').attr('href').split('/')[2].split('-')[0]
-
         self.number = None
-        if row("div.profile-start-number").text():
-            self.number = row("div.profile-start-number").text().replace('#', '')
-
-        self.car = row("div.profile-start-car").clone().find('span.startlist-chassis').remove().end().find(
-            'span.r8').remove().end().find('a').remove().end().text().strip()
-
-        self.plate = None
-        if row("div.profile-start-car").find('span.startlist-chassis'):
-            self.plate = row("div.profile-start-car").find('span.startlist-chassis').text()
-
         self.team = None
-        if row("div.profile-start-car").find('span.r8'):
-            self.team = row("div.profile-start-car").find('span.r8').text()
-
+        self.plate = None
         self.chassis = None
-        if row("div.profile-start-car").find('span.c-grey'):
-            self.chassis = row("div.profile-start-car").find('span.c-grey').text().replace('[chassis ', '').replace(']',
-                                                                                                                    '')
-
         self.category = None
-        if row("div.profile-start-cat").text():
-            self.category = row("div.profile-start-cat").text()
+        if codriver.find('a'):
+            self.codriver_id = get_href_id(codriver.find('a'))
+        if number.text():
+            self.number = number.text().replace('#', '')
+        self.car = car.clone().find('span').remove().end().text()
+        if team:
+            self.team = team.text()
+        if car_info:
+            self.plate = car_info.find('a:first').text()
+            if len(car_info.find('a')) == 2:
+                self.chassis = get_chassis(car_info.find('a:last').text())
+        if category.text():
+            self.category = category.text()
 
+        result = None
+        class_result = []
         if row("div").hasClass("profile-start-oa"):
-            result = row("div.profile-start-oa").text().replace('.', '')  # Finishes
-            class_result = [cr.text() for cr in row.items("div.profile-start-sub")]
+            result = row("div.profile-start-oa").clone().find('span').remove().end().text().replace('.', '')  # Finishes
+            # FIXME
+            # class_result = [cr.text() for cr in row.items("div.profile-start-sub")]
         elif row("div").hasClass("profile-start-ret"):
             result = row("div.profile-start-ret").text()  # Accidents
-            class_result = []
-        else:
-            result = None
             class_result = []
 
         self.result = result

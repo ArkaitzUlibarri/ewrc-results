@@ -6,7 +6,7 @@ def get_href_id(a_tag):
 
 
 def get_tyres(img_tag):
-    return img_tag.attr('src').split('/')[5].split('.')[0].upper()
+    return img_tag.attr('src').split('/')[5].split('.')[0].split('_')[0].upper()
 
 
 class Entry:

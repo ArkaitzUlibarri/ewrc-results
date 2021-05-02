@@ -1,41 +1,38 @@
 import datetime
 
 
+def has_numbers(input_string):
+	return any(char.isdigit() for char in input_string)
+
+
 class Driver:
 
 	def __init__(self, doc, id):
 		self.id = id
-		self.get_names(doc)
-		self.get_nationality(doc)
-		self.get_dates(doc)
-		self.set_timestamps()
-
-	def get_names(self, doc):
-		self.fullname = doc(".profile > h1").text()
-		header = [h.text() for h in doc.items("div.profile-header-data > table > tr > td > strong")]
+		self.fullname = doc(".profile > h4").text()
+		header = [h.text() for h in doc.items("div.profile-header-data").find('td.font-weight-bold')]
 		self.lastname = header[0]
 		self.name = header[1]
+		self.nationality = doc("div.profile-header-data").find('img.flag-s').parent('td').text().strip()
+		self.birthdate = None
+		self.deathdate = None
+		if has_numbers(header[2].replace(". ", "-")):
+			self.birthdate = header[2].replace(". ", "-")
+		if doc("div.profile-header-data").find('i.fa-cross'):
+			self.deathdate = header[3].replace(". ", "-")
+		self.get_dates(doc)
+		self.set_timestamps()
 
 	def get_dates(self, doc):
 		self.birthdate = None
 		self.deathdate = None
 		dates = [d.text().replace(". ", "-") for d in doc.items("div.profile-header-data > table > tr > td > b")]
 		for date in dates:
-			if self.has_numbers(date):
+			if has_numbers(date):
 				if self.birthdate is None:
 					self.birthdate = date
 				elif self.deathdate is None:
 					self.deathdate = date
-
-	def get_nationality(self, doc):
-		nationality = [n.text() for n in doc.items("div.profile-header-flag > div.profile-header-nat")]
-		if len(nationality) == 2:
-			self.nationality = nationality[1]
-		else:
-			self.nationality = nationality[0]
-
-	def has_numbers(self, input_string):
-		return any(char.isdigit() for char in input_string)
 
 	def set_timestamps(self):
 		self.created_at = datetime.datetime.now()

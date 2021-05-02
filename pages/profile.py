@@ -39,7 +39,7 @@ def insert_profiles(base_url, db_path, driver_list, category):
 					VALUES (?,?,?,?,?,?,?,?,?,?)''', driver.get_tuple());
 
 					# Starts-WRC
-					for season in doc.items("div.profile-season"):
+					for season in doc.items("h5.profile-season"):
 
 						starts = season.nextAll('div.profile-starts').eq(0)
 
