@@ -6,14 +6,15 @@ from pyquery import PyQuery as pq
 from models.scratch import Scratch
 from models.leader import Leader
 
+
 def insert_event_stats(base_url, db_path, event_ids_dict):
-	currentfile = os.path.basename(__file__)
-	currentfilename = os.path.splitext(currentfile)[0]
+	current_file = os.path.basename(__file__)
+	current_filename = os.path.splitext(current_file)[0]
 
 	for key in event_ids_dict:
 		for event_id in event_ids_dict[key]:
 
-			url = base_url + "/" + currentfilename + "/" + str(event_id) + "/"
+			url = base_url + "/" + current_filename + "/" + str(event_id) + "/"
 
 			try:
 				print(url)
@@ -26,46 +27,41 @@ def insert_event_stats(base_url, db_path, event_ids_dict):
 
 				doc = pq(response.text)
 
+				db = sqlite3.connect(db_path)
+
 				try:
-					db = sqlite3.connect(db_path)
+
 					cursor = db.cursor()
 
 					# EventStats - Scratches
 					scratches = doc("div.stats-wins").eq(0)
 
 					for tr in scratches('tr').items():
-
-						if tr("td:last").hasClass('text-danger'):
-							pass
+						scratch = Scratch(tr, event_id, pq)
+						if scratch.drivers is not None:
+							for driver_id in scratch.drivers:
+								db.execute('''INSERT INTO scratchs
+								(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
+								VALUES (?,?,?,?,?,?,?)''', scratch.get_tuple(driver_id));
 						else:
-							tr("td:last").remove()  # Empty
-
-						drivers = set(tr("td:last > a").map(lambda i, e: pq(e).attr('href').split('/')[2].split('-')[0]))
-
-						if len(drivers) == 0:
-							drivers = set([])
-
-						for driver_id in drivers:
-							scratch = Scratch(tr,event_id, driver_id)
-							db.execute('''INSERT INTO scratchs 
-							(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at) 
-							VALUES (?,?,?,?,?,?,?)''', scratch.get_tuple());
+							db.execute('''INSERT INTO scratchs
+							(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
+							VALUES (?,?,?,?,?,?,?)''', scratch.get_tuple(None));
 
 					# Eventstats - Leaders
 					leads = doc("div.stats-leads").eq(0)
 
 					for tr in leads('tr').items():
-
-						drivers = set(tr("td:last > a").map(lambda i, e: pq(e).attr('href').split('/')[2].split('-')[0]))
-
-						if len(drivers) == 0:
-							drivers = set([])
-
-						for driver_id in drivers:
-							leader = Leader(tr,event_id,driver_id)
-							db.execute('''INSERT INTO leaders 
-							(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at) 
-							VALUES (?,?,?,?,?,?,?)''', leader.get_tuple());
+						leader = Leader(tr, event_id, pq)
+						if leader.drivers is not None:
+							for driver_id in leader.drivers:
+								db.execute('''INSERT INTO leaders
+								(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
+								VALUES (?,?,?,?,?,?,?)''', leader.get_tuple(driver_id));
+						else:
+							db.execute('''INSERT INTO leaders
+							(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
+							VALUES (?,?,?,?,?,?,?)''', leader.get_tuple(None));
 
 					db.commit()
 

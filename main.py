@@ -27,19 +27,19 @@ db = os.path.join(package_dir, 'database', app.database + '.db')
 # season.insert_events(app.base_url, db, app.database, app.start_season)
 
 # Entries
-# event_ids_dict = select_events(db, app.start_season)
+event_ids_dict = select_events(db, app.start_season)
 # entries.insert_entries(app.base_url, db, event_ids_dict)
 
 # Event Stats
-# eventstats.insert_event_stats(app.base_url, db, event_ids_dict)
+eventstats.insert_event_stats(app.base_url, db, event_ids_dict)
 
 # Drivers & Results
-driver_list = select_drivers(db)
-profile.insert_profiles(app.base_url, db, driver_list, app.category)
+# driver_list = select_drivers(db)
+# profile.insert_profiles(app.base_url, db, driver_list, app.category)
 
 # Codrivers
-codriver_list = select_codrivers(db)
-coprofile.insert_codrivers(app.base_url, db, codriver_list, app.category)
+# codriver_list = select_codrivers(db)
+# coprofile.insert_codrivers(app.base_url, db, codriver_list, app.category)
 
 # Event Photos
 # photo.insert_event_photos(app.base_url, db, event_ids_dict)
