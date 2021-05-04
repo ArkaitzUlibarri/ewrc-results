@@ -36,32 +36,34 @@ def insert_event_stats(base_url, db_path, event_ids_dict):
 					# EventStats - Scratches
 					scratches = doc("div.stats-wins").eq(0)
 
-					for tr in scratches('tr').items():
-						scratch = Scratch(tr, event_id, pq)
+					for index, tr in enumerate(scratches('tr').items(), start=1):
+						scratch = Scratch(tr, event_id, index, pq)
+						scratch_insert_query = '''INSERT INTO scratchs
+								(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
+								VALUES (?,?,?,?,?,?,?)'''
 						if scratch.drivers is not None:
 							for driver_id in scratch.drivers:
-								db.execute('''INSERT INTO scratchs
-								(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
-								VALUES (?,?,?,?,?,?,?)''', scratch.get_tuple(driver_id));
+								scratch.get_tuple(driver_id)
+								# db.execute(scratch_insert_query, scratch.get_tuple(driver_id))
 						else:
-							db.execute('''INSERT INTO scratchs
-							(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
-							VALUES (?,?,?,?,?,?,?)''', scratch.get_tuple(None));
+							scratch.get_tuple(None)
+							# db.execute(scratch_insert_query, scratch.get_tuple(None))
 
 					# Eventstats - Leaders
 					leads = doc("div.stats-leads").eq(0)
 
-					for tr in leads('tr').items():
-						leader = Leader(tr, event_id, pq)
+					for index, tr in enumerate(leads('tr').items(), start=1):
+						leader = Leader(tr, event_id, index, pq)
+						leader_insert_query = '''INSERT INTO leaders
+								(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
+								VALUES (?,?,?,?,?,?,?)'''
 						if leader.drivers is not None:
 							for driver_id in leader.drivers:
-								db.execute('''INSERT INTO leaders
-								(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
-								VALUES (?,?,?,?,?,?,?)''', leader.get_tuple(driver_id));
+								leader.get_tuple(driver_id)
+								# db.execute(leader_insert_query, leader.get_tuple(driver_id))
 						else:
-							db.execute('''INSERT INTO leaders
-							(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
-							VALUES (?,?,?,?,?,?,?)''', leader.get_tuple(None));
+							leader.get_tuple(None)
+							# db.execute(leader_insert_query, leader.get_tuple(None))
 
 					db.commit()
 
