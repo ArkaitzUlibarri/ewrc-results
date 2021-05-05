@@ -43,11 +43,11 @@ def insert_event_stats(base_url, db_path, event_ids_dict):
 								VALUES (?,?,?,?,?,?,?)'''
 						if scratch.drivers is not None:
 							for driver_id in scratch.drivers:
-								scratch.get_tuple(driver_id)
-								# db.execute(scratch_insert_query, scratch.get_tuple(driver_id))
+								# scratch.get_tuple(driver_id)
+								db.execute(scratch_insert_query, scratch.get_tuple(driver_id))
 						else:
-							scratch.get_tuple(None)
-							# db.execute(scratch_insert_query, scratch.get_tuple(None))
+							# scratch.get_tuple(None)
+							db.execute(scratch_insert_query, scratch.get_tuple(None))
 
 					# Eventstats - Leaders
 					leads = doc("div.stats-leads").eq(0)
@@ -59,11 +59,11 @@ def insert_event_stats(base_url, db_path, event_ids_dict):
 								VALUES (?,?,?,?,?,?,?)'''
 						if leader.drivers is not None:
 							for driver_id in leader.drivers:
-								leader.get_tuple(driver_id)
-								# db.execute(leader_insert_query, leader.get_tuple(driver_id))
+								# leader.get_tuple(driver_id)
+								db.execute(leader_insert_query, leader.get_tuple(driver_id))
 						else:
-							leader.get_tuple(None)
-							# db.execute(leader_insert_query, leader.get_tuple(None))
+							# leader.get_tuple(None)
+							db.execute(leader_insert_query, leader.get_tuple(None))
 
 					db.commit()
 

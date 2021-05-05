@@ -26,6 +26,6 @@ class Scratch:
     def get_tuple(self, driver_id):
         self.tuple = (self.event_id, self.stage_number, self.stage_name, driver_id, self.created_at, self.updated_at, self.deleted_at)
 
-        print(self.tuple)
+        # print(self.tuple)
 
         return self.tuple
