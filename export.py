@@ -12,15 +12,15 @@ def create_table(data):
     return shapes.add_table(rows, cols, left, top, width, height).table
 
 
-def write_table_headings(table, headings):
+def write_table_headings(ppt_table, headings):
     for index, heading in enumerate(headings, start=0):
-        table.cell(0, index).text = heading
+        ppt_table.cell(0, index).text = heading
 
 
-def write_table_body(table, data):
+def write_table_body(ppt_table, data):
     for row_index, row in enumerate(data, start=1):
         for col_index, cell in enumerate(row, start=0):
-            table.cell(row_index, col_index).text = str(cell)
+            ppt_table.cell(row_index, col_index).text = str(cell)
 
 
 # Clear console
@@ -35,37 +35,65 @@ season = str(1993)
 # Queries
 scratchs = drivers_scratchs(db, season)
 leaders = drivers_leaders(db, season)
-winners = drivers_winners(db, season)
-podiums = drivers_podiums(db, season)
-results = rally_winners(db, season)
+win_stats = drivers_winners(db, season)
+podium_stats = drivers_podiums(db, season)
+season_winners = rally_winners(db, season)
 
-# TODO
-# driverPointsSystem = drivers_championship_points_system(db,season)
-# full_results_by_driver = full_results_by_driver(db,season,1398)
+# Driver Points
+driverPointsSystem = drivers_championship_points_system(db, season)
+full_results_by_driver = full_results_by_driver(db, season, 1398)
 
 # print(scratchs)
-# print(json.loads(driverPointsSystem))
+print(json.loads(driverPointsSystem))
 
 # create PPT
 prs = Presentation()
 layout = prs.slide_layouts[5]
 
-# First Slide
+# First Slide - Season Winners
 slide = prs.slides.add_slide(layout)
 shapes = slide.shapes
 shapes.title.text = 'WORLD RALLY CHAMPIONSHIP ' + season
 
-table = create_table(results)
+table = create_table(season_winners)
 write_table_headings(table, ('#', 'Edition', 'Rally', 'Winner', 'Car', 'Team'))
-write_table_body(table, results)
+write_table_body(table, season_winners)
 
-# Second slide
+# Second slide - Win stats
 slide = prs.slides.add_slide(layout)
 shapes = slide.shapes
+shapes.title.text = 'STATS ' + season
 
-table = create_table(winners)
+table = create_table(win_stats)
 write_table_headings(table, ('Driver', 'Wins'))
-write_table_body(table, winners)
+write_table_body(table, win_stats)
+
+# Third slide - Podium stats
+slide = prs.slides.add_slide(layout)
+shapes = slide.shapes
+shapes.title.text = 'STATS ' + season
+
+table = create_table(podium_stats)
+write_table_headings(table, ('Driver', 'Podiums'))
+write_table_body(table, podium_stats)
+
+# Fourth slide - Scratchs stats
+slide = prs.slides.add_slide(layout)
+shapes = slide.shapes
+shapes.title.text = 'STATS ' + season
+
+table = create_table(scratchs)
+write_table_headings(table, ('Driver', 'Scratchs'))
+write_table_body(table, scratchs)
+
+# Fifth slide - Leaders stats
+slide = prs.slides.add_slide(layout)
+shapes = slide.shapes
+shapes.title.text = 'STATS ' + season
+
+table = create_table(scratchs)
+write_table_headings(table, ('Driver', 'Scratchs'))
+write_table_body(table, scratchs)
 
 # save PPT
 prs.save('WRC_' + season + '.pptx')
