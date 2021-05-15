@@ -6,13 +6,13 @@ from pyquery import PyQuery as pq
 from models.driver import Driver	
 
 
-def insertCodrivers(base_url, dbPath, codriverlist, category):
-	currentfile = os.path.basename(__file__)
-	currentfilename = os.path.splitext(currentfile)[0]
+def insert_codrivers(base_url, db_path, codriver_list, category):
+	current_file = os.path.basename(__file__)
+	current_file_name = os.path.splitext(current_file)[0]
 
-	for codriver_id in codriverlist:
+	for codriver_id in codriver_list:
 
-		url = base_url + "/" + currentfilename + "/" + str(codriver_id) + "/" + category
+		url = base_url + "/" + current_file_name + "/" + str(codriver_id) + "/" + category
 
 		try:
 			print(url)
@@ -26,16 +26,15 @@ def insertCodrivers(base_url, dbPath, codriverlist, category):
 			doc = pq(response.text)
 
 			try:
-				db = sqlite3.connect(dbPath)
+				db = sqlite3.connect(db_path)
 				cursor = db.cursor()
 
-				if(doc("main > div").eq(0).hasClass("profile")):
-
-					#Header - Codriver Info
-					codriver = Driver(doc,codriver_id)
+				if doc("main > div").eq(0).hasClass("profile"):
+					# Header - Codriver Info
+					codriver = Driver(doc, codriver_id)
 					db.execute('''INSERT INTO codrivers 
 					(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at) 
-					VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.getTuple());
+					VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.get_tuple());
 
 				db.commit()
 

@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-""" Configuración general del proyecto """
+""" Project main configuration """
 
 # base url
 base_url = "https://www.ewrc-results.com"
@@ -14,10 +14,10 @@ base_url = "https://www.ewrc-results.com"
 # "60-great-britain"
 # "79-germany"
 # "138-france"
-database = "26-belgium"
+database = "1-wrc"
 
 # start season
-startSeason = 1973
+start_season = 1973
 
 # profile category
-category = "26"
+category = "1"

@@ -1,11 +1,11 @@
-import os
 import sqlite3
 
-def migrate(dbPath):
+
+def migrate(db_path):
+
+    db = sqlite3.connect(db_path)
 
     try:
-
-        db = sqlite3.connect(dbPath)
 
         cursor = db.cursor()
 
@@ -76,7 +76,7 @@ def migrate(dbPath):
             event_id INTEGER NOT NULL,
             stage_number TEXT NOT NULL,
             stage_name TEXT NOT NULL,
-            driver_id INTEGER NOT NULL,
+            driver_id INTEGER,
             created_at timestamp,
             updated_at timestamp,
             deleted_at timestamp,
@@ -89,7 +89,7 @@ def migrate(dbPath):
             event_id INTEGER NOT NULL,
             stage_number TEXT NOT NULL,
             stage_name TEXT NOT NULL,
-            driver_id INTEGER NOT NULL,
+            driver_id INTEGER,
             created_at timestamp,
             updated_at timestamp,
             deleted_at timestamp,
@@ -122,6 +122,32 @@ def migrate(dbPath):
             updated_at timestamp,
             deleted_at timestamp,
             FOREIGN KEY(event_id) REFERENCES events(id))''')
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS driver_points(
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            season INTEGER NOT NULL UNIQUE,
+            overall_position_scoring json NOT NULL,
+            created_at timestamp,
+            updated_at timestamp,
+            deleted_at timestamp)''')
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS powerstage_points(
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            season INTEGER NOT NULL UNIQUE,
+            overall_position_scoring json NOT NULL,
+            created_at timestamp,
+            updated_at timestamp,
+            deleted_at timestamp)''')
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS manufacturer_points(
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            season INTEGER NOT NULL UNIQUE,
+            overall_position_scoring json NOT NULL,
+            group_position_scoring json,
+            comments TEXT,
+            created_at timestamp,
+            updated_at timestamp,
+            deleted_at timestamp)''')
 
         db.commit()
 

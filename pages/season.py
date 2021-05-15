@@ -7,13 +7,13 @@ from pyquery import PyQuery as pq
 from models.event import Event
 
 
-def insertEvents(base_url, dbPath, dbName, startSeason):
-	currentFile = os.path.basename(__file__)
-	currentFileName = os.path.splitext(currentFile)[0]
+def insert_events(base_url, db_path, db_name, start_season):
+	current_file = os.path.basename(__file__)
+	current_file_name = os.path.splitext(current_file)[0]
 
-	for season in range(startSeason, datetime.datetime.now().year + 1):
+	for season in range(start_season, datetime.datetime.now().year + 1):
 
-		url = base_url + "/" + currentFileName + "/" + str(season) + "/" + dbName + "/"
+		url = base_url + "/" + current_file_name + "/" + str(season) + "/" + db_name + "/"
 
 		try:
 			print(url)
@@ -26,17 +26,19 @@ def insertEvents(base_url, dbPath, dbName, startSeason):
 
 			doc = pq(response.text)
 
+			db = sqlite3.connect(db_path)
+
 			try:
-				db = sqlite3.connect(dbPath)
+
 				cursor = db.cursor()
-				
-				#Events
+
+				# Events
 				events = doc.items(".season-event")
-				for index,event in enumerate(events,start=1):
-					rally = Event(season,event,index)
-					db.execute('''INSERT INTO events 
+				for index, event in enumerate(events, start=1):
+					rally = Event(season, event, index)
+					db.execute('''REPLACE INTO events 
 					(id,season,season_event_id,edition,name,asphalt,gravel,snow,ice,dates,entries,finish,created_at,updated_at,deleted_at) 
-					VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', rally.getTuple());
+					VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', rally.get_tuple())
 
 				db.commit()
 

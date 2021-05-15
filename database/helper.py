@@ -1,157 +1,112 @@
 import sqlite3
 import datetime
 
-def selectEvents(database, startSeason):
 
-	event_ids_dict = {}
+def select_event(database, event_id):
+    event_ids_dict = {}
 
-	try:
-		db = sqlite3.connect(database)
-		cursor = db.cursor()
+    db = sqlite3.connect(database)
 
-		for season in range(startSeason, datetime.datetime.now().year + 1):
+    try:
 
-			cursor.execute("SELECT id FROM events WHERE season=? ORDER BY season_event_id", (season,))
+        cursor = db.cursor()
 
-			rows = cursor.fetchall()
+        cursor.execute("SELECT id,season FROM events WHERE id=?", (event_id,))
 
-			event_ids_list = []
+        row = cursor.fetchone()
 
-			for row in rows:
-				event_ids_list.append(row[0])
+        print(row)
 
-			event_ids_dict[season] = event_ids_list
+        event_ids_dict[row[1]] = [row[0]]
 
-		return event_ids_dict
+        return event_ids_dict
 
-	except Exception as e:
-		db.rollback()	
-		raise e
-	finally:
-		db.close()
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
 
-def selectDrivers(database):
+def select_events(database, start_season):
+    event_ids_dict = {}
 
-	try:
-		db = sqlite3.connect(database)
-		cursor = db.cursor()
+    db = sqlite3.connect(database)
 
-		cursor.execute("SELECT DISTINCT driver_id FROM scratchs")
+    try:
 
-		rows = cursor.fetchall()
+        cursor = db.cursor()
 
-		driver_ids_list = []
+        for season in range(start_season, datetime.datetime.now().year + 1):
 
-		for row in rows:
-			driver_ids_list.append(row[0])
+            cursor.execute("SELECT id FROM events WHERE season=? ORDER BY season_event_id", (season,))
 
-		return driver_ids_list
+            rows = cursor.fetchall()
 
-	except Exception as e:
-		db.rollback()	
-		raise e
-	finally:
-		db.close()
+            event_ids_list = []
 
-def selectCodrivers(database):
+            for row in rows:
+                event_ids_list.append(row[0])
 
-	try:
-		db = sqlite3.connect(database)
-		cursor = db.cursor()
+            event_ids_dict[season] = event_ids_list
 
-		cursor.execute("""SELECT DISTINCT entries.codriver_id
+        return event_ids_dict
+
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
+
+
+def select_drivers(database):
+    db = sqlite3.connect(database)
+
+    try:
+
+        cursor = db.cursor()
+
+        cursor.execute("SELECT DISTINCT driver_id FROM scratchs")
+
+        rows = cursor.fetchall()
+
+        driver_ids_list = []
+
+        for row in rows:
+            driver_ids_list.append(row[0])
+
+        return driver_ids_list
+
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
+
+
+def select_codrivers(database):
+    db = sqlite3.connect(database)
+
+    try:
+
+        cursor = db.cursor()
+
+        cursor.execute("""SELECT DISTINCT entries.codriver_id
 			FROM entries
 			INNER JOIN scratchs on entries.driver_id = scratchs.driver_id
 			WHERE entries.codriver_id IS NOT NULL
 			ORDER BY entries.codriver_id""")
 
-		rows = cursor.fetchall()
+        rows = cursor.fetchall()
 
-		driver_ids_list = []
+        driver_ids_list = []
 
-		for row in rows:
-			driver_ids_list.append(row[0])
+        for row in rows:
+            driver_ids_list.append(row[0])
 
-		return driver_ids_list
+        return driver_ids_list
 
-	except Exception as e:
-		db.rollback()	
-		raise e
-	finally:
-		db.close()
-
-def rallyWinners(database,season):
-
-	try:
-		db = sqlite3.connect(database)
-		cursor = db.cursor()
-
-		cursor.execute("""SELECT 
-			events.season_event_id as ID,
-			events.edition,
-			events.name,
-			drivers.fullname,
-			results.car,
-			results.team
-			FROM events 
-			LEFT JOIN results on events.id = results.event_id 
-			LEFT JOIN drivers on results.driver_id = drivers.id 
-			WHERE events.season=? and results.result like '1' 
-			ORDER BY season_event_id""", (season,))
-
-		return cursor.fetchall()
-
-	except Exception as e:
-		db.rollback()	
-		raise e
-	finally:
-		db.close()
-
-def driversStats(database,season,table):
-
-	try:
-		db = sqlite3.connect(database)
-		db.row_factory = sqlite3.Row
-		cursor = db.cursor()
-
-		cursor.execute("""SELECT drivers.fullname,COUNT(stage_name) as cuenta
-			FROM """ + table + """ 
-			INNER JOIN drivers on drivers.id = """ + table + """.driver_id
-			WHERE event_id in (select id from events where season = :season)
-			GROUP BY driver_id
-			ORDER BY cuenta DESC""", {"season":season})
-
-		return cursor.fetchall()
-
-	except Exception as e:
-		db.rollback()	
-		raise e
-	finally:
-		db.close()
-
-def driversResults(database,season,result):
-
-	if(result == "winners"):
-		condition = "(result = '1')"
-	elif(result == "podiums"):
-		condition = "(result = '1' or result = '2' or result = '3')"
-
-	try:
-		db = sqlite3.connect(database)
-		db.row_factory = sqlite3.Row
-		cursor = db.cursor()
-
-		cursor.execute("""SELECT drivers.fullname,COUNT(results.result) as cuenta
-			FROM results
-			INNER JOIN drivers on drivers.id = results.driver_id
-			WHERE results.season is :season and """ + condition +"""
-			GROUP BY drivers.fullname
-			ORDER BY cuenta DESC""", {"season":season})
-
-		return cursor.fetchall()
-
-	except Exception as e:
-		db.rollback()	
-		raise e
-	finally:
-		db.close()
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()

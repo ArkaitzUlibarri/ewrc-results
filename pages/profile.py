@@ -7,13 +7,13 @@ from models.driver import Driver
 from models.result import Result
 
 
-def insertDriversAndResults(base_url, dbPath, driverlist, category):
-	currentfile = os.path.basename(__file__)
-	currentfilename = os.path.splitext(currentfile)[0]
+def insert_profiles(base_url, db_path, driver_list, category):
+	current_file = os.path.basename(__file__)
+	current_file_name = os.path.splitext(current_file)[0]
 
-	for driver_id in driverlist:
+	for driver_id in driver_list:
 
-		url = base_url + "/" + currentfilename + "/" + str(driver_id) + "/" + category
+		url = base_url + "/" + current_file_name + "/" + str(driver_id) + "/" + category
 
 		try:
 			print(url)
@@ -27,19 +27,19 @@ def insertDriversAndResults(base_url, dbPath, driverlist, category):
 			doc = pq(response.text)
 
 			try:
-				db = sqlite3.connect(dbPath)
+				db = sqlite3.connect(db_path)
 				cursor = db.cursor()
 
-				if(doc("main > div").eq(0).hasClass("profile")):
+				if doc("main > div").eq(0).hasClass("profile"):
 
-					#Header - Driver Info
-					driver = Driver(doc,driver_id)
+					# Header - Driver Info
+					driver = Driver(doc, driver_id)
 					db.execute('''INSERT INTO drivers 
 					(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at)
-					VALUES (?,?,?,?,?,?,?,?,?,?)''', driver.getTuple());
+					VALUES (?,?,?,?,?,?,?,?,?,?)''', driver.get_tuple());
 
-					#Salidas-WRC
-					for season in doc.items("div.profile-season"):
+					# Starts-WRC
+					for season in doc.items("h5.profile-season"):
 
 						starts = season.nextAll('div.profile-starts').eq(0)
 
@@ -47,7 +47,7 @@ def insertDriversAndResults(base_url, dbPath, driverlist, category):
 							result = Result(driver.id, season, start)
 							db.execute('''INSERT INTO results 
 							(event_id,driver_id,codriver_id,season,dorsal,car,plate,team,chassis,category,result,created_at,updated_at,deleted_at)
-							VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', result.getTuple());
+							VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', result.get_tuple());
 
 				db.commit()
 

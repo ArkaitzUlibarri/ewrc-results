@@ -1,9 +1,10 @@
 import os
 from config import app
 from database.migration import migrate
-from database.helper import selectEvents
-from database.helper import selectDrivers
-from database.helper import selectCodrivers
+from database.seeders.championshipPoints import seeder
+from database.helper import select_events
+from database.helper import select_drivers
+from database.helper import select_codrivers
 from pages import season
 from pages import entries
 from pages import eventstats
@@ -11,32 +12,35 @@ from pages import photo
 from pages import profile
 from pages import coprofile
 
- # Clear console
-os.system("cls") 
+# Clear console
+os.system("cls")
 
-packageDir  = os.path.abspath(os.path.dirname(__file__))
-dbPath = os.path.join(packageDir,'database', app.database + '.db')
+package_dir = os.path.abspath(os.path.dirname(__file__))
+db = os.path.join(package_dir, 'database', app.database + '.db')
 
 # Migrations
-migrate(dbPath)
+migrate(db)
+seeder(db)
 
 # Events
-season.insertEvents(app.base_url, dbPath, app.database, app.startSeason)
+season.insert_events(app.base_url, db, app.database, app.start_season)
 
 # Entries
-event_ids_dict = selectEvents(dbPath, app.startSeason)
-entries.insertEntries(app.base_url,dbPath,event_ids_dict)
+event_ids_dict = select_events(db, app.start_season)
+entries.insert_entries(app.base_url, db, event_ids_dict)
 
 # Event Stats
-eventstats.insertEventStats(app.base_url,dbPath,event_ids_dict)
+eventstats.insert_event_stats(app.base_url, db, event_ids_dict)
 
 # Drivers & Results
-driverlist = selectDrivers(dbPath)
-profile.insertDriversAndResults(app.base_url, dbPath, driverlist, app.category)
+driver_list = select_drivers(db)
+profile.insert_profiles(app.base_url, db, driver_list, app.category)
 
 # Codrivers
-codriverlist = selectCodrivers(dbPath)
-coprofile.insertCodrivers(app.base_url, dbPath, codriverlist, app.category)
+codriver_list = select_codrivers(db)
+coprofile.insert_codrivers(app.base_url, db, codriver_list, app.category)
 
 # Event Photos
-photo.insertEventPhotos(app.base_url,dbPath,event_ids_dict)
+photo.insert_event_photos(app.base_url, db, event_ids_dict)
+
+print('Finished')
