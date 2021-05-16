@@ -27,11 +27,11 @@ def insert_event_stats(base_url, db_path, event_ids_dict):
 
 				doc = pq(response.text)
 
-				db = sqlite3.connect(db_path)
+				connection = sqlite3.connect(db_path)
 
 				try:
 
-					cursor = db.cursor()
+					cursor = connection.cursor()
 
 					# EventStats - Scratches
 					scratches = doc("div.stats-wins").eq(0)
@@ -44,10 +44,10 @@ def insert_event_stats(base_url, db_path, event_ids_dict):
 						if scratch.drivers is not None:
 							for driver_id in scratch.drivers:
 								# scratch.get_tuple(driver_id)
-								db.execute(scratch_insert_query, scratch.get_tuple(driver_id))
+								connection.execute(scratch_insert_query, scratch.get_tuple(driver_id))
 						else:
 							# scratch.get_tuple(None)
-							db.execute(scratch_insert_query, scratch.get_tuple(None))
+							connection.execute(scratch_insert_query, scratch.get_tuple(None))
 
 					# Eventstats - Leaders
 					leads = doc("div.stats-leads").eq(0)
@@ -60,15 +60,15 @@ def insert_event_stats(base_url, db_path, event_ids_dict):
 						if leader.drivers is not None:
 							for driver_id in leader.drivers:
 								# leader.get_tuple(driver_id)
-								db.execute(leader_insert_query, leader.get_tuple(driver_id))
+								connection.execute(leader_insert_query, leader.get_tuple(driver_id))
 						else:
 							# leader.get_tuple(None)
-							db.execute(leader_insert_query, leader.get_tuple(None))
+							connection.execute(leader_insert_query, leader.get_tuple(None))
 
-					db.commit()
+					connection.commit()
 
 				except Exception as e:
-					db.rollback()	
+					connection.rollback()
 					raise e
 				finally:
-					db.close()
+					connection.close()

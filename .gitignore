@@ -1,6 +1,6 @@
 __pycache__/
 backups/
-storage/*
+storage/photos/*
 *.db
 *.db-journal
 *.pptx

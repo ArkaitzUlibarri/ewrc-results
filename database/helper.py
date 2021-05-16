@@ -5,11 +5,11 @@ import datetime
 def select_event(database, event_id):
     event_ids_dict = {}
 
-    db = sqlite3.connect(database)
+    connection = sqlite3.connect(database)
 
     try:
 
-        cursor = db.cursor()
+        cursor = connection.cursor()
 
         cursor.execute("SELECT id,season FROM events WHERE id=?", (event_id,))
 
@@ -22,19 +22,38 @@ def select_event(database, event_id):
         return event_ids_dict
 
     except Exception as e:
-        db.rollback()
+        connection.rollback()
         raise e
     finally:
-        db.close()
+        connection.close()
+
+
+def select_events_info(database, event_id):
+    connection = sqlite3.connect(database)
+    connection.row_factory = sqlite3.Row
+    try:
+
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM events WHERE id=?", (event_id,))
+
+        return cursor.fetchone()
+
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()
+
 
 def select_events(database, start_season):
     event_ids_dict = {}
 
-    db = sqlite3.connect(database)
+    connection = sqlite3.connect(database)
 
     try:
 
-        cursor = db.cursor()
+        cursor = connection.cursor()
 
         for season in range(start_season, datetime.datetime.now().year + 1):
 
@@ -52,18 +71,18 @@ def select_events(database, start_season):
         return event_ids_dict
 
     except Exception as e:
-        db.rollback()
+        connection.rollback()
         raise e
     finally:
-        db.close()
+        connection.close()
 
 
 def select_drivers(database):
-    db = sqlite3.connect(database)
+    connection = sqlite3.connect(database)
 
     try:
 
-        cursor = db.cursor()
+        cursor = connection.cursor()
 
         cursor.execute("SELECT DISTINCT driver_id FROM scratchs")
 
@@ -77,24 +96,24 @@ def select_drivers(database):
         return driver_ids_list
 
     except Exception as e:
-        db.rollback()
+        connection.rollback()
         raise e
     finally:
-        db.close()
+        connection.close()
 
 
 def select_codrivers(database):
-    db = sqlite3.connect(database)
+    connection = sqlite3.connect(database)
 
     try:
 
-        cursor = db.cursor()
+        cursor = connection.cursor()
 
         cursor.execute("""SELECT DISTINCT entries.codriver_id
-			FROM entries
-			INNER JOIN scratchs on entries.driver_id = scratchs.driver_id
-			WHERE entries.codriver_id IS NOT NULL
-			ORDER BY entries.codriver_id""")
+            FROM entries
+            INNER JOIN scratchs on entries.driver_id = scratchs.driver_id
+            WHERE entries.codriver_id IS NOT NULL
+            ORDER BY entries.codriver_id""")
 
         rows = cursor.fetchall()
 
@@ -106,7 +125,7 @@ def select_codrivers(database):
         return driver_ids_list
 
     except Exception as e:
-        db.rollback()
+        connection.rollback()
         raise e
     finally:
-        db.close()
+        connection.close()

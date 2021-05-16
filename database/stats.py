@@ -2,10 +2,10 @@ import sqlite3
 
 
 def rally_winners(database, season):
-    db = sqlite3.connect(database)
+    connection = sqlite3.connect(database)
     try:
 
-        cursor = db.cursor()
+        cursor = connection.cursor()
 
         cursor.execute("""SELECT 
             events.season_event_id as ID,
@@ -23,18 +23,18 @@ def rally_winners(database, season):
         return cursor.fetchall()
 
     except Exception as e:
-        db.rollback()
+        connection.rollback()
         raise e
     finally:
-        db.close()
+        connection.close()
 
 
 def drivers_championship_points_system(database, season):
-    db = sqlite3.connect(database)
+    connection = sqlite3.connect(database)
     try:
 
-        db.row_factory = sqlite3.Row
-        cursor = db.cursor()
+        connection.row_factory = sqlite3.Row
+        cursor = connection.cursor()
 
         cursor.execute("""SELECT overall_position_scoring
             FROM driver_points
@@ -44,19 +44,19 @@ def drivers_championship_points_system(database, season):
         return cursor.fetchone()[0]
 
     except Exception as e:
-        db.rollback()
+        connection.rollback()
         raise e
     finally:
-        db.close()
+        connection.close()
 
 
 def drivers_stats(database, season, table):
-    db = sqlite3.connect(database)
+    connection = sqlite3.connect(database)
 
     try:
 
-        db.row_factory = sqlite3.Row
-        cursor = db.cursor()
+        connection.row_factory = sqlite3.Row
+        cursor = connection.cursor()
 
         cursor.execute("""SELECT drivers.fullname,COUNT(stage_name) as count
             FROM """ + table + """ 
@@ -68,10 +68,10 @@ def drivers_stats(database, season, table):
         return cursor.fetchall()
 
     except Exception as e:
-        db.rollback()
+        connection.rollback()
         raise e
     finally:
-        db.close()
+        connection.close()
 
 
 def drivers_scratchs(database, season):
@@ -89,12 +89,12 @@ def drivers_results(database, season, result):
     elif result == "podiums":
         condition = "(result = '1' or result = '2' or result = '3')"
 
-    db = sqlite3.connect(database)
+    connection = sqlite3.connect(database)
 
     try:
 
-        db.row_factory = sqlite3.Row
-        cursor = db.cursor()
+        connection.row_factory = sqlite3.Row
+        cursor = connection.cursor()
 
         cursor.execute("""SELECT drivers.fullname,COUNT(results.result) as count
             FROM results
@@ -106,10 +106,10 @@ def drivers_results(database, season, result):
         return cursor.fetchall()
 
     except Exception as e:
-        db.rollback()
+        connection.rollback()
         raise e
     finally:
-        db.close()
+        connection.close()
 
 
 def drivers_podiums(database, season):
@@ -121,11 +121,11 @@ def drivers_winners(database, season):
 
 
 def full_results_by_driver(database, season, driver_id):
-    db = sqlite3.connect(database)
+    connection = sqlite3.connect(database)
     try:
 
-        db.row_factory = sqlite3.Row
-        cursor = db.cursor()
+        connection.row_factory = sqlite3.Row
+        cursor = connection.cursor()
 
         cursor.execute("""
             SELECT events.season_event_id as ID,events.edition,events.name,
@@ -140,7 +140,7 @@ def full_results_by_driver(database, season, driver_id):
         return cursor.fetchall()
 
     except Exception as e:
-        db.rollback()
+        connection.rollback()
         raise e
     finally:
-        db.close()
+        connection.close()

@@ -25,11 +25,11 @@ def insert_entries(base_url, db_path, event_ids_dict):
 			if response.status_code == 200:
 
 				doc = pq(response.text)
-				db = sqlite3.connect(db_path)
+				connection = sqlite3.connect(db_path)
 
 				try:
 
-					cursor = db.cursor()
+					cursor = connection.cursor()
 
 					# Entries
 					startlist = doc("table.results")
@@ -38,14 +38,14 @@ def insert_entries(base_url, db_path, event_ids_dict):
 					for tr in startlist('tr').items():
 						entry = Entry(event_id, tr)
 						if entry.driver_id:
-							db.execute('''INSERT INTO entries 
+							connection.execute('''INSERT INTO entries 
 							(event_id,car_number,driver_id,codriver_id,team,car,plate,tyres,category,created_at,updated_at,deleted_at)
-							VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''', entry.get_tuple());
+							VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''', entry.get_tuple())
 
-					db.commit()
+					connection.commit()
 
 				except Exception as e:
-					db.rollback()
+					connection.rollback()
 					raise e
 				finally:
-					db.close()
+					connection.close()

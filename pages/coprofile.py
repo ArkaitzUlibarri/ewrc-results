@@ -26,20 +26,20 @@ def insert_codrivers(base_url, db_path, codriver_list, category):
 			doc = pq(response.text)
 
 			try:
-				db = sqlite3.connect(db_path)
-				cursor = db.cursor()
+				connection = sqlite3.connect(db_path)
+				cursor = connection.cursor()
 
 				if doc("main > div").eq(0).hasClass("profile"):
 					# Header - Codriver Info
 					codriver = Driver(doc, codriver_id)
-					db.execute('''INSERT INTO codrivers 
+					connection.execute('''INSERT INTO codrivers 
 					(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at) 
-					VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.get_tuple());
+					VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.get_tuple())
 
-				db.commit()
+				connection.commit()
 
 			except Exception as e:
-				db.rollback()	
+				connection.rollback()
 				raise e
 			finally:
-				db.close()
+				connection.close()

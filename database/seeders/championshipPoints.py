@@ -13,11 +13,11 @@ def seeder(db_path):
     # returns JSON object as a dictionary
     data = json.load(f)
 
-    db = sqlite3.connect(db_path)
+    connection = sqlite3.connect(db_path)
 
     try:
 
-        cursor = db.cursor()
+        cursor = connection.cursor()
 
         for item in data['manufacturers']:
             cursor.execute('''REPLACE INTO manufacturer_points 
@@ -25,7 +25,7 @@ def seeder(db_path):
             VALUES (?,?,?,?,?,?,?)''', [item['season'], json.dumps(item['overall_position_scoring']),
                                         json.dumps(item['group_position_scoring']), json.dumps(item['comments']),
                                         datetime.datetime.now(), datetime.datetime.now(), None])
-            db.commit()
+            connection.commit()
 
         for item in data['drivers']:
             cursor.execute('''REPLACE INTO driver_points 
@@ -33,7 +33,7 @@ def seeder(db_path):
             VALUES (?,?,?,?,?)''',
                            [item['season'], json.dumps(item['overall_position_scoring']), datetime.datetime.now(),
                             datetime.datetime.now(), None])
-            db.commit()
+            connection.commit()
 
         for item in data['powerstage']:
             cursor.execute('''REPLACE INTO powerstage_points 
@@ -41,13 +41,13 @@ def seeder(db_path):
             VALUES (?,?,?,?,?)''',
                            [item['season'], json.dumps(item['overall_position_scoring']), datetime.datetime.now(),
                             datetime.datetime.now(), None])
-            db.commit()
+            connection.commit()
 
     except Exception as e:
-        db.rollback()
+        connection.rollback()
         raise e
     finally:
-        db.close()
+        connection.close()
 
     # Closing file 
     f.close()

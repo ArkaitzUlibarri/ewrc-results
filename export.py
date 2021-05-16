@@ -27,21 +27,21 @@ def write_table_body(ppt_table, data):
 os.system("cls")
 
 package_dir = os.path.abspath(os.path.dirname(__file__))
-db = os.path.join(package_dir, 'database', app.database + '.db')
+db_path = os.path.join(package_dir, 'database', app.database + '.db')
 
 # Config
 season = str(1993)
 
 # Queries
-scratchs = drivers_scratchs(db, season)
-leaders = drivers_leaders(db, season)
-win_stats = drivers_winners(db, season)
-podium_stats = drivers_podiums(db, season)
-season_winners = rally_winners(db, season)
+scratchs = drivers_scratchs(db_path, season)
+leaders = drivers_leaders(db_path, season)
+win_stats = drivers_winners(db_path, season)
+podium_stats = drivers_podiums(db_path, season)
+season_winners = rally_winners(db_path, season)
 
 # Driver Points
-driverPointsSystem = drivers_championship_points_system(db, season)
-full_results_by_driver = full_results_by_driver(db, season, 1398)
+driverPointsSystem = drivers_championship_points_system(db_path, season)
+full_results_by_driver = full_results_by_driver(db_path, season, 1398)
 
 # print(scratchs)
 print(json.loads(driverPointsSystem))

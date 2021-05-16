@@ -27,16 +27,16 @@ def insert_profiles(base_url, db_path, driver_list, category):
 			doc = pq(response.text)
 
 			try:
-				db = sqlite3.connect(db_path)
-				cursor = db.cursor()
+				connection = sqlite3.connect(db_path)
+				cursor = connection.cursor()
 
 				if doc("main > div").eq(0).hasClass("profile"):
 
 					# Header - Driver Info
 					driver = Driver(doc, driver_id)
-					db.execute('''INSERT INTO drivers 
+					connection.execute('''INSERT INTO drivers 
 					(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at)
-					VALUES (?,?,?,?,?,?,?,?,?,?)''', driver.get_tuple());
+					VALUES (?,?,?,?,?,?,?,?,?,?)''', driver.get_tuple())
 
 					# Starts-WRC
 					for season in doc.items("h5.profile-season"):
@@ -45,14 +45,14 @@ def insert_profiles(base_url, db_path, driver_list, category):
 
 						for start in starts('div.profile-start-line').items():
 							result = Result(driver.id, season, start)
-							db.execute('''INSERT INTO results 
+							connection.execute('''INSERT INTO results 
 							(event_id,driver_id,codriver_id,season,dorsal,car,plate,team,chassis,category,result,created_at,updated_at,deleted_at)
-							VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', result.get_tuple());
+							VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', result.get_tuple())
 
-				db.commit()
+				connection.commit()
 
 			except Exception as e:
-				db.rollback()
+				connection.rollback()
 				raise e
 			finally:
-				db.close()
+				connection.close()

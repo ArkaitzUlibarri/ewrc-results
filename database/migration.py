@@ -3,11 +3,11 @@ import sqlite3
 
 def migrate(db_path):
 
-    db = sqlite3.connect(db_path)
+    connection = sqlite3.connect(db_path)
 
     try:
 
-        cursor = db.cursor()
+        cursor = connection.cursor()
 
         cursor.execute('''CREATE TABLE IF NOT EXISTS events(
             id INTEGER NOT NULL PRIMARY KEY,
@@ -149,11 +149,11 @@ def migrate(db_path):
             updated_at timestamp,
             deleted_at timestamp)''')
 
-        db.commit()
+        connection.commit()
 
     except Exception as e:
-        db.rollback()
+        connection.rollback()
         raise e
     finally:
         print("Migration completed")
-        db.close()
+        connection.close()
