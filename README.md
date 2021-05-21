@@ -1,4 +1,4 @@
-# scraping
+# ewrc-results.com scraping
 
 Web scraping with python package pyquery
 
