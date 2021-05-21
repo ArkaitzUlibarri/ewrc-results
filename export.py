@@ -96,5 +96,12 @@ write_table_headings(table, ('Driver', 'Scratchs'))
 write_table_body(table, scratchs)
 
 # save PPT
-prs.save('WRC_' + season + '.pptx')
-print('Finished ' + 'WRC_' + season + '.pptx' + ' export')
+package_dir = os.path.abspath(os.path.dirname(__file__))
+export_folder = os.path.join(package_dir, 'storage', 'exports')
+if not os.path.exists(export_folder):
+    os.makedirs(export_folder)
+
+export_path = os.path.join(package_dir, 'storage', 'exports', 'WRC_' + season + '.pptx')
+prs.save(export_path)
+
+print('Finished ' + export_path + ' export')

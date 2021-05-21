@@ -8,6 +8,16 @@ from database.helper import select_events_info
 from models.image import Image
 
 
+def get_storage_path(event, file):
+    season_folder = str(event['season'])
+    event_folder = str(event['season_event_id']) + ' - ' + str(event['id']) + ' - ' + event['name']
+    file_folder = os.path.join('storage', 'photos', season_folder, event_folder)
+    if not os.path.exists(file_folder):
+        os.makedirs(file_folder)
+
+    return os.path.join('storage', 'photos', season_folder, event_folder, file)
+
+
 def insert_event_photos(base_url, db_path, event_ids_dict):
     current_file = os.path.basename(__file__)
     current_file_name = os.path.splitext(current_file)[0]
@@ -50,13 +60,8 @@ def insert_event_photos(base_url, db_path, event_ids_dict):
                             image_content = requests.get(image_url, stream=True)
 
                             # Create target Directory if don't exist
-                            season_folder = str(event_info['season'])
-                            event_folder = str(event_id) + ' - ' + event_info['name']
                             file = image_id + '.' + extension
-                            if not os.path.exists(os.path.join('storage', 'photos', season_folder, event_folder)):
-                                os.makedirs(os.path.join('storage', 'photos', season_folder, event_folder))
-
-                            storage_path = os.path.join('storage', 'photos', season_folder, event_folder, file)
+                            storage_path = get_storage_path(event_info, file)
 
                             with open(storage_path, 'wb+') as out_file:
                                 shutil.copyfileobj(image_content.raw, out_file)
