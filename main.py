@@ -11,6 +11,7 @@ from pages import eventstats
 from pages import photo
 from pages import profile
 from pages import coprofile
+from pages import timetable
 
 # Clear console
 os.system("cls")
@@ -31,6 +32,9 @@ entries.insert_entries(app.base_url, db_path, event_ids_dict)
 
 # Event Stats
 eventstats.insert_event_stats(app.base_url, db_path, event_ids_dict)
+
+# Timetable
+timetable.get_timetable(app.base_url, db_path, event_ids_dict)
 
 # Drivers & Results
 driver_list = select_drivers(db_path)

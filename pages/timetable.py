@@ -2,42 +2,49 @@ import os
 import sys
 import requests
 import sqlite3
-from config import app
 from pyquery import PyQuery as pq
 
-current_file = os.path.basename(__file__)
-current_file_name = os.path.splitext(current_file)[0]
 
-os.system("cls")  # Clear console
+def get_timetable(base_url, db_path, event_ids_dict):
+    current_file = os.path.basename(__file__)
+    current_file_name = os.path.splitext(current_file)[0]
 
-url = app.base_url + current_file_name + "/" + "533" + "/"
+    for key in event_ids_dict:
+        for event_id in event_ids_dict[key]:
 
-try:
-	print(url)
-	response = requests.get(url)
-except requests.exceptions.RequestException as e:
-	print(e)
-	sys.exit(1)
+            url = base_url + "/" + current_file_name + "/" + str(event_id) + "/"
 
-if response.status_code == 200:
+            try:
+                print(url)
+                response = requests.get(url)
+            except requests.exceptions.RequestException as e:
+                print(e)
+                sys.exit(1)
 
-	doc = pq(response.text)
+            if response.status_code == 200:
 
-	timetable = doc('.timetable')
+                doc = pq(response.text)
 
-	for tr in timetable('tr').items():
-		if tr.hasClass('servis'):
-			service_name = tr('td').eq(1).text()
-			date = tr('td.td_right').text()
-			hour = tr('td:last').text()
-			print(service_name + " " + date + " " + hour)
-		else:
-			number = tr('td:first > a').text()
-			stage_name = tr('td > a').eq(1).text()
-			# stage_id = tr('td > a').eq(1).attr('href')
-			distance = tr('td.td_right.nwrap').text()
-			date = tr('td.td_right').not_('.nwrap').text()
-			gmt = tr('td:last > span.timetable-gmt').text()
-			tr('td:last > span.timetable-gmt').remove()
-			hour = tr('td:last').text()
-			# print(number + " " + stage_name + " " + distance + " " + date + " " + hour + " " + gmt)
+                timetable = doc('.harm-main')
+
+                day = ""
+                event_legs = len(timetable('div.text-muted'))
+
+                for div in timetable('div.harm.d-flex').items():
+                    pending_legs = len(div.next_all('div.text-muted'))
+                    leg = event_legs - pending_legs
+                    date_first = div('div.harm-date:first')
+                    hour = div('div.harm-date:last').text()
+                    if date_first.text():
+                        day = date_first.text()
+
+                    if div('div.harm-ss').find('i'):
+                        service_name = div('div.harm-stage').text()
+
+                        print(day + " " + hour + " Leg: " + str(leg) + " Service: " + service_name)
+                    else:
+                        number = div('div.harm-ss').text()
+                        stage_name = div('div.harm-stage').text()
+                        distance = div('div.harm-km').text()
+
+                        print(day + " " + hour + " Leg: " + str(leg) + " Stage: " + number + " " + stage_name + " " + distance)
