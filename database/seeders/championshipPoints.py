@@ -19,29 +19,24 @@ def seeder(db_path):
 
         cursor = connection.cursor()
 
-        for item in data['manufacturers']:
-            cursor.execute('''REPLACE INTO manufacturer_points 
-            (season,overall_position_scoring,group_position_scoring,comments,created_at,updated_at,deleted_at) 
-            VALUES (?,?,?,?,?,?,?)''', [item['season'], json.dumps(item['overall_position_scoring']),
-                                        json.dumps(item['group_position_scoring']), json.dumps(item['comments']),
-                                        datetime.datetime.now(), datetime.datetime.now(), None])
-            connection.commit()
+        insert = '''REPLACE INTO points 
+           (code, season,overall_position_scoring,group_position_scoring,comments,created_at,updated_at,deleted_at) 
+             VALUES (?,?,?,?,?,?,?,?)'''
 
-        for item in data['drivers']:
-            cursor.execute('''REPLACE INTO driver_points 
-            (season,overall_position_scoring,created_at,updated_at,deleted_at) 
-            VALUES (?,?,?,?,?)''',
-                           [item['season'], json.dumps(item['overall_position_scoring']), datetime.datetime.now(),
-                            datetime.datetime.now(), None])
-            connection.commit()
-
-        for item in data['powerstage']:
-            cursor.execute('''REPLACE INTO powerstage_points 
-            (season,overall_position_scoring,created_at,updated_at,deleted_at) 
-            VALUES (?,?,?,?,?)''',
-                           [item['season'], json.dumps(item['overall_position_scoring']), datetime.datetime.now(),
-                            datetime.datetime.now(), None])
-            connection.commit()
+        for code in data:
+            for item in data[code]:
+                parameters = [
+                    code,
+                    item['season'],
+                    json.dumps(item['overall_position_scoring']),
+                    json.dumps(item['group_position_scoring']),
+                    json.dumps(item['comments']),
+                    datetime.datetime.now(),
+                    datetime.datetime.now(),
+                    None
+                ]
+                cursor.execute(insert, parameters)
+                connection.commit()
 
     except Exception as e:
         connection.rollback()

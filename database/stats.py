@@ -29,7 +29,7 @@ def rally_winners(database, season):
         connection.close()
 
 
-def drivers_championship_points_system(database, season):
+def drivers_championship_points_system(database, season, code):
     connection = sqlite3.connect(database)
     try:
 
@@ -37,9 +37,10 @@ def drivers_championship_points_system(database, season):
         cursor = connection.cursor()
 
         cursor.execute("""SELECT overall_position_scoring
-            FROM driver_points
-            WHERE season <= :season
-            LIMIT 1""", {"season": season})
+            FROM points
+            WHERE season <= :season AND code = :code
+            ORDER BY season DESC
+            LIMIT 1""", {"season": season, "code": code})
 
         return cursor.fetchone()[0]
 
