@@ -43,7 +43,8 @@ class Entry:
         if row("td.fs-091:first").text():
             self.category = row("td.fs-091:first").text()
 
-        # self.championship = row("td.entry-sct").text()
+        self.startlist_m = row("td.startlist-m").text()
+        # self.championship = row("td.entry-sct").split('<br>')# TODO
 
         self.set_timestamps()
 
@@ -53,7 +54,8 @@ class Entry:
         self.deleted_at = None
 
     def get_tuple(self):
-        self.tuple = (self.event_id, self.car_number, self.driver_id, self.codriver_id, self.team, self.car, self.plate, self.tyres, self.category, self.created_at, self.updated_at, self. deleted_at)
+        self.tuple = (self.event_id, self.car_number, self.driver_id, self.codriver_id, self.team, self.car, self.plate,
+                      self.tyres, self.category, self.created_at, self.updated_at, self. deleted_at)
 
         # print(self.tuple)
 

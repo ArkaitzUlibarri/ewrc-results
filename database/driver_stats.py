@@ -1,7 +1,7 @@
 import sqlite3
 
 
-def rally_winners(database, season):
+def season_winners(database, season):
     connection = sqlite3.connect(database)
     try:
 
@@ -29,7 +29,7 @@ def rally_winners(database, season):
         connection.close()
 
 
-def drivers_championship_points_system(database, season, code):
+def championship_points_system(database, season, code):
     connection = sqlite3.connect(database)
     try:
 
@@ -83,12 +83,12 @@ def drivers_leaders(database, season):
     return drivers_stats(database, season, 'leaders')
 
 
-def drivers_results(database, season, result):
+def drivers_results(database, season, code):
     condition = ""
-    if result == "winners":
-        condition = "(result = '1')"
-    elif result == "podiums":
-        condition = "(result = '1' or result = '2' or result = '3')"
+    if code == "winners":
+        condition = "(r.result = '1')"
+    elif code == "podiums":
+        condition = "(r.result = '1' or r.result = '2' or r.result = '3')"
 
     connection = sqlite3.connect(database)
 
@@ -97,10 +97,10 @@ def drivers_results(database, season, result):
         connection.row_factory = sqlite3.Row
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT drivers.fullname,COUNT(results.result) as count
-            FROM results
-            INNER JOIN drivers on drivers.id = results.driver_id
-            WHERE results.season is :season and """ + condition + """
+        cursor.execute("""SELECT drivers.fullname,COUNT(r.result) as count
+            FROM results r
+            INNER JOIN drivers on drivers.id = r.driver_id
+            WHERE r.season is :season and """ + condition + """
             GROUP BY drivers.fullname
             ORDER BY count DESC""", {"season": season})
 

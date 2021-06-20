@@ -3,7 +3,8 @@ import json
 from config import app
 from pptx import Presentation
 from pptx.util import Cm
-from database.stats import *
+from database.driver_stats import *
+from database.team_stats import *
 
 
 def create_table(data):
@@ -23,6 +24,16 @@ def write_table_body(ppt_table, data):
             ppt_table.cell(row_index, col_index).text = str(cell)
 
 
+def get_points(result, points_dict):
+    points = '0'
+
+    for item in points_dict:
+        if result in item['position']:
+            points = item['points']
+
+    return points
+
+
 def get_driver_season_stats(results, points_dict):
     starts = 0
     wins = 0
@@ -32,8 +43,8 @@ def get_driver_season_stats(results, points_dict):
     total_points = 0
     for row_index, row in enumerate(results, start=1):
         starts += 1
-        points = '0'
         result = row['result']
+        points = get_points(result, points_dict)
 
         if not result.isnumeric():
             dnfs += 1
@@ -44,9 +55,7 @@ def get_driver_season_stats(results, points_dict):
                 podiums += 1
             if int(result) <= 5:
                 top5 += 1
-            if result in points_dict:
-                points = points_dict[result]
-
+        
         total_points += int(points)
         print("Result: " + result + ", Points: " + points)
     print("Starts: " + str(starts)
@@ -66,78 +75,102 @@ db_path = os.path.join(package_dir, 'database', app.database + '.db')
 # Config
 season = str(1997)
 
-# Queries
-scratchs = drivers_scratchs(db_path, season)
-leaders = drivers_leaders(db_path, season)
-win_stats = drivers_winners(db_path, season)
-podium_stats = drivers_podiums(db_path, season)
-season_winners = rally_winners(db_path, season)
+# Queries - Drivers
+drivers_scratchs_stats = drivers_scratchs(db_path, season)
+drivers_leaders_stats = drivers_leaders(db_path, season)
+drivers_winners_stats = drivers_winners(db_path, season)
+drivers_podiums_stats = drivers_podiums(db_path, season)
+full_season_winners = season_winners(db_path, season)
+
+# Queries - Teams
+teams_winners_stats = teams_winners(db_path, season)
+teams_podiums_stats = teams_podiums(db_path, season)
+
+# Queries - Points System
+driver_points_system_dict = json.loads(championship_points_system(db_path, season, 'drivers'))
+
+# TODO: Obtain all the drivers which have scored points
+lowest_position = len(driver_points_system_dict)
 
 # Driver Points
-# TODO: Pilotos en el podio durante el año + pilotos de marcas oficiales
-driverPointsSystem = drivers_championship_points_system(db_path, season, 'drivers')
-driver_points_system_dict = json.loads(driverPointsSystem)
-print(driver_points_system_dict)
+# TODO: Drivers on the podium + official teams
 full_results_by_driver = full_results_by_driver(db_path, season, 848)
-
-# get_driver_season_stats(full_results_by_driver, driver_points_system_dict)
+get_driver_season_stats(full_results_by_driver, driver_points_system_dict)
 
 # create PPT
-# prs = Presentation()
-# layout = prs.slide_layouts[5]
+prs = Presentation()
+layout = prs.slide_layouts[5]
 
-# # First Slide - Season Winners
-# slide = prs.slides.add_slide(layout)
-# shapes = slide.shapes
-# shapes.title.text = 'WORLD RALLY CHAMPIONSHIP ' + season
-#
-# table = create_table(season_winners)
-# write_table_headings(table, ('#', 'Edition', 'Rally', 'Winner', 'Car', 'Team'))
-# write_table_body(table, season_winners)
-#
-# # Second slide - Win stats
-# slide = prs.slides.add_slide(layout)
-# shapes = slide.shapes
-# shapes.title.text = 'STATS ' + season
-#
-# table = create_table(win_stats)
-# write_table_headings(table, ('Driver', 'Wins'))
-# write_table_body(table, win_stats)
-#
-# # Third slide - Podium stats
-# slide = prs.slides.add_slide(layout)
-# shapes = slide.shapes
-# shapes.title.text = 'STATS ' + season
-#
-# table = create_table(podium_stats)
-# write_table_headings(table, ('Driver', 'Podiums'))
-# write_table_body(table, podium_stats)
-#
-# # Fourth slide - Scratchs stats
-# slide = prs.slides.add_slide(layout)
-# shapes = slide.shapes
-# shapes.title.text = 'STATS ' + season
-#
-# table = create_table(scratchs)
-# write_table_headings(table, ('Driver', 'Scratchs'))
-# write_table_body(table, scratchs)
-#
-# # Fifth slide - Leaders stats
-# slide = prs.slides.add_slide(layout)
-# shapes = slide.shapes
-# shapes.title.text = 'STATS ' + season
-#
-# table = create_table(scratchs)
-# write_table_headings(table, ('Driver', 'Scratchs'))
-# write_table_body(table, scratchs)
+# First Slide - Season Winners
+slide = prs.slides.add_slide(layout)
+shapes = slide.shapes
+shapes.title.text = 'WORLD RALLY CHAMPIONSHIP ' + season
 
-# save PPT
-# package_dir = os.path.abspath(os.path.dirname(__file__))
-# export_folder = os.path.join(package_dir, 'storage', 'exports')
-# if not os.path.exists(export_folder):
-#     os.makedirs(export_folder)
-#
-# export_path = os.path.join(package_dir, 'storage', 'exports', 'WRC_' + season + '.pptx')
-# prs.save(export_path)
+table = create_table(full_season_winners)
+write_table_headings(table, ('#', 'Edition', 'Rally', 'Winner', 'Car', 'Team'))
+write_table_body(table, full_season_winners)
 
-# print('Finished ' + export_path + ' export')
+# Second slide - Win stats
+slide = prs.slides.add_slide(layout)
+shapes = slide.shapes
+shapes.title.text = 'STATS ' + season
+
+table = create_table(drivers_winners_stats)
+write_table_headings(table, ('Driver', 'Wins'))
+write_table_body(table, drivers_winners_stats)
+
+# Third slide - Podium stats
+slide = prs.slides.add_slide(layout)
+shapes = slide.shapes
+shapes.title.text = 'STATS ' + season
+
+table = create_table(drivers_podiums_stats)
+write_table_headings(table, ('Driver', 'Podiums'))
+write_table_body(table, drivers_podiums_stats)
+
+# Fourth slide - Scratchs stats
+slide = prs.slides.add_slide(layout)
+shapes = slide.shapes
+shapes.title.text = 'STATS ' + season
+
+table = create_table(drivers_scratchs_stats)
+write_table_headings(table, ('Driver', 'Scratchs'))
+write_table_body(table, drivers_scratchs_stats)
+
+# Fifth slide - Leaders stats
+slide = prs.slides.add_slide(layout)
+shapes = slide.shapes
+shapes.title.text = 'STATS ' + season
+
+table = create_table(drivers_leaders_stats)
+write_table_headings(table, ('Driver', 'Leaders'))
+write_table_body(table, drivers_leaders_stats)
+
+# Sixth slide - Win stats
+slide = prs.slides.add_slide(layout)
+shapes = slide.shapes
+shapes.title.text = 'STATS ' + season
+
+table = create_table(teams_winners_stats)
+write_table_headings(table, ('Car', 'Team', 'Wins'))
+write_table_body(table, teams_winners_stats)
+
+# Seven slide - Podium stats
+slide = prs.slides.add_slide(layout)
+shapes = slide.shapes
+shapes.title.text = 'STATS ' + season
+
+table = create_table(teams_podiums_stats)
+write_table_headings(table, ('Car', 'Team', 'Podiums'))
+write_table_body(table, teams_podiums_stats)
+
+# Save PPT
+package_dir = os.path.abspath(os.path.dirname(__file__))
+export_folder = os.path.join(package_dir, 'storage', 'exports')
+if not os.path.exists(export_folder):
+    os.makedirs(export_folder)
+
+export_path = os.path.join(package_dir, 'storage', 'exports', 'WRC_' + season + '.pptx')
+prs.save(export_path)
+
+print('Finished ' + export_path + ' export')
