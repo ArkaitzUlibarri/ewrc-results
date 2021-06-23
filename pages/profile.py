@@ -46,7 +46,7 @@ def insert_profiles(base_url, db_path, driver_list, category):
 						for start in starts('div.profile-start-line').items():
 							result = Result(driver.id, season, start)
 							connection.execute('''INSERT INTO results 
-							(event_id,driver_id,codriver_id,season,dorsal,car,plate,team,chassis,category,result,created_at,updated_at,deleted_at)
+							(event_id,driver_id,codriver_id,season,car_number,car,plate,team,chassis,category,result,created_at,updated_at,deleted_at)
 							VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', result.get_tuple())
 
 				connection.commit()

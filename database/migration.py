@@ -56,7 +56,7 @@ def migrate(db_path):
             driver_id INTEGER NOT NULL,
             codriver_id INTEGER,
             season INTEGER NOT NULL,
-            dorsal TEXT,
+            car_number TEXT,
             car TEXT NOT NULL,
             team TEXT,
             plate TEXT,

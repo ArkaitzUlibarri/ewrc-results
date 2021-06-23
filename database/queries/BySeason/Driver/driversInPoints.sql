@@ -1,4 +1,4 @@
-select events.name,results.dorsal,results.car,results.team,drivers.fullname,results.result
+select events.name,results.car_number,results.car,results.team,drivers.fullname,results.result
 from results 
 inner join events on results.event_id = events.id
 inner join drivers on results.driver_id = drivers.id
