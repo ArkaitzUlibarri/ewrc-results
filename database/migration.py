@@ -108,6 +108,8 @@ def migrate(db_path):
             plate TEXT,
             tyres TEXT,
             category TEXT,
+            startlist_m TEXT,
+            championship TEXT,
             created_at timestamp,
             updated_at timestamp,
             deleted_at timestamp,
