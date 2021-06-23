@@ -89,13 +89,17 @@ teams_podiums_stats = teams_podiums(db_path, season)
 # Queries - Points System
 driver_points_system_dict = json.loads(championship_points_system(db_path, season, 'drivers'))
 
-# TODO: Obtain all the drivers which have scored points
+# Obtain all the drivers which have scored points
 lowest_position = len(driver_points_system_dict)
+drivers_in_points_list = drivers_in_points(db_path, season, lowest_position)
 
-# Driver Points
-# TODO: Drivers on the podium + official teams
-full_results_by_driver = full_results_by_driver(db_path, season, 848)
-get_driver_season_stats(full_results_by_driver, driver_points_system_dict)
+full_results = list()
+for row_index, row in enumerate(drivers_in_points_list, start=1):
+    driver_id = row['driver_id']
+    get_driver_season_stats(full_results_by_driver(db_path, season, driver_id), driver_points_system_dict)
+
+# TODO: Drivers on the podium + official teams - SLIDE ON PPT
+# TODO: Championship Table Slide - Only TOP 10
 
 # create PPT
 prs = Presentation()

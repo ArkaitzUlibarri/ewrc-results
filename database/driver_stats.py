@@ -121,6 +121,31 @@ def drivers_winners(database, season):
     return drivers_results(database, season, 'winners')
 
 
+def drivers_in_points(database, season, points_position):
+    connection = sqlite3.connect(database)
+    try:
+
+        connection.row_factory = sqlite3.Row
+        cursor = connection.cursor()
+
+        cursor.execute("""SELECT drivers.fullname,results.driver_id
+        FROM results 
+        INNER JOIN events ON results.event_id = events.id
+        INNER JOIN drivers ON results.driver_id = drivers.id
+        WHERE results.season is :season 
+        AND CAST(results.result AS INTEGER) <= :points_position 
+        AND results.result  GLOB '*[0-9]*'
+        GROUP BY results.driver_id""", {"season": season, "points_position": points_position})
+
+        return cursor.fetchall()
+
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()
+
+
 def full_results_by_driver(database, season, driver_id):
     connection = sqlite3.connect(database)
     try:
