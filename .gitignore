@@ -5,3 +5,4 @@ storage/photos/*
 *.db-journal
 *.pptx
 /.idea/
+/.vscode/

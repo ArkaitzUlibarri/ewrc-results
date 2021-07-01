@@ -30,8 +30,6 @@ def insert_events(base_url, db_path, db_name, start_season):
 
 			try:
 
-				cursor = connection.cursor()
-
 				# Events
 				events = doc.items(".season-event")
 				for index, event in enumerate(events, start=1):

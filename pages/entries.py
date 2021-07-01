@@ -29,8 +29,6 @@ def insert_entries(base_url, db_path, event_ids_dict):
 
 				try:
 
-					cursor = connection.cursor()
-
 					# Entries
 					startlist = doc("table.results")
 					startlist('td.entry-sct > span.text-danger').parents('tr').remove()  # Remove course cars

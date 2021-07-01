@@ -26,9 +26,9 @@ def insert_profiles(base_url, db_path, driver_list, category):
 
 			doc = pq(response.text)
 
+			connection = sqlite3.connect(db_path)
+
 			try:
-				connection = sqlite3.connect(db_path)
-				cursor = connection.cursor()
 
 				if doc("main > div").eq(0).hasClass("profile"):
 

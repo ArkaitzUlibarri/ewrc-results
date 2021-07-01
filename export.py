@@ -83,6 +83,8 @@ drivers_podiums_stats = drivers_podiums(db_path, season)
 full_season_winners = season_winners(db_path, season)
 
 # Queries - Teams
+teams_scratchs_stats = teams_scratchs(db_path, season)
+teams_leaders_stats = teams_leaders(db_path, season)
 teams_winners_stats = teams_winners(db_path, season)
 teams_podiums_stats = teams_podiums(db_path, season)
 
@@ -105,68 +107,99 @@ for row_index, row in enumerate(drivers_in_points_list, start=1):
 prs = Presentation()
 layout = prs.slide_layouts[5]
 
-# First Slide - Season Winners
-slide = prs.slides.add_slide(layout)
-shapes = slide.shapes
-shapes.title.text = 'WORLD RALLY CHAMPIONSHIP ' + season
+# 1 Slide - Season Winners
+if len(full_season_winners):
+    slide = prs.slides.add_slide(layout)
+    shapes = slide.shapes
+    shapes.title.text = 'WORLD RALLY CHAMPIONSHIP ' + season
 
-table = create_table(full_season_winners)
-write_table_headings(table, ('#', 'Edition', 'Rally', 'Winner', 'Car', 'Team'))
-write_table_body(table, full_season_winners)
+    table = create_table(full_season_winners)
+    write_table_headings(table, ('#', 'Edition', 'Rally', 'Winner', 'Car', 'Team'))
+    write_table_body(table, full_season_winners)
 
-# Second slide - Win stats
-slide = prs.slides.add_slide(layout)
-shapes = slide.shapes
-shapes.title.text = 'STATS ' + season
+# DRIVER
 
-table = create_table(drivers_winners_stats)
-write_table_headings(table, ('Driver', 'Wins'))
-write_table_body(table, drivers_winners_stats)
+# 2 Slide - Win stats
+if len(drivers_winners_stats):
+    slide = prs.slides.add_slide(layout)
+    shapes = slide.shapes
+    shapes.title.text = 'DRIVER STATS ' + season
 
-# Third slide - Podium stats
-slide = prs.slides.add_slide(layout)
-shapes = slide.shapes
-shapes.title.text = 'STATS ' + season
+    table = create_table(drivers_winners_stats)
+    write_table_headings(table, ('Driver', 'Wins'))
+    write_table_body(table, drivers_winners_stats)
 
-table = create_table(drivers_podiums_stats)
-write_table_headings(table, ('Driver', 'Podiums'))
-write_table_body(table, drivers_podiums_stats)
+# 3 Slide - Podium stats
+if len(drivers_podiums_stats):
+    slide = prs.slides.add_slide(layout)
+    shapes = slide.shapes
+    shapes.title.text = 'DRIVER STATS ' + season
 
-# Fourth slide - Scratchs stats
-slide = prs.slides.add_slide(layout)
-shapes = slide.shapes
-shapes.title.text = 'STATS ' + season
+    table = create_table(drivers_podiums_stats)
+    write_table_headings(table, ('Driver', 'Podiums'))
+    write_table_body(table, drivers_podiums_stats)
 
-table = create_table(drivers_scratchs_stats)
-write_table_headings(table, ('Driver', 'Scratchs'))
-write_table_body(table, drivers_scratchs_stats)
+# 4 Slide - Scratchs stats
+if len(drivers_scratchs_stats):
+    slide = prs.slides.add_slide(layout)
+    shapes = slide.shapes
+    shapes.title.text = 'DRIVER STATS ' + season
 
-# Fifth slide - Leaders stats
-slide = prs.slides.add_slide(layout)
-shapes = slide.shapes
-shapes.title.text = 'STATS ' + season
+    table = create_table(drivers_scratchs_stats)
+    write_table_headings(table, ('Driver', 'Scratchs'))
+    write_table_body(table, drivers_scratchs_stats)
 
-table = create_table(drivers_leaders_stats)
-write_table_headings(table, ('Driver', 'Leaders'))
-write_table_body(table, drivers_leaders_stats)
+# 5 Slide - Leaders stats
+if len(drivers_leaders_stats):
+    slide = prs.slides.add_slide(layout)
+    shapes = slide.shapes
+    shapes.title.text = 'DRIVER STATS ' + season
 
-# Sixth slide - Win stats
-slide = prs.slides.add_slide(layout)
-shapes = slide.shapes
-shapes.title.text = 'STATS ' + season
+    table = create_table(drivers_leaders_stats)
+    write_table_headings(table, ('Driver', 'Leaders'))
+    write_table_body(table, drivers_leaders_stats)
 
-table = create_table(teams_winners_stats)
-write_table_headings(table, ('Car', 'Team', 'Wins'))
-write_table_body(table, teams_winners_stats)
+# TEAM
 
-# Seven slide - Podium stats
-slide = prs.slides.add_slide(layout)
-shapes = slide.shapes
-shapes.title.text = 'STATS ' + season
+# 6 Slide - Win stats
+if len(teams_winners_stats):
+    slide = prs.slides.add_slide(layout)
+    shapes = slide.shapes
+    shapes.title.text = 'TEAM STATS ' + season
 
-table = create_table(teams_podiums_stats)
-write_table_headings(table, ('Car', 'Team', 'Podiums'))
-write_table_body(table, teams_podiums_stats)
+    table = create_table(teams_winners_stats)
+    write_table_headings(table, ('Car', 'Team', 'Wins'))
+    write_table_body(table, teams_winners_stats)
+
+# 7 Slide - Podium stats
+if len(teams_podiums_stats):
+    slide = prs.slides.add_slide(layout)
+    shapes = slide.shapes
+    shapes.title.text = 'TEAM STATS ' + season
+
+    table = create_table(teams_podiums_stats)
+    write_table_headings(table, ('Car', 'Team', 'Podiums'))
+    write_table_body(table, teams_podiums_stats)
+
+# 8 Slide - Scratchs stats
+if len(teams_scratchs_stats):
+    slide = prs.slides.add_slide(layout)
+    shapes = slide.shapes
+    shapes.title.text = 'TEAM STATS ' + season
+
+    table = create_table(teams_scratchs_stats)
+    write_table_headings(table, ('Team', 'Scratchs'))
+    write_table_body(table, teams_scratchs_stats)
+
+# 9 Slide - Leaders stats
+if len(teams_leaders_stats):
+    slide = prs.slides.add_slide(layout)
+    shapes = slide.shapes
+    shapes.title.text = 'TEAM STATS ' + season
+
+    table = create_table(teams_leaders_stats)
+    write_table_headings(table, ('Team', 'Leaders'))
+    write_table_body(table, teams_leaders_stats)
 
 # Save PPT
 package_dir = os.path.abspath(os.path.dirname(__file__))

@@ -42,8 +42,6 @@ def insert_event_photos(base_url, db_path, event_ids_dict):
 
                 try:
 
-                    cursor = connection.cursor()
-
                     event_info = select_events_info(db_path, event_id)
 
                     # Event Photos

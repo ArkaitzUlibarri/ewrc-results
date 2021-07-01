@@ -31,8 +31,6 @@ def insert_event_stats(base_url, db_path, event_ids_dict):
 
 				try:
 
-					cursor = connection.cursor()
-
 					# EventStats - Scratches
 					scratches = doc("div.stats-wins").eq(0)
 
