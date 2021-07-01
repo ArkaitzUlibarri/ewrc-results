@@ -8,16 +8,16 @@ def season_winners(database, season):
         cursor = connection.cursor()
 
         cursor.execute("""SELECT 
-            events.season_event_id as ID,
-            events.edition,
-            events.name,
-            drivers.fullname,
-            results.car,
-            results.team
-            FROM events 
-            LEFT JOIN results on events.id = results.event_id 
-            LEFT JOIN drivers on results.driver_id = drivers.id 
-            WHERE events.season=? and results.result like '1' 
+            e.season_event_id as ID,
+            e.edition,
+            e.name,
+            d.fullname,
+            r.car,
+            r.team
+            FROM events AS e
+            LEFT JOIN results AS r on e.id = r.event_id 
+            LEFT JOIN drivers AS d on r.driver_id = d.id 
+            WHERE e.season=? and r.result like '1' 
             ORDER BY season_event_id""", (season,))
 
         return cursor.fetchall()
@@ -59,9 +59,9 @@ def drivers_stats(database, season, table):
         connection.row_factory = sqlite3.Row
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT drivers.fullname,COUNT(stage_name) as count
+        cursor.execute("""SELECT d.fullname,COUNT(stage_name) as count
             FROM """ + table + """ 
-            INNER JOIN drivers on drivers.id = """ + table + """.driver_id
+            INNER JOIN drivers AS d on d.id = """ + table + """.driver_id
             WHERE event_id in (select id from events where season = :season)
             GROUP BY driver_id
             ORDER BY count DESC""", {"season": season})
@@ -97,11 +97,11 @@ def drivers_results(database, season, code):
         connection.row_factory = sqlite3.Row
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT drivers.fullname,COUNT(r.result) as count
-            FROM results r
-            INNER JOIN drivers on drivers.id = r.driver_id
+        cursor.execute("""SELECT d.fullname,COUNT(r.result) as count
+            FROM results AS r
+            INNER JOIN drivers AS d on d.id = r.driver_id
             WHERE r.season is :season and """ + condition + """
-            GROUP BY drivers.fullname
+            GROUP BY d.fullname
             ORDER BY count DESC""", {"season": season})
 
         return cursor.fetchall()
@@ -128,14 +128,14 @@ def drivers_in_points(database, season, points_position):
         connection.row_factory = sqlite3.Row
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT drivers.fullname,results.driver_id
-        FROM results 
-        INNER JOIN events ON results.event_id = events.id
-        INNER JOIN drivers ON results.driver_id = drivers.id
-        WHERE results.season is :season 
-        AND CAST(results.result AS INTEGER) <= :points_position 
-        AND results.result  GLOB '*[0-9]*'
-        GROUP BY results.driver_id""", {"season": season, "points_position": points_position})
+        cursor.execute("""SELECT d.fullname,r.driver_id
+        FROM results AS r
+        INNER JOIN events AS e ON r.event_id = e.id
+        INNER JOIN drivers AS d ON r.driver_id = d.id
+        WHERE r.season is :season 
+        AND CAST(r.result AS INTEGER) <= :points_position 
+        AND r.result  GLOB '*[0-9]*'
+        GROUP BY r.driver_id""", {"season": season, "points_position": points_position})
 
         return cursor.fetchall()
 
@@ -154,14 +154,14 @@ def full_results_by_driver(database, season, driver_id):
         cursor = connection.cursor()
 
         cursor.execute("""
-            SELECT events.season_event_id as ID,events.edition,events.name,
-            results.car_number,drivers.fullname,codrivers.fullname,results.plate,results.car,results.team,results.result
-            FROM events
-            LEFT JOIN results on events.id = results.event_id
-            LEFT JOIN drivers on results.driver_id = drivers.id
-            LEFT JOIN codrivers on results.codriver_id = codrivers.id 
-            WHERE  events.season = :season and drivers.id = :driver_id
-            ORDER BY events.season,events.season_event_id""", {"season": season, "driver_id": driver_id})
+            SELECT e.season_event_id as ID,e.edition,e.name,
+            r.car_number,d.fullname,co.fullname,r.plate,r.car,r.team,r.result
+            FROM events AS e
+            LEFT JOIN results AS r on e.id = r.event_id
+            LEFT JOIN drivers AS d on r.driver_id = d.id
+            LEFT JOIN codrivers AS co on r.codriver_id = co.id 
+            WHERE  e.season = :season and d.id = :driver_id
+            ORDER BY e.season,e.season_event_id""", {"season": season, "driver_id": driver_id})
 
         return cursor.fetchall()
 
