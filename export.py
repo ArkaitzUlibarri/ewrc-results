@@ -3,67 +3,84 @@ import json
 from config import app
 from pptx import Presentation
 from pptx.util import Cm
+from pptx.util import Pt
 from database.driver_stats import *
 from database.team_stats import *
 
 
-def create_table(data):
-    rows, cols = len(data) + 1, len(data[0])
+def create_table(body_data):
+    rows, cols = len(body_data) + 1, len(body_data[0])
     left, top, width, height = Cm(1), Cm(4), Cm(rows * 24 / 14), Cm(cols * 11 / 6)
     return shapes.add_table(rows, cols, left, top, width, height).table
 
 
-def write_table_headings(ppt_table, headings):
-    for index, heading in enumerate(headings, start=0):
-        ppt_table.cell(0, index).text = heading
+def write_table(ppt_table, headings, body_data):
+    for heading_index, heading_item in enumerate(headings, start=0):
+        cell = ppt_table.cell(0, heading_index)
+        cell.text = heading_item
+        set_cell_font_size(cell, 14)
+
+    for body_index, body_item in enumerate(body_data, start=1):
+        for col_index, text in enumerate(body_item, start=0):
+            cell = ppt_table.cell(body_index, col_index)
+            cell.text = str(text)
+            set_cell_font_size(cell, 12)
 
 
-def write_table_body(ppt_table, data):
-    for row_index, row in enumerate(data, start=1):
-        for col_index, cell in enumerate(row, start=0):
-            ppt_table.cell(row_index, col_index).text = str(cell)
+def set_cell_font_size(cell, size):
+    for paragraph in cell.text_frame.paragraphs:
+        for paragraph_run in paragraph.runs:
+            paragraph_run.font.size = Pt(size)
 
 
-def get_points(result, points_dict):
+def get_points(position, points_dict):
     points = '0'
 
     for item in points_dict:
-        if result in item['position']:
+        if position in item['position']:
             points = item['points']
 
     return points
 
 
-def get_driver_season_stats(results, points_dict):
+def get_driver_season_stats(driver_id, results, points_dict):
+    output = dict()
+    output['driver_id'] = driver_id
+    output['results'] = list()
+
     starts = 0
     wins = 0
     podiums = 0
     top5 = 0
     dnfs = 0
     total_points = 0
-    for row_index, row in enumerate(results, start=1):
+    for item_index, item in enumerate(results, start=1):
         starts += 1
-        result = row['result']
-        points = get_points(result, points_dict)
+        position = item['result']
+        season_event_id = item['ID']
+        points = get_points(position, points_dict)
 
-        if not result.isnumeric():
+        if not position.isnumeric():
             dnfs += 1
         else:
-            if int(result) == 1:
+            if int(position) == 1:
                 wins += 1
-            if int(result) <= 3:
+            if int(position) <= 3:
                 podiums += 1
-            if int(result) <= 5:
+            if int(position) <= 5:
                 top5 += 1
-        
+
         total_points += int(points)
-        print("Result: " + result + ", Points: " + points)
-    print("Starts: " + str(starts)
-          + ", Wins: " + str(wins)
-          + ", Podiums: " + str(podiums)
-          + ", TOP5: " + str(top5)
-          + ", DNFs: " + str(dnfs)
-          + ", Points: " + str(total_points))
+
+        output['results'].append({"season_event_id": season_event_id, "position": position, "points": points})
+    output['starts'] = starts
+    output['wins'] = wins
+    output['podiums'] = podiums
+    output['top5'] = top5
+    output['dnfs'] = dnfs
+    output['total_points'] = total_points
+
+    return output
 
 
 # Clear console
@@ -96,110 +113,111 @@ lowest_position = len(driver_points_system_dict)
 drivers_in_points_list = drivers_in_points(db_path, season, lowest_position)
 
 full_results = list()
-for row_index, row in enumerate(drivers_in_points_list, start=1):
-    driver_id = row['driver_id']
-    get_driver_season_stats(full_results_by_driver(db_path, season, driver_id), driver_points_system_dict)
+for index, row in enumerate(drivers_in_points_list, start=1):
+    results_by_driver_list = full_results_by_driver(db_path, season, row['driver_id'])
+    driver_results_dict = get_driver_season_stats(row['driver_id'], results_by_driver_list, driver_points_system_dict)
+    full_results.append(driver_results_dict)
+full_results = sorted(full_results, key=lambda k: k['total_points'], reverse=True)
+# print(full_results)
 
 # TODO: Drivers on the podium + official teams - SLIDE ON PPT
 # TODO: Championship Table Slide - Only TOP 10
 
 # create PPT
 prs = Presentation()
-layout = prs.slide_layouts[5]
+title_slide_layout = prs.slide_layouts[5]
 
 # 1 Slide - Season Winners
 if len(full_season_winners):
-    slide = prs.slides.add_slide(layout)
+    slide = prs.slides.add_slide(title_slide_layout)
     shapes = slide.shapes
-    shapes.title.text = 'WORLD RALLY CHAMPIONSHIP ' + season
+    text_frame = shapes[0].text_frame
+    p = text_frame.paragraphs[0]
+    run = p.add_run()
+    run.text = 'WORLD RALLY CHAMPIONSHIP ' + season
+
+    font = run.font
+    font.name = 'Calibri'
+    font.size = Pt(40)
 
     table = create_table(full_season_winners)
-    write_table_headings(table, ('#', 'Edition', 'Rally', 'Winner', 'Car', 'Team'))
-    write_table_body(table, full_season_winners)
+    write_table(table, ('#', 'Edition', 'Rally', 'Winner', 'Car', 'Team'), full_season_winners)
 
 # DRIVER
 
 # 2 Slide - Win stats
 if len(drivers_winners_stats):
-    slide = prs.slides.add_slide(layout)
+    slide = prs.slides.add_slide(title_slide_layout)
     shapes = slide.shapes
     shapes.title.text = 'DRIVER STATS ' + season
 
     table = create_table(drivers_winners_stats)
-    write_table_headings(table, ('Driver', 'Wins'))
-    write_table_body(table, drivers_winners_stats)
+    write_table(table, ('Driver', 'Wins'), drivers_winners_stats)
 
 # 3 Slide - Podium stats
 if len(drivers_podiums_stats):
-    slide = prs.slides.add_slide(layout)
+    slide = prs.slides.add_slide(title_slide_layout)
     shapes = slide.shapes
     shapes.title.text = 'DRIVER STATS ' + season
 
     table = create_table(drivers_podiums_stats)
-    write_table_headings(table, ('Driver', 'Podiums'))
-    write_table_body(table, drivers_podiums_stats)
+    write_table(table, ('Driver', 'Podiums'), drivers_podiums_stats)
 
 # 4 Slide - Scratchs stats
 if len(drivers_scratchs_stats):
-    slide = prs.slides.add_slide(layout)
+    slide = prs.slides.add_slide(title_slide_layout)
     shapes = slide.shapes
     shapes.title.text = 'DRIVER STATS ' + season
 
     table = create_table(drivers_scratchs_stats)
-    write_table_headings(table, ('Driver', 'Scratchs'))
-    write_table_body(table, drivers_scratchs_stats)
+    write_table(table, ('Driver', 'Scratchs'), drivers_scratchs_stats)
 
 # 5 Slide - Leaders stats
 if len(drivers_leaders_stats):
-    slide = prs.slides.add_slide(layout)
+    slide = prs.slides.add_slide(title_slide_layout)
     shapes = slide.shapes
     shapes.title.text = 'DRIVER STATS ' + season
 
     table = create_table(drivers_leaders_stats)
-    write_table_headings(table, ('Driver', 'Leaders'))
-    write_table_body(table, drivers_leaders_stats)
+    write_table(table, ('Driver', 'Leaders'), drivers_leaders_stats)
 
 # TEAM
 
 # 6 Slide - Win stats
 if len(teams_winners_stats):
-    slide = prs.slides.add_slide(layout)
+    slide = prs.slides.add_slide(title_slide_layout)
     shapes = slide.shapes
     shapes.title.text = 'TEAM STATS ' + season
 
     table = create_table(teams_winners_stats)
-    write_table_headings(table, ('Car', 'Team', 'Wins'))
-    write_table_body(table, teams_winners_stats)
+    write_table(table, ('Car', 'Team', 'Wins'), teams_winners_stats)
 
 # 7 Slide - Podium stats
 if len(teams_podiums_stats):
-    slide = prs.slides.add_slide(layout)
+    slide = prs.slides.add_slide(title_slide_layout)
     shapes = slide.shapes
     shapes.title.text = 'TEAM STATS ' + season
 
     table = create_table(teams_podiums_stats)
-    write_table_headings(table, ('Car', 'Team', 'Podiums'))
-    write_table_body(table, teams_podiums_stats)
+    write_table(table, ('Car', 'Team', 'Podiums'), teams_podiums_stats)
 
 # 8 Slide - Scratchs stats
 if len(teams_scratchs_stats):
-    slide = prs.slides.add_slide(layout)
+    slide = prs.slides.add_slide(title_slide_layout)
     shapes = slide.shapes
     shapes.title.text = 'TEAM STATS ' + season
 
     table = create_table(teams_scratchs_stats)
-    write_table_headings(table, ('Team', 'Scratchs'))
-    write_table_body(table, teams_scratchs_stats)
+    write_table(table, ('Team', 'Scratchs'), teams_scratchs_stats)
 
 # 9 Slide - Leaders stats
 if len(teams_leaders_stats):
-    slide = prs.slides.add_slide(layout)
+    slide = prs.slides.add_slide(title_slide_layout)
     shapes = slide.shapes
     shapes.title.text = 'TEAM STATS ' + season
 
     table = create_table(teams_leaders_stats)
-    write_table_headings(table, ('Team', 'Leaders'))
-    write_table_body(table, teams_leaders_stats)
+    write_table(table, ('Team', 'Leaders'), teams_leaders_stats)
 
 # Save PPT
 package_dir = os.path.abspath(os.path.dirname(__file__))
