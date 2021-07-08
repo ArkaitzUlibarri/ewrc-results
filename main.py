@@ -25,13 +25,15 @@ seeder(db_path)
 
 # Events
 season_list = season.get_seasons(app.base_url)
-nationality_list = season.get_nationalities(app.base_url, app.start_season)
-category_list = season.get_championships(app.base_url, app.start_season, '95')
+start_season = season_list[-1]
+for item in season_list:
+    nationality_list = season.get_nationalities(app.base_url, item)
+    category_list = season.get_championships(app.base_url, item, '95')
 
-season.insert_events(app.base_url, db_path, app.database, app.start_season)
+season.insert_events(app.base_url, db_path, start_season, "1-wrc")
 
 # Entries
-event_ids_dict = select_events(db_path, app.start_season)
+event_ids_dict = select_events(db_path, start_season)
 entries.insert_entries(app.base_url, db_path, event_ids_dict)
 
 # Event Stats
