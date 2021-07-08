@@ -24,6 +24,10 @@ migrate(db_path)
 seeder(db_path)
 
 # Events
+season_list = season.get_seasons(app.base_url)
+nationality_list = season.get_nationalities(app.base_url, app.start_season)
+category_list = season.get_championships(app.base_url, app.start_season, '95')
+
 season.insert_events(app.base_url, db_path, app.database, app.start_season)
 
 # Entries
