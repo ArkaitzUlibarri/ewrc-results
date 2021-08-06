@@ -2,6 +2,7 @@ import os
 from config import app
 from database.migration import migrate
 from database.seeders.championshipPoints import seeder
+from database.helper import select_nationalities
 from database.helper import select_events
 from database.helper import select_drivers
 from database.helper import select_codrivers
@@ -23,18 +24,27 @@ db_path = os.path.join(package_dir, 'database', app.database + '.db')
 migrate(db_path)
 seeder(db_path)
 
-# Events
+# Season Options
 season_list = season.get_seasons(app.base_url)
 start_season = season_list[-1]
-for item in season_list:
-    nationality_list = season.get_nationalities(app.base_url, item)
-    category_list = season.get_championships(app.base_url, item, '95')
 
+for item in season_list:
+    season.insert_nationalities(app.base_url, db_path, item)
+
+for item in season_list:
+    nationality_list = select_nationalities(db_path)
+    for nationality_id in nationality_list:
+        season.insert_championships(app.base_url, db_path, item, nationality_id)
+
+# Events
 season.insert_events(app.base_url, db_path, start_season, "1-wrc")
 
 # Entries
 event_ids_dict = select_events(db_path, start_season)
 entries.insert_entries(app.base_url, db_path, event_ids_dict)
+
+# Event Photos
+photo.insert_event_photos(app.base_url, db_path, event_ids_dict)
 
 # Event Stats
 eventstats.insert_event_stats(app.base_url, db_path, event_ids_dict)
@@ -49,8 +59,5 @@ profile.insert_profiles(app.base_url, db_path, driver_list, app.category)
 # Codrivers
 codriver_list = select_codrivers(db_path)
 coprofile.insert_codrivers(app.base_url, db_path, codriver_list, app.category)
-
-# Event Photos
-photo.insert_event_photos(app.base_url, db_path, event_ids_dict)
 
 print('Finished')

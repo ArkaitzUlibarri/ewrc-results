@@ -6,7 +6,7 @@
 base_url = "https://www.ewrc-results.com"
 
 # database name
-database = "1-wrc"
+database = "ewrc-results"
 
 # profile category
 category = "1"

@@ -49,25 +49,27 @@ def insert_event_photos(base_url, db_path, event_ids_dict):
                         image_id = photo.find('a').attr('href').split('/')[2]
                         image = Image(event_id, image_id, base_url)
 
-                        # Image URL
-                        image_response = requests.get(image.url)
-                        if image_response.status_code == 200:
-                            image_url = pq(image_response.text).find('#main-photo').find('img').attr('src')
-                            extension = image_url.rsplit('.')[-1]
-
-                            image_content = requests.get(image_url, stream=True)
-
-                            # Create target Directory if don't exist
-                            file = image_id + '.' + extension
-                            storage_path = get_storage_path(event_info, file)
-
-                            with open(storage_path, 'wb+') as out_file:
-                                shutil.copyfileobj(image_content.raw, out_file)
-                            del image_content
-
-                        insert_query = '''INSERT INTO images (id,event_id,created_at,updated_at,deleted_at) VALUES (?,?,?,?,?)'''
+                        insert_query = '''INSERT INTO images 
+                        (id,event_id,driver_id,codriver_id,created_at,updated_at,deleted_at) 
+                        VALUES (?,?,?,?,?,?,?)'''
 
                         connection.execute(insert_query, image.get_tuple())
+
+                        # Image URL
+                        # image_response = requests.get(image.url)
+                        # if image_response.status_code == 200:
+                        #     image_url = pq(image_response.text).find('#main-photo').find('img').attr('src')
+                        #     extension = image_url.rsplit('.')[-1]
+                        #
+                        #     image_content = requests.get(image_url, stream=True)
+                        #
+                        #     # Create target Directory if don't exist
+                        #     file = image_id + '.' + extension
+                        #     storage_path = get_storage_path(event_info, file)
+                        #
+                        #     with open(storage_path, 'wb+') as out_file:
+                        #         shutil.copyfileobj(image_content.raw, out_file)
+                        #     del image_content
 
                     connection.commit()
 

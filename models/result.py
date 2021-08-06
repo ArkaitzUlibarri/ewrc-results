@@ -63,7 +63,22 @@ class Result:
         self.deleted_at = None
 
     def get_tuple(self):
-        self.tuple = (self.event_id, self.driver_id, self.codriver_id, self.season, self.number, self.car, self.plate, self.team, self.chassis, self.category, self.result, self.created_at, self.updated_at, self.deleted_at)
+        self.tuple = (
+            self.event_id,
+            self.driver_id,
+            self.codriver_id,
+            self.season,
+            self.number,
+            self.car,
+            self.plate,
+            self.team,
+            self.chassis,
+            self.category,
+            self.result,
+            self.created_at,
+            self.updated_at,
+            self.deleted_at
+        )
 
         # print(self.tuple)
 

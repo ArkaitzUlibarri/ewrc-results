@@ -120,6 +120,8 @@ def migrate(db_path):
         cursor.execute('''CREATE TABLE IF NOT EXISTS images(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             event_id INTEGER NOT NULL,
+            driver_id INTEGER,
+            codriver_id INTEGER,
             created_at timestamp,
             updated_at timestamp,
             deleted_at timestamp,
@@ -136,6 +138,33 @@ def migrate(db_path):
             updated_at timestamp,
             deleted_at timestamp,
             CONSTRAINT points_unique UNIQUE (code,season))''')
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS nationalities(
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            created_at timestamp,
+            updated_at timestamp,
+            deleted_at timestamp)''')
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS championships(
+            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            code TEXT NOT NULL,
+            name TEXT NOT NULL,
+            created_at timestamp,
+            updated_at timestamp,
+            deleted_at timestamp)''')
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS event_championship(
+            id INTEGER NOT NULL PRIMARY KEY,
+            event_id INTEGER NOT NULL,
+            championship_id INTEGER NOT NULL,
+            championship_order INTEGER,
+            coefficient REAL,
+            created_at timestamp,
+            updated_at timestamp,
+            deleted_at timestamp,
+            FOREIGN KEY(championship_id) REFERENCES championships(id),
+            FOREIGN KEY(event_id) REFERENCES events(id))''')
 
         connection.commit()
 

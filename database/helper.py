@@ -129,3 +129,31 @@ def select_codrivers(database):
         raise e
     finally:
         connection.close()
+
+
+def select_nationalities(database):
+
+    connection = sqlite3.connect(database)
+
+    try:
+
+        cursor = connection.cursor()
+
+        cursor.execute("""SELECT id
+            FROM nationalities
+            ORDER BY id DESC""")
+
+        rows = cursor.fetchall()
+
+        nationality_ids_list = []
+
+        for row in rows:
+            nationality_ids_list.append(row[0])
+
+        return nationality_ids_list
+
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()

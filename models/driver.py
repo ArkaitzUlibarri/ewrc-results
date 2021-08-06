@@ -34,7 +34,18 @@ class Driver:
         self.deleted_at = None
 
     def get_tuple(self):
-        self.tuple = (self.id, self.fullname, self.name, self.lastname, self.birthdate, self.deathdate, self.nationality, self.created_at, self.updated_at, self.deleted_at)
+        self.tuple = (
+            self.id,
+            self.fullname,
+            self.name,
+            self.lastname,
+            self.birthdate,
+            self.deathdate,
+            self.nationality,
+            self.created_at,
+            self.updated_at,
+            self.deleted_at
+        )
 
         print(self.tuple)
 
