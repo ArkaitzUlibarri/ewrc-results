@@ -4,11 +4,11 @@ import os
 import sqlite3
 
 
-def seeder(db_path):
+def championship_points(db_path):
     package_dir = os.path.abspath(os.path.dirname(__file__))
 
     # Opening JSON file 
-    f = open(os.path.join(package_dir, 'championshipPoints.json'), )
+    f = open(os.path.join(package_dir, 'seeders/championshipPoints.json'), )
 
     # returns JSON object as a dictionary
     data = json.load(f)
@@ -46,3 +46,5 @@ def seeder(db_path):
 
     # Closing file 
     f.close()
+
+    print("Seeder Finished")

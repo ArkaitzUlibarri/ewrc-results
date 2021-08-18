@@ -7,7 +7,7 @@ from models.driver import Driver
 from models.result import Result
 
 
-def insert_profiles(base_url, db_path, driver_list, category):
+def insert_drivers(base_url, db_path, driver_list, category):
 	current_file = os.path.basename(__file__)
 	current_file_name = os.path.splitext(current_file)[0]
 
