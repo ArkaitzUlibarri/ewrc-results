@@ -37,7 +37,7 @@ def insert_entries(base_url, db_path, event_ids_dict):
 						entry = Entry(event_id, tr)
 						if entry.driver_id:
 							connection.execute('''INSERT INTO entries 
-							(event_id,car_number,driver_id,codriver_id,team,car,plate,tyres,category,startlist_m,championship,created_at,updated_at,deleted_at)
+							(event_id,car_number,driver_id,codriver_id,car,team,plate,tyres,category,startlist_m,championship,created_at,updated_at,deleted_at)
 							VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', entry.get_tuple())
 
 					connection.commit()

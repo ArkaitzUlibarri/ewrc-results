@@ -32,7 +32,7 @@ def insert_codrivers(base_url, db_path, codriver_list, category):
 				if doc("main > div").eq(0).hasClass("profile"):
 					# Header - Codriver Info
 					codriver = Driver(doc, codriver_id)
-					connection.execute('''INSERT INTO codrivers 
+					connection.execute('''REPLACE INTO codrivers 
 					(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at) 
 					VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.get_tuple())
 

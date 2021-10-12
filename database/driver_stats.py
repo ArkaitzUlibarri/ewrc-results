@@ -100,7 +100,8 @@ def drivers_results(database, season, code):
         cursor.execute("""SELECT d.fullname,COUNT(r.result) as count
             FROM results AS r
             INNER JOIN drivers AS d on d.id = r.driver_id
-            WHERE r.season is :season and """ + condition + """
+            INNER JOIN events AS e on r.event_id = e.id AND e.season is :season
+            WHERE """ + condition + """
             GROUP BY d.fullname
             ORDER BY count DESC""", {"season": season})
 
@@ -130,10 +131,9 @@ def drivers_in_points(database, season, points_position):
 
         cursor.execute("""SELECT d.fullname,r.driver_id
         FROM results AS r
-        INNER JOIN events AS e ON r.event_id = e.id
+        INNER JOIN events AS e ON r.event_id = e.id AND e.season is :season
         INNER JOIN drivers AS d ON r.driver_id = d.id
-        WHERE r.season is :season 
-        AND CAST(r.result AS INTEGER) <= :points_position 
+        WHERE CAST(r.result AS INTEGER) <= :points_position 
         AND r.result  GLOB '*[0-9]*'
         GROUP BY r.driver_id""", {"season": season, "points_position": points_position})
 
@@ -160,7 +160,7 @@ def full_results_by_driver(database, season, driver_id):
             LEFT JOIN results AS r on e.id = r.event_id
             LEFT JOIN drivers AS d on r.driver_id = d.id
             LEFT JOIN codrivers AS co on r.codriver_id = co.id 
-            WHERE  e.season = :season and d.id = :driver_id
+            WHERE e.season = :season and d.id = :driver_id
             ORDER BY e.season,e.season_event_id""", {"season": season, "driver_id": driver_id})
 
         return cursor.fetchall()

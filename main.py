@@ -36,8 +36,12 @@ for item in season_list:
 # Events
 season_page.insert_events(app.base_url, db_path, start_season, "1-wrc")
 
-# Entries
+# Select Events Data
 event_ids_dict = db_helper.select_events(db_path, start_season)
+driver_list = db_helper.select_drivers(db_path)
+codriver_list = db_helper.select_codrivers(db_path)
+
+# Entries
 entry_page.insert_entries(app.base_url, db_path, event_ids_dict)
 
 # Event Photos
@@ -49,12 +53,10 @@ event_stats_page.insert_event_stats(app.base_url, db_path, event_ids_dict)
 # Timetable
 event_timetable_page.get_timetable(app.base_url, db_path, event_ids_dict)
 
-# Drivers & Results
-driver_list = db_helper.select_drivers(db_path)
+# Drivers
 profile_page.insert_drivers(app.base_url, db_path, driver_list, app.category)
 
 # Codrivers
-codriver_list = db_helper.select_codrivers(db_path)
 coprofile_page.insert_codrivers(app.base_url, db_path, codriver_list, app.category)
 
 print('Finished')

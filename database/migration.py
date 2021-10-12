@@ -22,6 +22,7 @@ def migrate(db_path):
             dates TEXT,
             entries TEXT,
             finish TEXT,
+            timetable JSON NOT NULL,
             created_at timestamp,
             updated_at timestamp,
             deleted_at timestamp)''')
@@ -53,14 +54,12 @@ def migrate(db_path):
         cursor.execute('''CREATE TABLE IF NOT EXISTS results(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             event_id INTEGER NOT NULL,
+            car_number TEXT,
             driver_id INTEGER NOT NULL,
             codriver_id INTEGER,
-            season INTEGER NOT NULL,
-            car_number TEXT,
             car TEXT NOT NULL,
             team TEXT,
             plate TEXT,
-            chassis TEXT,
             category TEXT,
             result TEXT,
             created_at timestamp,

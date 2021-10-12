@@ -84,7 +84,7 @@ def select_drivers(database):
 
         cursor = connection.cursor()
 
-        cursor.execute("SELECT DISTINCT driver_id FROM scratchs")
+        cursor.execute("SELECT DISTINCT driver_id FROM entries")
 
         rows = cursor.fetchall()
 
@@ -132,7 +132,6 @@ def select_codrivers(database):
 
 
 def select_nationalities(database):
-
     connection = sqlite3.connect(database)
 
     try:

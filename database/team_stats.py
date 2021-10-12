@@ -50,7 +50,8 @@ def teams_results(database, season, code):
 
         cursor.execute("""SELECT r.car,r.team,COUNT(r.team) as count
         FROM results AS r
-        WHERE r.season is :season and """ + condition + """
+        INNER JOIN events AS e ON r.event_id = e.id AND e.season is :season
+        WHERE """ + condition + """
         GROUP BY r.team
         ORDER BY count DESC""", {"season": season})
 

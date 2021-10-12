@@ -1,4 +1,6 @@
 import os
+import json
+import datetime
 import sys
 import requests
 import sqlite3
@@ -30,6 +32,7 @@ def get_timetable(base_url, db_path, event_ids_dict):
                 day = ""
                 event_legs = len(timetable('div.text-muted'))
 
+                timetable_list = list()
                 for div in timetable('div.harm.d-flex').items():
                     pending_legs = len(div.next_all('div.text-muted'))
                     leg = event_legs - pending_legs
@@ -41,10 +44,58 @@ def get_timetable(base_url, db_path, event_ids_dict):
                     if div('div.harm-ss').find('i'):
                         service_name = div('div.harm-stage').text()
 
-                        print(day + " " + hour + " Leg: " + str(leg) + " Service: " + service_name)
+                        timetable_item = {
+                            "day": day,
+                            "hour": hour,
+                            "leg": leg,
+                            "type": "Service",
+                            "number": None,
+                            "name": service_name,
+                            "distance": None
+                        }
+
                     else:
                         number = div('div.harm-ss').text()
                         stage_name = div('div.harm-stage').text()
                         distance = div('div.harm-km').text()
 
-                        print(day + " " + hour + " Leg: " + str(leg) + " Stage: " + number + " " + stage_name + " " + distance)
+                        timetable_item = {
+                            "day": day,
+                            "hour": hour,
+                            "leg": leg,
+                            "type": "Stage",
+                            "number": number,
+                            "name": stage_name,
+                            "distance": distance
+                        }
+
+                    timetable_list.append(timetable_item)
+
+                save_timetable(db_path, timetable_list, event_id)
+
+
+def save_timetable(db_path, timetable_item, event_id):
+    connection = sqlite3.connect(db_path)
+
+    try:
+
+        cursor = connection.cursor()
+
+        update = '''UPDATE events
+        SET timetable = :timetable,
+            updated_at = :updated_at
+        WHERE
+            id = :id'''
+
+        cursor.execute(update, {
+            "timetable": json.dumps(timetable_item),
+            "updated_at": datetime.datetime.now(),
+            "id": event_id
+        })
+        connection.commit()
+
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()

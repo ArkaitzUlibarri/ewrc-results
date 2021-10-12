@@ -13,11 +13,11 @@ class Entry:
 
     def __init__(self, event_id, row):
 
-        delimiter = ','
         car_number = row('td:first')
         entry = row('td.startlist-entry')
         driver = entry.find('div.startlist-driver').eq(0)
         codriver = entry.find('div.startlist-driver').eq(1)
+        car_image = row('td.startlist-icon').find('img').attr('src')
         car = row("td.font-weight-bold.lh-130")
         team = car.find('span')
         plate = row("td.startlist-team").find('a')
@@ -36,6 +36,7 @@ class Entry:
         if row('div.startlist-driver:last > a').attr('href'):
             self.codriver_id = get_href_id(codriver.find('a'))
 
+        self.car_image = car_image
         self.car = car.clone().find('span').remove().end().text()
 
         self.team = None
@@ -50,6 +51,7 @@ class Entry:
         if plate:
             self.plate = plate.text()
         if tyres:
+            self.tyre_image = tyres.attr('src')
             self.tyres = get_tyres(tyres)
         if category.text():
             self.category = category.text()
@@ -71,8 +73,8 @@ class Entry:
             self.car_number,
             self.driver_id,
             self.codriver_id,
-            self.team,
             self.car,
+            self.team,
             self.plate,
             self.tyres,
             self.category,

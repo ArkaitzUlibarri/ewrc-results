@@ -34,7 +34,7 @@ def insert_drivers(base_url, db_path, driver_list, category):
 
 					# Header - Driver Info
 					driver = Driver(doc, driver_id)
-					connection.execute('''INSERT INTO drivers 
+					connection.execute('''REPLACE INTO drivers 
 					(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at)
 					VALUES (?,?,?,?,?,?,?,?,?,?)''', driver.get_tuple())
 
@@ -44,10 +44,10 @@ def insert_drivers(base_url, db_path, driver_list, category):
 						starts = season.nextAll('div.profile-starts').eq(0)
 
 						for start in starts('div.profile-start-line').items():
-							result = Result(driver.id, season, start)
-							connection.execute('''INSERT INTO results 
-							(event_id,driver_id,codriver_id,season,car_number,car,plate,team,chassis,category,result,created_at,updated_at,deleted_at)
-							VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', result.get_tuple())
+							result = Result(driver.id, start)
+							connection.execute('''REPLACE INTO results 
+							(event_id,car_number,driver_id,codriver_id,car,team,plate,category,result,created_at,updated_at,deleted_at)
+							VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''', result.get_tuple())
 
 				connection.commit()
 

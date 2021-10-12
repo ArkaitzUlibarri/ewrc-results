@@ -1,5 +1,5 @@
 import datetime
-
+import json
 
 class Event:
 
@@ -12,6 +12,7 @@ class Event:
         self.get_event_info(item)
         self.get_event_surface(item)
         self.get_event_championships(item)
+        self.timetable = json.dumps({})
         self.set_timestamps()
 
     def get_event_id(self, item):
@@ -84,7 +85,7 @@ class Event:
             if coefficient_delimiter in championship:
                 start = championship.find(coefficient_delimiter) + len(coefficient_delimiter)
                 end = championship.find(")", start)
-                coefficient = float(championship[start: end].strip().replace(',','.'))
+                coefficient = float(championship[start: end].strip().replace(',', '.'))
 
             event_championship_dict = {
                 'event_id': self.event_id,
@@ -116,6 +117,7 @@ class Event:
             self.dates,
             self.entries,
             self.finish,
+            self.timetable,
             self.created_at,
             self.updated_at,
             self.deleted_at
