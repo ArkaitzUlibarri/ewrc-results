@@ -1,6 +1,7 @@
 import datetime
 import json
 
+
 class Event:
 
     def __init__(self, season, item, index):
@@ -61,6 +62,13 @@ class Event:
         self.snow = "snow" in info
         self.ice = "ice" in info
 
+        self.surface = {
+            "asphalt": self.asphalt,
+            "gravel": self.gravel,
+            "snow": self.snow,
+            "ice": self.ice
+        }
+
     def get_event_championships(self, item):
         self.sections = list()
         event_championships = item(".event-sections a").items()
@@ -110,10 +118,7 @@ class Event:
             self.season_event_id,
             self.edition,
             self.name,
-            self.asphalt,
-            self.gravel,
-            self.snow,
-            self.ice,
+            self.surface,
             self.dates,
             self.entries,
             self.finish,

@@ -164,8 +164,8 @@ def insert_events(base_url, db_path, start_season, championship):
 
                 event_query = '''
                     REPLACE INTO events
-                    (id,season,season_event_id,edition,name,asphalt,gravel,snow,ice,dates,entries,finish,timetable,created_at,updated_at,deleted_at)
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
+                    (id,season,season_event_id,edition,name,surface,dates,entries,finish,timetable,created_at,updated_at,deleted_at)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'''
 
                 event_championship_query = '''
                     INSERT INTO event_championship
