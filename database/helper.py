@@ -133,23 +133,38 @@ def select_codrivers(database):
 
 def select_nationalities(database):
     connection = sqlite3.connect(database)
+    connection.row_factory = sqlite3.Row
 
     try:
 
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT id
+        cursor.execute("""SELECT *
             FROM nationalities
             ORDER BY id DESC""")
 
-        rows = cursor.fetchall()
+        return cursor.fetchall()
 
-        nationality_ids_list = []
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()
 
-        for row in rows:
-            nationality_ids_list.append(row[0])
 
-        return nationality_ids_list
+def select_championships(database):
+    connection = sqlite3.connect(database)
+    connection.row_factory = sqlite3.Row
+
+    try:
+
+        cursor = connection.cursor()
+
+        cursor.execute("""SELECT *
+            FROM championships
+            ORDER BY id DESC""")
+
+        return cursor.fetchall()
 
     except Exception as e:
         connection.rollback()

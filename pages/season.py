@@ -164,21 +164,14 @@ def insert_events(base_url, db_path, start_season, championship):
 
                 event_query = '''
                     REPLACE INTO events
-                    (id,season,season_event_id,edition,name,surface,dates,entries,finish,timetable,created_at,updated_at,deleted_at)
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)'''
-
-                event_championship_query = '''
-                    INSERT INTO event_championship
-                    (event_id,championship_id,championship_order,coefficient,created_at,updated_at,deleted_at)
-                    VALUES (?,?,?,?,?,?,?)'''
+                    (id,season,season_event_id,edition,name,surface,dates,entries,finish,timetable,championship,created_at,updated_at,deleted_at)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
 
                 # Events
                 events = doc.items(".season-event")
                 for index, event in enumerate(events, start=1):
                     rally = Event(season, event, index)
                     connection.execute(event_query, rally.get_tuple())
-                    for section in rally.sections:
-                        connection.execute(event_championship_query, list(section.values()))
 
                 connection.commit()
 

@@ -28,21 +28,18 @@ start_season = season_list[-1]
 for item in season_list:
     season_page.insert_nationalities(app.base_url, db_path, item)
 
+nationality_list = db_helper.select_nationalities(db_path)
+
 for item in season_list:
-    nationality_list = db_helper.select_nationalities(db_path)
-    for nationality_id in nationality_list:
-        season_page.insert_championships(app.base_url, db_path, item, nationality_id)
+    for index, row in enumerate(nationality_list, start=1):
+        season_page.insert_championships(app.base_url, db_path, item, row['id'])
 
 # Events
-season_page.insert_events(app.base_url, db_path, start_season, "1-wrc")
+# season_page.insert_events(app.base_url, db_path, start_season, "1-wrc")
 
 # Select Events Data
+championship_list = db_helper.select_championships(db_path)
 event_ids_dict = db_helper.select_events(db_path, start_season)
-driver_list = db_helper.select_drivers(db_path)
-codriver_list = db_helper.select_codrivers(db_path)
-
-# Entries
-entry_page.insert_entries(app.base_url, db_path, event_ids_dict)
 
 # Event Photos
 event_photos_page.insert_event_photos(app.base_url, db_path, event_ids_dict)
@@ -50,8 +47,15 @@ event_photos_page.insert_event_photos(app.base_url, db_path, event_ids_dict)
 # Event Stats
 event_stats_page.insert_event_stats(app.base_url, db_path, event_ids_dict)
 
-# Timetable
+# Event Timetable
 event_timetable_page.get_timetable(app.base_url, db_path, event_ids_dict)
+
+# Entries
+entry_page.insert_entries(app.base_url, db_path, event_ids_dict, championship_list)
+
+# Select Entries Data
+driver_list = db_helper.select_drivers(db_path)
+codriver_list = db_helper.select_codrivers(db_path)
 
 # Drivers
 profile_page.insert_drivers(app.base_url, db_path, driver_list, app.category)

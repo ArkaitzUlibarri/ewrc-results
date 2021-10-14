@@ -20,6 +20,7 @@ def migrate(db_path):
             entries TEXT,
             finish TEXT,
             timetable JSON NOT NULL,
+            championship JSON NOT NULL,
             created_at timestamp,
             updated_at timestamp,
             deleted_at timestamp)''')
@@ -105,7 +106,7 @@ def migrate(db_path):
             tyres TEXT,
             category TEXT,
             startlist_m TEXT,
-            championship TEXT,
+            championship JSON NOT NULL,
             created_at timestamp,
             updated_at timestamp,
             deleted_at timestamp,
@@ -127,8 +128,8 @@ def migrate(db_path):
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             code TEXT NOT NULL,
             season INTEGER NOT NULL,
-            overall_position_scoring json NOT NULL,
-            group_position_scoring json NOT NULL,
+            overall_position_scoring JSON NOT NULL,
+            group_position_scoring JSON NOT NULL,
             comments TEXT,
             created_at timestamp,
             updated_at timestamp,
@@ -149,18 +150,6 @@ def migrate(db_path):
             created_at timestamp,
             updated_at timestamp,
             deleted_at timestamp)''')
-
-        cursor.execute('''CREATE TABLE IF NOT EXISTS event_championship(
-            id INTEGER NOT NULL PRIMARY KEY,
-            event_id INTEGER NOT NULL,
-            championship_id INTEGER NOT NULL,
-            championship_order INTEGER,
-            coefficient REAL,
-            created_at timestamp,
-            updated_at timestamp,
-            deleted_at timestamp,
-            FOREIGN KEY(championship_id) REFERENCES championships(id),
-            FOREIGN KEY(event_id) REFERENCES events(id))''')
 
         connection.commit()
 

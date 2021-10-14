@@ -13,7 +13,7 @@ class Event:
         self.get_event_info(item)
         self.get_event_surface(item)
         self.get_event_championships(item)
-        self.timetable = json.dumps({})
+        self.timetable = {}
         self.set_timestamps()
 
     def get_event_id(self, item):
@@ -96,13 +96,9 @@ class Event:
                 coefficient = float(championship[start: end].strip().replace(',', '.'))
 
             event_championship_dict = {
-                'event_id': self.event_id,
                 'championship_id': championship_id,
                 'championship_order': championship_order,
                 'coefficient': coefficient,
-                'created_at': datetime.datetime.now(),
-                'updated_at': datetime.datetime.now(),
-                'deleted_at': None
             }
             self.sections.append(event_championship_dict)
 
@@ -118,11 +114,12 @@ class Event:
             self.season_event_id,
             self.edition,
             self.name,
-            self.surface,
+            json.dumps(self.surface),
             self.dates,
             self.entries,
             self.finish,
-            self.timetable,
+            json.dumps(self.timetable),
+            json.dumps(self.sections),
             self.created_at,
             self.updated_at,
             self.deleted_at

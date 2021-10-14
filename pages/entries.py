@@ -6,7 +6,7 @@ from pyquery import PyQuery as pq
 from models.entry import Entry
 
 
-def insert_entries(base_url, db_path, event_ids_dict):
+def insert_entries(base_url, db_path, event_ids_dict, championship_list):
 	current_file = os.path.basename(__file__)
 	current_file_name = os.path.splitext(current_file)[0]
 
@@ -33,12 +33,14 @@ def insert_entries(base_url, db_path, event_ids_dict):
 					startlist = doc("table.results")
 					startlist('td.entry-sct > span.text-danger').parents('tr').remove()  # Remove course cars
 
-					for tr in startlist('tr').items():
-						entry = Entry(event_id, tr)
-						if entry.driver_id:
-							connection.execute('''INSERT INTO entries 
+					insert = '''INSERT INTO entries 
 							(event_id,car_number,driver_id,codriver_id,car,team,plate,tyres,category,startlist_m,championship,created_at,updated_at,deleted_at)
-							VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', entry.get_tuple())
+							VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
+
+					for tr in startlist('tr').items():
+						entry = Entry(event_id, tr, championship_list)
+						if entry.driver_id:
+							connection.execute(insert, entry.get_tuple())
 
 					connection.commit()
 

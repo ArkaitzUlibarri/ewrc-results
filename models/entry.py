@@ -1,4 +1,5 @@
 import datetime
+import json
 
 
 def get_href_id(a_tag):
@@ -9,9 +10,16 @@ def get_tyres(img_tag):
     return img_tag.attr('src').split('/')[5].split('.')[0].split('_')[0].upper()
 
 
+def search_by_key(list_haystack, needle, search_key, return_key):
+    for index, row in enumerate(list_haystack, start=1):
+        if row[search_key] == needle:
+            return row[return_key]
+    return False
+
+
 class Entry:
 
-    def __init__(self, event_id, row):
+    def __init__(self, event_id, row, championship_list):
 
         car_number = row('td:first')
         entry = row('td.startlist-entry')
@@ -44,7 +52,7 @@ class Entry:
         self.tyres = None
         self.category = None
         self.startlist_m = None
-        self.championship = None
+        self.championship = {}
 
         if team:
             self.team = team.text()
@@ -58,7 +66,11 @@ class Entry:
         if startlist_m.text():
             self.startlist_m = startlist_m.text()
         if championship.html():
-            self.championship = championship.text() 
+            entry_championship_list = list()
+            for championship_name in championship.text().splitlines():
+                championship_id = search_by_key(championship_list, championship_name, 'name', 'id')
+                entry_championship_list.append(championship_id)
+            self.championship = {'championship': entry_championship_list}
 
         self.set_timestamps()
 
@@ -79,7 +91,7 @@ class Entry:
             self.tyres,
             self.category,
             self.startlist_m,
-            self.championship,
+            json.dumps(self.championship),
             self.created_at,
             self.updated_at,
             self.deleted_at
