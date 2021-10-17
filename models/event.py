@@ -70,7 +70,8 @@ class Event:
         }
 
     def get_event_championships(self, item):
-        self.sections = list()
+        self.sections = {}
+        sections = list()
         event_championships = item(".event-sections a").items()
         for event_championship in event_championships:
 
@@ -95,12 +96,12 @@ class Event:
                 end = championship.find(")", start)
                 coefficient = float(championship[start: end].strip().replace(',', '.'))
 
-            event_championship_dict = {
-                'championship_id': championship_id,
-                'championship_order': championship_order,
+            sections.append({
+                'id': championship_id,
+                'order': championship_order,
                 'coefficient': coefficient,
-            }
-            self.sections.append(event_championship_dict)
+            })
+        self.sections = {'championships': sections}
 
     def set_timestamps(self):
         self.created_at = datetime.datetime.now()
