@@ -74,7 +74,7 @@ def get_timetable(base_url, db_path, event_ids_dict):
                 save_timetable(db_path, timetable_list, event_id)
 
 
-def save_timetable(db_path, timetable_item, event_id):
+def save_timetable(db_path, timetable_list, event_id):
     connection = sqlite3.connect(db_path)
 
     try:
@@ -88,7 +88,7 @@ def save_timetable(db_path, timetable_item, event_id):
             id = :id'''
 
         cursor.execute(update, {
-            "timetable": json.dumps(timetable_item),
+            "timetable": json.dumps({"itinerary": timetable_list}),
             "updated_at": datetime.datetime.now(),
             "id": event_id
         })
