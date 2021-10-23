@@ -48,11 +48,11 @@ def teams_results(database, season, code):
         connection.row_factory = sqlite3.Row
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT r.car,r.team,COUNT(r.team) as count
-        FROM results AS r
-        INNER JOIN events AS e ON r.event_id = e.id AND e.season is :season
+        cursor.execute("""SELECT e.car,e.team,COUNT(e.team) as count
+        FROM entries AS e
+        INNER JOIN events AS ev ON e.event_id = ev.id AND ev.season is :season
         WHERE """ + condition + """
-        GROUP BY r.team
+        GROUP BY e.team
         ORDER BY count DESC""", {"season": season})
 
         return cursor.fetchall()
