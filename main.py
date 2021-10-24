@@ -5,6 +5,7 @@ from database import seeder
 from database import helper as db_helper
 from pages import season as season_page
 from pages import entries as entry_page
+from pages import final as result_page
 from pages import eventstats as event_stats_page
 from pages import photo as event_photos_page
 from pages import profile as profile_page
@@ -52,6 +53,9 @@ event_timetable_page.get_timetable(app.base_url, db_path, event_ids_dict)
 
 # Entries
 entry_page.insert_entries(app.base_url, db_path, event_ids_dict, championship_list)
+
+# Results
+result_page.insert_results(app.base_url, db_path, event_ids_dict)
 
 # Select Entries Data
 driver_list = db_helper.select_drivers(db_path)
