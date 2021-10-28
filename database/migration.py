@@ -49,25 +49,6 @@ def migrate(db_path):
             updated_at timestamp,
             deleted_at timestamp)''')
 
-        cursor.execute('''CREATE TABLE IF NOT EXISTS results(
-            id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            event_id INTEGER NOT NULL,
-            car_number TEXT,
-            driver_id INTEGER NOT NULL,
-            codriver_id INTEGER,
-            car TEXT NOT NULL,
-            team TEXT,
-            plate TEXT,
-            category TEXT,
-            result TEXT,
-            created_at timestamp,
-            updated_at timestamp,
-            deleted_at timestamp,
-            FOREIGN KEY(driver_id) REFERENCES drivers(id),
-            FOREIGN KEY(codriver_id) REFERENCES codrivers(id),
-            FOREIGN KEY(event_id) REFERENCES events(id),
-            CONSTRAINT results_unique UNIQUE (event_id,driver_id,codriver_id))''')
-
         cursor.execute('''CREATE TABLE IF NOT EXISTS scratchs(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             event_id INTEGER NOT NULL,
@@ -105,6 +86,7 @@ def migrate(db_path):
             plate TEXT,
             tyres TEXT,
             category TEXT,
+            result TEXT,
             startlist_m TEXT,
             championship JSON NOT NULL,
             created_at timestamp,

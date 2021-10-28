@@ -38,17 +38,6 @@ def insert_drivers(base_url, db_path, driver_list, category):
 					(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at)
 					VALUES (?,?,?,?,?,?,?,?,?,?)''', driver.get_tuple())
 
-					# Starts-WRC
-					for season in doc.items("h5.profile-season"):
-
-						starts = season.nextAll('div.profile-starts').eq(0)
-
-						for start in starts('div.profile-start-line').items():
-							result = Result(driver.id, start)
-							connection.execute('''REPLACE INTO results 
-							(event_id,car_number,driver_id,codriver_id,car,team,plate,category,result,created_at,updated_at,deleted_at)
-							VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''', result.get_tuple())
-
 				connection.commit()
 
 			except Exception as e:
