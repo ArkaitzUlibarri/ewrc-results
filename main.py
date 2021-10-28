@@ -36,7 +36,7 @@ for item in season_list:
         season_page.insert_championships(app.base_url, db_path, item, row['id'])
 
 # Events
-# season_page.insert_events(app.base_url, db_path, start_season, "1-wrc")
+season_page.insert_events(app.base_url, db_path, start_season, "1-wrc")
 
 # Select Events Data
 championship_list = db_helper.select_championships(db_path)
