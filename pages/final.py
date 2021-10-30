@@ -52,14 +52,16 @@ def insert_results(base_url, db_path, event_ids_dict):
                             result = tr('td.font-weight-bold.text-left').not_(".final-results-number").text().replace('.', '')
 
                         update_statement = '''UPDATE entries
-                                    SET result = :result
+                                    SET result = :result,
+                                        entry_info_id = :entry_info_id,
+                                        updated_at = :updated_at
                                     WHERE driver_id = :driver_id 
                                     AND codriver_id = :codriver_id 
-                                    AND event_id = :event_id
-                                    AND updated_at = :updated_at;'''
+                                    AND event_id = :event_id;'''
 
                         cursor.execute(update_statement, {
                             "result": result,
+                            "entry_info_id": int(entry_info_id),
                             "driver_id": entry_info["driver_id"],
                             "codriver_id": entry_info["codriver_id"],
                             "event_id": event_id,
