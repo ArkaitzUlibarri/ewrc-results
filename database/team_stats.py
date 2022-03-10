@@ -1,8 +1,9 @@
 import sqlite3
+import definitions
 
 
-def teams_stats(database, season, table):
-    connection = sqlite3.connect(database)
+def teams_stats(season, table):
+    connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
 
@@ -26,22 +27,22 @@ def teams_stats(database, season, table):
         connection.close()
 
 
-def teams_scratchs(database, season):
-    return teams_stats(database, season, 'scratchs')
+def teams_scratchs(season):
+    return teams_stats(season, 'scratchs')
 
 
-def teams_leaders(database, season):
-    return teams_stats(database, season, 'leaders')
+def teams_leaders(season):
+    return teams_stats(season, 'leaders')
 
 
-def teams_results(database, season, code):
+def teams_results(season, code):
     condition = ""
     if code == "winners":
-        condition = "(r.result = '1')"
+        condition = "(e.result = '1')"
     elif code == "podiums":
-        condition = "(r.result = '1' or r.result = '2' or r.result = '3')"
+        condition = "(e.result = '1' or e.result = '2' or e.result = '3')"
 
-    connection = sqlite3.connect(database)
+    connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
 
@@ -64,9 +65,9 @@ def teams_results(database, season, code):
         connection.close()
 
 
-def teams_podiums(database, season):
-    return teams_results(database, season, 'podiums')
+def teams_podiums(season):
+    return teams_results(season, 'podiums')
 
 
-def teams_winners(database, season):
-    return teams_results(database, season, 'winners')
+def teams_winners(season):
+    return teams_results(season, 'winners')

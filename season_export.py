@@ -1,5 +1,6 @@
 import os
 import json
+import definitions
 from config import app
 from pptx import Presentation
 from pptx.util import Cm
@@ -86,35 +87,32 @@ def get_driver_season_stats(driver_id, results, points_dict):
 # Clear console
 os.system("cls")
 
-package_dir = os.path.abspath(os.path.dirname(__file__))
-db_path = os.path.join(package_dir, 'database', app.database + '.db')
-
 # Config
 season = str(1997)
 
 # Queries - Drivers
-drivers_scratchs_stats = driver_stats.drivers_scratchs(db_path, season)
-drivers_leaders_stats = driver_stats.drivers_leaders(db_path, season)
-drivers_winners_stats = driver_stats.drivers_winners(db_path, season)
-drivers_podiums_stats = driver_stats.drivers_podiums(db_path, season)
-full_season_winners = driver_stats.season_winners(db_path, season)
+drivers_scratchs_stats = driver_stats.drivers_scratchs(season)
+drivers_leaders_stats = driver_stats.drivers_leaders(season)
+drivers_winners_stats = driver_stats.drivers_winners(season)
+drivers_podiums_stats = driver_stats.drivers_podiums(season)
+full_season_winners = driver_stats.season_winners(season)
 
 # Queries - Teams
-teams_scratchs_stats = team_stats.teams_scratchs(db_path, season)
-teams_leaders_stats = team_stats.teams_leaders(db_path, season)
-teams_winners_stats = team_stats.teams_winners(db_path, season)
-teams_podiums_stats = team_stats.teams_podiums(db_path, season)
+teams_scratchs_stats = team_stats.teams_scratchs(season)
+teams_leaders_stats = team_stats.teams_leaders(season)
+teams_winners_stats = team_stats.teams_winners(season)
+teams_podiums_stats = team_stats.teams_podiums(season)
 
 # Queries - Points System
-driver_points_system_dict = json.loads(driver_stats.championship_points_system(db_path, season, 'drivers'))
+driver_points_system_dict = json.loads(driver_stats.championship_points_system(season, 'drivers'))
 
 # Obtain all the drivers which have scored points
 lowest_position = len(driver_points_system_dict)
-drivers_in_points_list = driver_stats.drivers_in_points(db_path, season, lowest_position)
+drivers_in_points_list = driver_stats.drivers_in_points(season, lowest_position)
 
 full_results = list()
 for index, row in enumerate(drivers_in_points_list, start=1):
-    results_by_driver_list = driver_stats.full_results_by_driver(db_path, season, row['driver_id'])
+    results_by_driver_list = driver_stats.full_results_by_driver(season, row['driver_id'])
     driver_results_dict = get_driver_season_stats(row['driver_id'], results_by_driver_list, driver_points_system_dict)
     full_results.append(driver_results_dict)
 full_results = sorted(full_results, key=lambda k: k['total_points'], reverse=True)
@@ -220,12 +218,10 @@ if len(teams_leaders_stats):
     write_table(table, ('Team', 'Leaders'), teams_leaders_stats)
 
 # Save PPT
-package_dir = os.path.abspath(os.path.dirname(__file__))
-export_folder = os.path.join(package_dir, 'storage', 'exports')
-if not os.path.exists(export_folder):
-    os.makedirs(export_folder)
+if not os.path.exists(definitions.EXPORT_FOLDER):
+    os.makedirs(definitions.EXPORT_FOLDER)
 
-export_path = os.path.join(package_dir, 'storage', 'exports', 'WRC_' + season + '.pptx')
+export_path = os.path.join(definitions.ROOT_DIR, 'storage', 'exports', 'WRC_' + season + '.pptx')
 prs.save(export_path)
 
 print('Finished ' + export_path + ' export')

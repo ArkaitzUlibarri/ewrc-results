@@ -1,8 +1,8 @@
 import sqlite3
+import definitions
 
-
-def season_winners(database, season):
-    connection = sqlite3.connect(database)
+def season_winners(season):
+    connection = sqlite3.connect(definitions.DB_PATH)
     try:
 
         cursor = connection.cursor()
@@ -29,8 +29,8 @@ def season_winners(database, season):
         connection.close()
 
 
-def championship_points_system(database, season, code):
-    connection = sqlite3.connect(database)
+def championship_points_system(season, code):
+    connection = sqlite3.connect(definitions.DB_PATH)
     try:
 
         connection.row_factory = sqlite3.Row
@@ -51,8 +51,8 @@ def championship_points_system(database, season, code):
         connection.close()
 
 
-def drivers_stats(database, season, table):
-    connection = sqlite3.connect(database)
+def drivers_stats(season, table):
+    connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
 
@@ -75,22 +75,22 @@ def drivers_stats(database, season, table):
         connection.close()
 
 
-def drivers_scratchs(database, season):
-    return drivers_stats(database, season, 'scratchs')
+def drivers_scratchs(season):
+    return drivers_stats(season, 'scratchs')
 
 
-def drivers_leaders(database, season):
-    return drivers_stats(database, season, 'leaders')
+def drivers_leaders(season):
+    return drivers_stats(season, 'leaders')
 
 
-def drivers_results(database, season, code):
+def drivers_results(season, code):
     condition = ""
     if code == "winners":
-        condition = "(r.result = '1')"
+        condition = "(e.result = '1')"
     elif code == "podiums":
-        condition = "(r.result = '1' or r.result = '2' or r.result = '3')"
+        condition = "(e.result = '1' or e.result = '2' or e.result = '3')"
 
-    connection = sqlite3.connect(database)
+    connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
 
@@ -114,16 +114,16 @@ def drivers_results(database, season, code):
         connection.close()
 
 
-def drivers_podiums(database, season):
-    return drivers_results(database, season, 'podiums')
+def drivers_podiums(season):
+    return drivers_results(season, 'podiums')
 
 
-def drivers_winners(database, season):
-    return drivers_results(database, season, 'winners')
+def drivers_winners(season):
+    return drivers_results(season, 'winners')
 
 
-def drivers_in_points(database, season, points_position):
-    connection = sqlite3.connect(database)
+def drivers_in_points(season, points_position):
+    connection = sqlite3.connect(definitions.DB_PATH)
     try:
 
         connection.row_factory = sqlite3.Row
@@ -146,8 +146,8 @@ def drivers_in_points(database, season, points_position):
         connection.close()
 
 
-def full_results_by_driver(database, season, driver_id):
-    connection = sqlite3.connect(database)
+def full_results_by_driver(season, driver_id):
+    connection = sqlite3.connect(definitions.DB_PATH)
     try:
 
         connection.row_factory = sqlite3.Row
