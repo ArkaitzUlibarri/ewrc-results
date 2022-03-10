@@ -2,50 +2,54 @@ import os
 import sys
 import requests
 import sqlite3
+import definitions
 from pyquery import PyQuery as pq
+
+from config import app
 from models.entry import Entry
 
 
-def insert_entries(base_url, db_path, event_ids_dict, championship_list):
-	current_file = os.path.basename(__file__)
-	current_file_name = os.path.splitext(current_file)[0]
+def get_current_filename():
+    return os.path.splitext(os.path.basename(__file__))[0]
 
-	for key in event_ids_dict:
-		for event_id in event_ids_dict[key]:
 
-			url = base_url + "/" + current_file_name + "/" + str(event_id) + "/"
+def insert_entries(event_ids_dict, championship_list):
+    for key in event_ids_dict:
+        for event_id in event_ids_dict[key]:
 
-			try:
-				print(url)
-				response = requests.get(url)
-			except requests.exceptions.RequestException as e:
-				print(e)
-				sys.exit(1)
+            url = app.base_url + "/" + get_current_filename() + "/" + str(event_id) + "/"
 
-			if response.status_code == 200:
+            try:
+                print(url)
+                response = requests.get(url)
+            except requests.exceptions.RequestException as e:
+                print(e)
+                sys.exit(1)
 
-				doc = pq(response.text)
-				connection = sqlite3.connect(db_path)
+            if response.status_code == 200:
 
-				try:
+                doc = pq(response.text)
+                connection = sqlite3.connect(definitions.DB_PATH)
 
-					# Entries
-					startlist = doc("table.results")
-					startlist('td.entry-sct > span.text-danger').parents('tr').remove()  # Remove course cars
+                try:
 
-					insert = '''INSERT INTO entries 
-							(event_id,car_number,driver_id,codriver_id,car,team,plate,tyres,category,startlist_m,championship,created_at,updated_at,deleted_at)
-							VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
+                    # Entries
+                    startlist = doc.find("table.results").eq(0)
+                    startlist('td.entry-sct > span.text-danger').parents('tr').remove()  # Remove course cars
 
-					for tr in startlist('tr').items():
-						entry = Entry(event_id, tr, championship_list)
-						if entry.driver_id:
-							connection.execute(insert, entry.get_tuple())
+                    insert = '''INSERT INTO entries 
+                            (event_id,car_number,driver_id,codriver_id,car,team,plate,tyres,category,startlist_m,championship,created_at,updated_at,deleted_at)
+                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
 
-					connection.commit()
+                    for tr in startlist('tr').items():
+                        entry = Entry(event_id, tr, championship_list)
+                        if entry.driver_id:
+                            connection.execute(insert, entry.get_tuple())
 
-				except Exception as e:
-					connection.rollback()
-					raise e
-				finally:
-					connection.close()
+                    connection.commit()
+
+                except Exception as e:
+                    connection.rollback()
+                    raise e
+                finally:
+                    connection.close()

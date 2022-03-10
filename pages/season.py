@@ -3,15 +3,19 @@ import sys
 import requests
 import sqlite3
 import datetime
+import definitions
 from pyquery import PyQuery as pq
+
+from config import app
 from models.event import Event
 
 
-def get_seasons(base_url):
-    current_file = os.path.basename(__file__)
-    current_file_name = os.path.splitext(current_file)[0]
+def get_current_filename():
+    return os.path.splitext(os.path.basename(__file__))[0]
 
-    url = base_url + "/" + current_file_name + "/"
+
+def get_seasons():
+    url = app.base_url + "/" + get_current_filename() + "/"
 
     try:
         print(url)
@@ -41,11 +45,8 @@ def get_seasons(base_url):
             return list()
 
 
-def insert_nationalities(base_url, db_path, season):
-    current_file = os.path.basename(__file__)
-    current_file_name = os.path.splitext(current_file)[0]
-
-    url = base_url + "/" + current_file_name + "/" + str(season) + "/"
+def insert_nationalities(season):
+    url = app.base_url + "/" + get_current_filename() + "/" + str(season) + "/"
 
     try:
         print(url)
@@ -58,7 +59,7 @@ def insert_nationalities(base_url, db_path, season):
 
         doc = pq(response.text)
 
-        connection = sqlite3.connect(db_path)
+        connection = sqlite3.connect(definitions.DB_PATH)
 
         try:
             header = doc('.justify-content-start.season-nat')
@@ -90,11 +91,8 @@ def insert_nationalities(base_url, db_path, season):
             connection.close()
 
 
-def insert_championships(base_url, db_path, season, nationality_code):
-    current_file = os.path.basename(__file__)
-    current_file_name = os.path.splitext(current_file)[0]
-
-    url = base_url + "/" + current_file_name + "/" + str(season) + "/" + '?nat=' + str(nationality_code)
+def insert_championships(season, nationality_code):
+    url = app.base_url + "/" + get_current_filename() + "/" + str(season) + "/" + '?nat=' + str(nationality_code)
 
     try:
         print(url)
@@ -107,7 +105,7 @@ def insert_championships(base_url, db_path, season, nationality_code):
 
         doc = pq(response.text)
 
-        connection = sqlite3.connect(db_path)
+        connection = sqlite3.connect(definitions.DB_PATH)
 
         try:
             header = doc('.justify-content-start.season-sct')
@@ -139,13 +137,10 @@ def insert_championships(base_url, db_path, season, nationality_code):
             connection.close()
 
 
-def insert_events(base_url, db_path, start_season, championship):
-    current_file = os.path.basename(__file__)
-    current_file_name = os.path.splitext(current_file)[0]
-
+def insert_events(start_season, championship):
     for season in range(start_season, datetime.datetime.now().year + 1):
 
-        url = base_url + "/" + current_file_name + "/" + str(season) + "/" + championship + "/"
+        url = app.base_url + "/" + get_current_filename() + "/" + str(season) + "/" + championship + "/"
 
         try:
             print(url)
@@ -158,7 +153,7 @@ def insert_events(base_url, db_path, start_season, championship):
 
             doc = pq(response.text)
 
-            connection = sqlite3.connect(db_path)
+            connection = sqlite3.connect(definitions.DB_PATH)
 
             try:
 

@@ -2,18 +2,21 @@ import os
 import sys
 import requests
 import sqlite3
+import definitions
 from pyquery import PyQuery as pq
+
+from config import app
 from models.driver import Driver
-from models.result import Result
 
 
-def insert_drivers(base_url, db_path, driver_list, category):
-	current_file = os.path.basename(__file__)
-	current_file_name = os.path.splitext(current_file)[0]
+def get_current_filename():
+	return os.path.splitext(os.path.basename(__file__))[0]
 
+
+def insert_drivers(driver_list, category):
 	for driver_id in driver_list:
 
-		url = base_url + "/" + current_file_name + "/" + str(driver_id) + "/" + category
+		url = app.base_url + "/" + get_current_filename() + "/" + str(driver_id) + "/" + category
 
 		try:
 			print(url)
@@ -26,7 +29,7 @@ def insert_drivers(base_url, db_path, driver_list, category):
 
 			doc = pq(response.text)
 
-			connection = sqlite3.connect(db_path)
+			connection = sqlite3.connect(definitions.DB_PATH)
 
 			try:
 

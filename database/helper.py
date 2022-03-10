@@ -1,11 +1,14 @@
+import os
 import sqlite3
 import datetime
+import definitions
+from config import app
 
 
-def select_event(database, event_id):
+def select_event(event_id):
     event_ids_dict = {}
 
-    connection = sqlite3.connect(database)
+    connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
 
@@ -28,8 +31,8 @@ def select_event(database, event_id):
         connection.close()
 
 
-def select_events_info(database, event_id):
-    connection = sqlite3.connect(database)
+def select_events_info(event_id):
+    connection = sqlite3.connect(definitions.DB_PATH)
     connection.row_factory = sqlite3.Row
     try:
 
@@ -46,10 +49,10 @@ def select_events_info(database, event_id):
         connection.close()
 
 
-def select_events(database, start_season):
+def select_events(start_season):
     event_ids_dict = {}
 
-    connection = sqlite3.connect(database)
+    connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
 
@@ -76,9 +79,33 @@ def select_events(database, start_season):
     finally:
         connection.close()
 
+def select_events_without_results():
 
-def select_drivers(database):
-    connection = sqlite3.connect(database)
+    connection = sqlite3.connect(definitions.DB_PATH)
+
+    try:
+
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT event_id FROM entries WHERE result IS NULL GROUP BY event_id ORDER BY event_id ASC")
+
+        rows = cursor.fetchall()
+
+        event_ids_list = []
+
+        for row in rows:
+            event_ids_list.append(row[0])
+
+        return event_ids_list
+
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()
+
+def select_drivers():
+    connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
 
@@ -102,18 +129,14 @@ def select_drivers(database):
         connection.close()
 
 
-def select_codrivers(database):
-    connection = sqlite3.connect(database)
+def select_codrivers():
+    connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
 
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT DISTINCT entries.codriver_id
-            FROM entries
-            INNER JOIN scratchs on entries.driver_id = scratchs.driver_id
-            WHERE entries.codriver_id IS NOT NULL
-            ORDER BY entries.codriver_id""")
+        cursor.execute("SELECT DISTINCT driver_id FROM entries")
 
         rows = cursor.fetchall()
 
@@ -131,17 +154,15 @@ def select_codrivers(database):
         connection.close()
 
 
-def select_nationalities(database):
-    connection = sqlite3.connect(database)
+def select_nationalities():
+    connection = sqlite3.connect(definitions.DB_PATH)
     connection.row_factory = sqlite3.Row
 
     try:
 
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT *
-            FROM nationalities
-            ORDER BY id DESC""")
+        cursor.execute("SELECT * FROM nationalities ORDER BY id DESC")
 
         return cursor.fetchall()
 
@@ -152,17 +173,15 @@ def select_nationalities(database):
         connection.close()
 
 
-def select_championships(database):
-    connection = sqlite3.connect(database)
+def select_championships():
+    connection = sqlite3.connect(definitions.DB_PATH)
     connection.row_factory = sqlite3.Row
 
     try:
 
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT *
-            FROM championships
-            ORDER BY id DESC""")
+        cursor.execute("""SELECT * FROM championships ORDER BY id DESC""")
 
         return cursor.fetchall()
 

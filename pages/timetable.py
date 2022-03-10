@@ -4,17 +4,21 @@ import datetime
 import sys
 import requests
 import sqlite3
+import definitions
 from pyquery import PyQuery as pq
 
+from config import app
 
-def get_timetable(base_url, db_path, event_ids_dict):
-    current_file = os.path.basename(__file__)
-    current_file_name = os.path.splitext(current_file)[0]
 
+def get_current_filename():
+    return os.path.splitext(os.path.basename(__file__))[0]
+
+
+def get_timetable(event_ids_dict):
     for key in event_ids_dict:
         for event_id in event_ids_dict[key]:
 
-            url = base_url + "/" + current_file_name + "/" + str(event_id) + "/"
+            url = app.base_url + "/" + get_current_filename() + "/" + str(event_id) + "/"
 
             try:
                 print(url)
@@ -71,11 +75,11 @@ def get_timetable(base_url, db_path, event_ids_dict):
 
                     timetable_list.append(timetable_item)
 
-                save_timetable(db_path, timetable_list, event_id)
+                save_timetable(timetable_list, event_id)
 
 
-def save_timetable(db_path, timetable_list, event_id):
-    connection = sqlite3.connect(db_path)
+def save_timetable(timetable_list, event_id):
+    connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
 

@@ -2,44 +2,48 @@ import os
 import sys
 import requests
 import sqlite3
+import definitions
 from pyquery import PyQuery as pq
-from models.driver import Driver	
+
+from config import app
+from models.driver import Driver
 
 
-def insert_codrivers(base_url, db_path, codriver_list, category):
-	current_file = os.path.basename(__file__)
-	current_file_name = os.path.splitext(current_file)[0]
+def get_current_filename():
+    return os.path.splitext(os.path.basename(__file__))[0]
 
-	for codriver_id in codriver_list:
 
-		url = base_url + "/" + current_file_name + "/" + str(codriver_id) + "/" + category
+def insert_codrivers(codriver_list, category):
+    for codriver_id in codriver_list:
 
-		try:
-			print(url)
-			response = requests.get(url)
-		except requests.exceptions.RequestException as e:
-			print(e)
-			sys.exit(1)
+        url = app.base_url + "/" + get_current_filename() + "/" + str(codriver_id) + "/" + category
 
-		if response.status_code == 200:
+        try:
+            print(url)
+            response = requests.get(url)
+        except requests.exceptions.RequestException as e:
+            print(e)
+            sys.exit(1)
 
-			doc = pq(response.text)
+        if response.status_code == 200:
 
-			connection = sqlite3.connect(db_path)
+            doc = pq(response.text)
 
-			try:
+            connection = sqlite3.connect(definitions.DB_PATH)
 
-				if doc("main > div").eq(0).hasClass("profile"):
-					# Header - Codriver Info
-					codriver = Driver(doc, codriver_id)
-					connection.execute('''REPLACE INTO codrivers 
-					(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at) 
-					VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.get_tuple())
+            try:
 
-				connection.commit()
+                if doc("main > div").eq(0).hasClass("profile"):
+                    # Header - Codriver Info
+                    codriver = Driver(doc, codriver_id)
+                    connection.execute('''REPLACE INTO codrivers 
+                    (id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at) 
+                    VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.get_tuple())
 
-			except Exception as e:
-				connection.rollback()
-				raise e
-			finally:
-				connection.close()
+                connection.commit()
+
+            except Exception as e:
+                connection.rollback()
+                raise e
+            finally:
+                connection.close()

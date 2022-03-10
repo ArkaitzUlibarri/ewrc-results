@@ -4,30 +4,33 @@ import sys
 import requests
 import sqlite3
 import datetime
+import definitions
 from pyquery import PyQuery as pq
+
+from config import app
 from pages import entryinfo as entry_info_page
 
 
-def insert_results(base_url, db_path, event_ids_dict):
-    current_file = os.path.basename(__file__)
-    current_file_name = os.path.splitext(current_file)[0]
+def get_current_filename():
+    return os.path.splitext(os.path.basename(__file__))[0]
 
-    for key in event_ids_dict:
-        for event_id in event_ids_dict[key]:
 
-            url = base_url + "/" + current_file_name + "/" + str(event_id) + "/"
+def insert_results(events_list):
+    for event_id in events_list:
 
-            try:
-                print(url)
-                response = requests.get(url)
-            except requests.exceptions.RequestException as e:
-                print(e)
-                sys.exit(1)
+        url = app.base_url + "/" + get_current_filename() + "/" + str(event_id) + "/"
 
-            if response.status_code == 200:
+        try:
+            print(url)
+            response = requests.get(url)
+        except requests.exceptions.RequestException as e:
+            print(e)
+            sys.exit(1)
+
+        if response.status_code == 200:
 
                 doc = pq(response.text)
-                connection = sqlite3.connect(db_path)
+                connection = sqlite3.connect(definitions.DB_PATH)
 
                 try:
 
@@ -41,7 +44,7 @@ def insert_results(base_url, db_path, event_ids_dict):
                         if not entry.length:
                             continue
                         entry_info_id = entry.find('a').attr('href').split('/')[3]
-                        entry_info = entry_info_page.get_entry_info(base_url, event_id, entry_info_id)
+                        entry_info = entry_info_page.get_entry_info(event_id, entry_info_id)
 
                         # Result info
                         if tr('td:first').hasClass('final-results-stage'):

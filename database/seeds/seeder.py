@@ -3,17 +3,19 @@ import json
 import os
 import sqlite3
 
+from config import app
+import definitions
 
-def championship_points(db_path):
-    package_dir = os.path.abspath(os.path.dirname(__file__))
 
+def championship_points():
+ 
     # Opening JSON file 
-    f = open(os.path.join(package_dir, 'seeders/championshipPoints.json'), )
+    f = open(os.path.join(definitions.ROOT_DIR,'database', 'seeds', 'championshipPoints.json'), )
 
     # returns JSON object as a dictionary
     data = json.load(f)
 
-    connection = sqlite3.connect(db_path)
+    connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
 
@@ -47,4 +49,4 @@ def championship_points(db_path):
     # Closing file 
     f.close()
 
-    print("Seeder Finished")
+    print("Points seeder completed")

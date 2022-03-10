@@ -3,12 +3,15 @@ import sys
 import requests
 from pyquery import PyQuery as pq
 
+from config import app
 
-def get_entry_info(base_url, event_id, entry_info_id):
-    current_file = os.path.basename(__file__)
-    current_file_name = os.path.splitext(current_file)[0]
 
-    url = base_url + "/" + current_file_name + "/" + str(event_id) + "/" + entry_info_id
+def get_current_filename():
+    return os.path.splitext(os.path.basename(__file__))[0]
+
+
+def get_entry_info(event_id, entry_info_id):
+    url = app.base_url + "/" + get_current_filename() + "/" + str(event_id) + "/" + entry_info_id
 
     try:
         print(url)
