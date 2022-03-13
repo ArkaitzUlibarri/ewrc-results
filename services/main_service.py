@@ -79,6 +79,7 @@ def select_events(start_season):
     finally:
         connection.close()
 
+
 def select_events_without_results():
 
     connection = sqlite3.connect(definitions.DB_PATH)
@@ -103,6 +104,7 @@ def select_events_without_results():
         raise e
     finally:
         connection.close()
+
 
 def select_drivers():
     connection = sqlite3.connect(definitions.DB_PATH)
@@ -136,7 +138,7 @@ def select_codrivers():
 
         cursor = connection.cursor()
 
-        cursor.execute("SELECT DISTINCT driver_id FROM entries")
+        cursor.execute("SELECT DISTINCT codriver_id FROM entries")
 
         rows = cursor.fetchall()
 
@@ -154,34 +156,20 @@ def select_codrivers():
         connection.close()
 
 
-def select_nationalities():
+def get_season_events(season):
     connection = sqlite3.connect(definitions.DB_PATH)
-    connection.row_factory = sqlite3.Row
-
     try:
 
         cursor = connection.cursor()
 
-        cursor.execute("SELECT * FROM nationalities ORDER BY id DESC")
-
-        return cursor.fetchall()
-
-    except Exception as e:
-        connection.rollback()
-        raise e
-    finally:
-        connection.close()
-
-
-def select_championships():
-    connection = sqlite3.connect(definitions.DB_PATH)
-    connection.row_factory = sqlite3.Row
-
-    try:
-
-        cursor = connection.cursor()
-
-        cursor.execute("""SELECT * FROM championships ORDER BY id DESC""")
+        cursor.execute("""
+            SELECT 
+                ev.id,
+                ev.season_event_id,
+                ev.name
+            FROM events AS ev
+            WHERE ev.season=?
+            ORDER BY ev.season_event_id""", (season,))
 
         return cursor.fetchall()
 

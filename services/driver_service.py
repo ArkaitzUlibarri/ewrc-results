@@ -1,57 +1,8 @@
 import sqlite3
 import definitions
 
-def season_winners(season):
-    connection = sqlite3.connect(definitions.DB_PATH)
-    try:
 
-        cursor = connection.cursor()
-
-        cursor.execute("""SELECT 
-            ev.season_event_id as ID,
-            ev.edition,
-            ev.name,
-            d.fullname,
-            e.car,
-            e.team
-            FROM events AS ev
-            LEFT JOIN entries AS e on ev.id = e.event_id 
-            LEFT JOIN drivers AS d on e.driver_id = d.id 
-            WHERE ev.season=? and e.result like '1' 
-            ORDER BY ev.season_event_id""", (season,))
-
-        return cursor.fetchall()
-
-    except Exception as e:
-        connection.rollback()
-        raise e
-    finally:
-        connection.close()
-
-
-def championship_points_system(season, code):
-    connection = sqlite3.connect(definitions.DB_PATH)
-    try:
-
-        connection.row_factory = sqlite3.Row
-        cursor = connection.cursor()
-
-        cursor.execute("""SELECT overall_position_scoring
-            FROM points
-            WHERE season <= :season AND code = :code
-            ORDER BY season DESC
-            LIMIT 1""", {"season": season, "code": code})
-
-        return cursor.fetchone()[0]
-
-    except Exception as e:
-        connection.rollback()
-        raise e
-    finally:
-        connection.close()
-
-
-def drivers_stats(season, table):
+def get_season_stats(season, table):
     connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
@@ -75,15 +26,15 @@ def drivers_stats(season, table):
         connection.close()
 
 
-def drivers_scratchs(season):
-    return drivers_stats(season, 'scratchs')
+def get_season_scratchs(season):
+    return get_season_stats(season, 'scratchs')
 
 
-def drivers_leaders(season):
-    return drivers_stats(season, 'leaders')
+def get_season_leaders(season):
+    return get_season_stats(season, 'leaders')
 
 
-def drivers_results(season, code):
+def get_season_results(season, code):
     condition = ""
     if code == "winners":
         condition = "(e.result = '1')"
@@ -114,15 +65,15 @@ def drivers_results(season, code):
         connection.close()
 
 
-def drivers_podiums(season):
-    return drivers_results(season, 'podiums')
+def get_season_podiums(season):
+    return get_season_results(season, 'podiums')
 
 
-def drivers_winners(season):
-    return drivers_results(season, 'winners')
+def get_season_winners(season):
+    return get_season_results(season, 'winners')
 
 
-def drivers_in_points(season, points_position):
+def get_drivers_in_points(season, points_position):
     connection = sqlite3.connect(definitions.DB_PATH)
     try:
 
@@ -146,7 +97,7 @@ def drivers_in_points(season, points_position):
         connection.close()
 
 
-def full_results_by_driver(season, driver_id):
+def get_driver_season_results(season, driver_id):
     connection = sqlite3.connect(definitions.DB_PATH)
     try:
 
@@ -154,14 +105,51 @@ def full_results_by_driver(season, driver_id):
         cursor = connection.cursor()
 
         cursor.execute("""
-            SELECT ev.season_event_id as ID,ev.edition,ev.name,
-            e.car_number,d.fullname,co.fullname,e.plate,e.car,e.team,e.result
+            SELECT 
+                ev.id AS event_id,
+                ev.season_event_id,
+                ev.edition,
+                ev.name,
+                e.car_number,
+                d.fullname AS driver,
+                co.fullname AS codriver,
+                e.plate,
+                e.car,
+                e.team,
+                e.result
             FROM events AS ev
-            LEFT JOIN entries AS e on ev.id = e.event_id
-            LEFT JOIN drivers AS d on e.driver_id = d.id
-            LEFT JOIN codrivers AS co on e.codriver_id = co.id 
-            WHERE ev.season = :season and d.id = :driver_id
-            ORDER BY ev.season,ev.season_event_id""", {"season": season, "driver_id": driver_id})
+            LEFT JOIN entries AS e ON ev.id = e.event_id AND e.driver_id = :driver_id
+            LEFT JOIN drivers AS d ON e.driver_id = d.id
+            LEFT JOIN codrivers AS co ON e.codriver_id = co.id 
+            WHERE ev.season = :season""", {"season": season, "driver_id": driver_id})
+
+        return cursor.fetchall()
+
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()
+
+
+def get_full_season_winners(season):
+    connection = sqlite3.connect(definitions.DB_PATH)
+    try:
+
+        cursor = connection.cursor()
+
+        cursor.execute("""SELECT 
+            ev.season_event_id as ID,
+            ev.edition,
+            ev.name,
+            d.fullname,
+            e.car,
+            e.team
+            FROM events AS ev
+            LEFT JOIN entries AS e on ev.id = e.event_id 
+            LEFT JOIN drivers AS d on e.driver_id = d.id 
+            WHERE ev.season=? and e.result like '1' 
+            ORDER BY ev.season_event_id""", (season,))
 
         return cursor.fetchall()
 

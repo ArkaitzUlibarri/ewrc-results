@@ -4,9 +4,8 @@ import requests
 import sqlite3
 import definitions
 from pyquery import PyQuery as pq
-
 from config import app
-from database.helper import select_events_info
+from services import main_service
 from models.image import Image
 
 
@@ -35,7 +34,7 @@ def insert_event_photos(event_ids_dict):
 
                 try:
 
-                    event_info = select_events_info(event_id)
+                    event_info = main_service.select_events_info(event_id)
 
                     # Event Photos
                     for photo in doc("div.photo-item").items():
