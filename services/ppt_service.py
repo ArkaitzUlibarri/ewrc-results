@@ -1,6 +1,6 @@
-from pptx import Presentation
 from pptx.util import Cm
 from pptx.util import Pt
+
 
 def create_table(shapes, body_data):
     rows, cols = len(body_data) + 1, len(body_data[0])

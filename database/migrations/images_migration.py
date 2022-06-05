@@ -1,27 +1,26 @@
 import sqlite3
+
 import definitions
 
 
-def migrate():
-
+def up():
     connection = sqlite3.connect(definitions.DB_PATH)
 
     try:
 
         cursor = connection.cursor()
 
-        cursor.execute('''CREATE TABLE IF NOT EXISTS leaders(
+        cursor.execute('''CREATE TABLE IF NOT EXISTS images(
             id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             event_id INTEGER NOT NULL,
-            stage_number TEXT NOT NULL,
-            stage_name TEXT NOT NULL,
             driver_id INTEGER,
+            codriver_id INTEGER,
+            content_url TEXT NOT NULL,
+            extension TEXT NOT NULL,
             created_at timestamp,
             updated_at timestamp,
             deleted_at timestamp,
-            FOREIGN KEY(driver_id) REFERENCES drivers(id),
-            FOREIGN KEY(event_id) REFERENCES events(id),
-            CONSTRAINT leaders_unique UNIQUE (event_id,stage_number,driver_id))''')
+            FOREIGN KEY(event_id) REFERENCES events(id))''')
 
         connection.commit()
 
@@ -29,5 +28,5 @@ def migrate():
         connection.rollback()
         raise e
     finally:
-        print("Leaders migration completed")
+        print("Images table created")
         connection.close()

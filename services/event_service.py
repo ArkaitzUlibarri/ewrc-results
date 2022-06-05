@@ -1,8 +1,8 @@
-import os
-import sqlite3
 import datetime
+import json
+import sqlite3
+
 import definitions
-from config import app
 
 
 def select_event(event_id):
@@ -80,82 +80,6 @@ def select_events(start_season):
         connection.close()
 
 
-def select_events_without_results():
-
-    connection = sqlite3.connect(definitions.DB_PATH)
-
-    try:
-
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT event_id FROM entries WHERE result IS NULL GROUP BY event_id ORDER BY event_id ASC")
-
-        rows = cursor.fetchall()
-
-        event_ids_list = []
-
-        for row in rows:
-            event_ids_list.append(row[0])
-
-        return event_ids_list
-
-    except Exception as e:
-        connection.rollback()
-        raise e
-    finally:
-        connection.close()
-
-
-def select_drivers():
-    connection = sqlite3.connect(definitions.DB_PATH)
-
-    try:
-
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT DISTINCT driver_id FROM entries")
-
-        rows = cursor.fetchall()
-
-        driver_ids_list = []
-
-        for row in rows:
-            driver_ids_list.append(row[0])
-
-        return driver_ids_list
-
-    except Exception as e:
-        connection.rollback()
-        raise e
-    finally:
-        connection.close()
-
-
-def select_codrivers():
-    connection = sqlite3.connect(definitions.DB_PATH)
-
-    try:
-
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT DISTINCT codriver_id FROM entries")
-
-        rows = cursor.fetchall()
-
-        driver_ids_list = []
-
-        for row in rows:
-            driver_ids_list.append(row[0])
-
-        return driver_ids_list
-
-    except Exception as e:
-        connection.rollback()
-        raise e
-    finally:
-        connection.close()
-
-
 def get_season_events(season):
     connection = sqlite3.connect(definitions.DB_PATH)
     try:
@@ -172,6 +96,33 @@ def get_season_events(season):
             ORDER BY ev.season_event_id""", (season,))
 
         return cursor.fetchall()
+
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()
+
+
+def save_timetable(timetable_list, event_id):
+    connection = sqlite3.connect(definitions.DB_PATH)
+
+    try:
+
+        cursor = connection.cursor()
+
+        update = '''UPDATE events
+        SET timetable = :timetable,
+            updated_at = :updated_at
+        WHERE
+            id = :id'''
+
+        cursor.execute(update, {
+            "timetable": json.dumps({"itinerary": timetable_list}),
+            "updated_at": datetime.datetime.now(),
+            "id": event_id
+        })
+        connection.commit()
 
     except Exception as e:
         connection.rollback()

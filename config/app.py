@@ -3,10 +3,10 @@
 """ Project main configuration """
 
 # base url
-base_url = "https://www.ewrc-results.com"
+BASE_URL = "https://www.ewrc-results.com"
 
 # database name
-database = "ewrc-results"
+DATABASE = "ewrc-results"
 
 # profile category
-category = "1"
+CATEGORY = "1"

@@ -3,14 +3,12 @@ import json
 import os
 import sqlite3
 
-from config import app
 import definitions
 
 
-def championship_points():
- 
-    # Opening JSON file 
-    f = open(os.path.join(definitions.ROOT_DIR,'database', 'seeds', 'championshipPoints.json'), )
+def run():
+    # Opening JSON file
+    f = open(os.path.join(definitions.ROOT_DIR, 'database', 'seeds', 'championshipPoints.json'), )
 
     # returns JSON object as a dictionary
     data = json.load(f)

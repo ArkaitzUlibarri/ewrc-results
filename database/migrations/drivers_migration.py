@@ -1,8 +1,9 @@
 import sqlite3
+
 import definitions
 
 
-def migrate():
+def up():
 
     connection = sqlite3.connect(definitions.DB_PATH)
 
@@ -10,18 +11,14 @@ def migrate():
 
         cursor = connection.cursor()
 
-        cursor.execute('''CREATE TABLE IF NOT EXISTS events(
+        cursor.execute('''CREATE TABLE IF NOT EXISTS drivers(
             id INTEGER NOT NULL PRIMARY KEY,
-            season INTEGER NOT NULL,
-            season_event_id INTEGER NOT NULL,
-            edition INTEGER,
+            fullname TEXT NOT NULL,
             name TEXT NOT NULL,
-            surface JSON NOT NULL,
-            dates TEXT,
-            entries TEXT,
-            finish TEXT,
-            timetable JSON NOT NULL,
-            championship JSON NOT NULL,
+            lastname TEXT NOT NULL,
+            birthdate TEXT,
+            deathdate TEXT,
+            nationality TEXT NOT NULL,
             created_at timestamp,
             updated_at timestamp,
             deleted_at timestamp)''')
@@ -32,5 +29,5 @@ def migrate():
         connection.rollback()
         raise e
     finally:
-        print("Events migration completed")
+        print("Drivers table created")
         connection.close()

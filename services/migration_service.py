@@ -3,15 +3,14 @@ import sqlite3
 import definitions
 
 
-def select_championships():
+def drop_table(table):
     connection = sqlite3.connect(definitions.DB_PATH)
-    connection.row_factory = sqlite3.Row
 
     try:
 
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT * FROM championships ORDER BY id DESC""")
+        cursor.execute('DROP TABLE IF EXISTS ' + table)
 
         return cursor.fetchall()
 
@@ -19,4 +18,5 @@ def select_championships():
         connection.rollback()
         raise e
     finally:
+        print(table.capitalize() + " table dropped")
         connection.close()

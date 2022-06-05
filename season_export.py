@@ -1,15 +1,15 @@
-import os
 import json
-import definitions
-from config import app
+import os
+
 from pptx import Presentation
-from pptx.util import Cm
 from pptx.util import Pt
+
+import definitions
 from services import driver_service
+from services import event_service
 from services import point_service
-from services import team_service
-from services import main_service
 from services import ppt_service
+from services import team_service
 
 
 def get_points(position, points_dict):
@@ -55,9 +55,9 @@ def get_driver_standings(driver_data, results, points_dict):
         output['total_points'] += int(points)
         output['results'].append({
             "event_id": entry['event_id'],
-            "season_event_id": entry['season_event_id'], 
-            "result": entry['result'], 
-            "position": position, 
+            "season_event_id": entry['season_event_id'],
+            "result": entry['result'],
+            "position": position,
             "points": points
         })
 
@@ -105,7 +105,7 @@ os.system("cls")
 season = str(1998)
 
 full_season_winners = driver_service.get_full_season_winners(season)
-season_events = main_service.get_season_events(season)
+season_events = event_service.get_season_events(season)
 
 # DRIVERS
 
@@ -133,14 +133,14 @@ full_championship_standings = sorted(full_championship_standings, key=lambda k: 
 limit = 10
 driver_standings = []
 driver_standings_header = ('#', 'Drivers',)
-for index, event in enumerate(season_events,start=1):
+for index, event in enumerate(season_events, start=1):
     driver_standings_header += (str(index),)
 driver_standings_header += ('Points',)
 
-for index,driver_result in enumerate(full_championship_standings, start=1):
-    row = (index,driver_result['driver'],)
+for index, driver_result in enumerate(full_championship_standings, start=1):
+    row = (index, driver_result['driver'],)
     for result in driver_result['results']:
-        row += (result['points'] + ' ('+ result['position'] +')',)
+        row += (result['points'] + ' (' + result['position'] + ')',)
     row += (driver_result['total_points'],)
     driver_standings.append(row)
     if index == limit:
@@ -172,12 +172,12 @@ full_championship_standings = sorted(full_championship_standings, key=lambda k: 
 
 team_standings = []
 team_standings_header = ('#', 'Teams',)
-for index, event in enumerate(season_events,start=1):
+for index, event in enumerate(season_events, start=1):
     team_standings_header += (str(index),)
 team_standings_header += ('Points',)
 
-for index,team_result in enumerate(full_championship_standings, start=1):
-    row = (index,team_result['team'],) + tuple(team_result['results'].values()) + (team_result['total_points'],)
+for index, team_result in enumerate(full_championship_standings, start=1):
+    row = (index, team_result['team'],) + tuple(team_result['results'].values()) + (team_result['total_points'],)
     team_standings.append(row)
 
 # TODO: Stats foreach TOP 10 driver

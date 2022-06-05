@@ -1,4 +1,5 @@
 import sqlite3
+
 import definitions
 
 
@@ -19,4 +20,3 @@ def select_nationalities():
         raise e
     finally:
         connection.close()
-

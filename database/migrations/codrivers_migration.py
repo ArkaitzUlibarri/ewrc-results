@@ -1,8 +1,9 @@
 import sqlite3
+
 import definitions
 
 
-def migrate():
+def up():
 
     connection = sqlite3.connect(definitions.DB_PATH)
 
@@ -10,7 +11,7 @@ def migrate():
 
         cursor = connection.cursor()
 
-        cursor.execute('''CREATE TABLE IF NOT EXISTS drivers(
+        cursor.execute('''CREATE TABLE IF NOT EXISTS codrivers(
             id INTEGER NOT NULL PRIMARY KEY,
             fullname TEXT NOT NULL,
             name TEXT NOT NULL,
@@ -28,5 +29,5 @@ def migrate():
         connection.rollback()
         raise e
     finally:
-        print("Drivers migration completed")
+        print("Codrivers table created")
         connection.close()

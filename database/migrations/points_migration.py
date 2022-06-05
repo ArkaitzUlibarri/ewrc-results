@@ -1,8 +1,9 @@
 import sqlite3
+
 import definitions
 
 
-def migrate():
+def up():
 
     connection = sqlite3.connect(definitions.DB_PATH)
 
@@ -28,5 +29,5 @@ def migrate():
         connection.rollback()
         raise e
     finally:
-        print("Points migration completed")
+        print("Points table created")
         connection.close()

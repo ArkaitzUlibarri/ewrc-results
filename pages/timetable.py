@@ -1,24 +1,22 @@
 import os
-import json
-import datetime
 import sys
+
 import requests
-import sqlite3
-import definitions
 from pyquery import PyQuery as pq
 
 from config import app
+from services import event_service
 
 
 def get_current_filename():
     return os.path.splitext(os.path.basename(__file__))[0]
 
 
-def get_timetable(event_ids_dict):
+def insert_timetable(event_ids_dict):
     for key in event_ids_dict:
         for event_id in event_ids_dict[key]:
 
-            url = app.base_url + "/" + get_current_filename() + "/" + str(event_id) + "/"
+            url = app.BASE_URL + "/" + get_current_filename() + "/" + str(event_id) + "/"
 
             try:
                 print(url)
@@ -75,31 +73,4 @@ def get_timetable(event_ids_dict):
 
                     timetable_list.append(timetable_item)
 
-                save_timetable(timetable_list, event_id)
-
-
-def save_timetable(timetable_list, event_id):
-    connection = sqlite3.connect(definitions.DB_PATH)
-
-    try:
-
-        cursor = connection.cursor()
-
-        update = '''UPDATE events
-        SET timetable = :timetable,
-            updated_at = :updated_at
-        WHERE
-            id = :id'''
-
-        cursor.execute(update, {
-            "timetable": json.dumps({"itinerary": timetable_list}),
-            "updated_at": datetime.datetime.now(),
-            "id": event_id
-        })
-        connection.commit()
-
-    except Exception as e:
-        connection.rollback()
-        raise e
-    finally:
-        connection.close()
+                event_service.save_timetable(timetable_list, event_id)

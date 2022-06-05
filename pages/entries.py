@@ -1,10 +1,11 @@
 import os
-import sys
-import requests
 import sqlite3
-import definitions
+import sys
+
+import requests
 from pyquery import PyQuery as pq
 
+import definitions
 from config import app
 from models.entry import Entry
 
@@ -17,7 +18,7 @@ def insert_entries(event_ids_dict, championship_list):
     for key in event_ids_dict:
         for event_id in event_ids_dict[key]:
 
-            url = app.base_url + "/" + get_current_filename() + "/" + str(event_id) + "/"
+            url = app.BASE_URL + "/" + get_current_filename() + "/" + str(event_id) + "/"
 
             try:
                 print(url)

@@ -1,12 +1,14 @@
 import os
-import sys
-import requests
 import sqlite3
-import definitions
+import sys
+
+import requests
 from pyquery import PyQuery as pq
+
+import definitions
 from config import app
-from services import main_service
 from models.image import Image
+from services import event_service
 
 
 def get_current_filename():
@@ -17,7 +19,7 @@ def insert_event_photos(event_ids_dict):
     for key in event_ids_dict:
         for event_id in event_ids_dict[key]:
 
-            url = app.base_url + "/" + get_current_filename() + "/" + str(event_id) + "/"
+            url = app.BASE_URL + "/" + get_current_filename() + "/" + str(event_id) + "/"
 
             try:
                 print(url)
@@ -34,7 +36,7 @@ def insert_event_photos(event_ids_dict):
 
                 try:
 
-                    event_info = main_service.select_events_info(event_id)
+                    event_info = event_service.select_events_info(event_id)
 
                     # Event Photos
                     for photo in doc("div.photo-item").items():

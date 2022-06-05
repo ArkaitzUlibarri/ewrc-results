@@ -1,20 +1,56 @@
 import datetime
 import json
+import sqlite3
+import definitions
 
 
 class Event:
 
-    def __init__(self, season, item, index):
-
-        self.get_event_id(item)
-        self.season = str(season)
-        self.season_event_id = index
-        self.get_event_name(item)
-        self.get_event_info(item)
-        self.get_event_surface(item)
-        self.get_event_championships(item)
+    def __init__(self):
+        self.connection = sqlite3.connect(definitions.DB_PATH)
+        self.event_id = None
+        self.season = None
+        self.season_event_id = None
+        self.edition = None
+        self.name = None
+        self.dates = None
+        self.surface = None
+        self.asphalt = None
+        self.gravel = None
+        self.snow = None
+        self.ice = None
+        self.sections = {}
         self.timetable = {}
-        self.set_timestamps()
+        self.created_at = None
+        self.updated_at = None
+        self.deleted_at = None
+        self.tuple = ()
+
+    def save(self, season, item, index):
+
+        try:
+
+            self.get_event_id(item)
+            self.season = str(season)
+            self.season_event_id = index
+            self.get_event_name(item)
+            self.get_event_surface(item)
+            self.get_event_championships(item)
+            self.set_timestamps()
+
+            replace_statement = '''
+                REPLACE INTO events
+                (id,season,season_event_id,edition,name,surface,dates,timetable,championship,created_at,updated_at,deleted_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'''
+
+            self.connection.execute(replace_statement, self.get_tuple())
+            self.connection.commit()
+
+        except Exception as e:
+            self.connection.rollback()
+            raise e
+        finally:
+            self.connection.close()
 
     def get_event_id(self, item):
         self.event_id = item(".season-event-name a").attr('href').split('/')[2].split('-')[0]
@@ -22,31 +58,11 @@ class Event:
     def get_event_name(self, item):
         event_name = item(".season-event-name").text().strip()
 
-        self.edition = None
         self.name = event_name
 
         if "." in event_name:
             self.edition = event_name.split('.')[0]
             self.name = event_name.split('.')[1]
-
-    def get_event_info(self, item):
-        self.dates = None
-        self.entries = None
-        self.finish = None
-
-    # FIXME
-    # if not self.is_cancelled(item):
-    # 	event_info = item(".event-info").text().split(u'\u2022')
-    #
-    # 	self.dates = event_info[0].strip()
-    # 	entries_info = event_info[1].split('-')[1].split('/')
-    #
-    # 	self.entries = entries_info[0].strip()
-    # 	self.finish = entries_info[1].strip()
-    # else:
-    # 	self.dates = None
-    # 	self.entries = None
-    # 	self.finish = None
 
     def is_cancelled(self, item):
         for div in item.items("div"):
@@ -78,7 +94,6 @@ class Event:
             championship_id = int(event_championship.attr('href').split('/')[3].split('-')[0])
 
             championship = event_championship.text().strip()
-            print(championship)
 
             championship_order = None
             order_delimiter = "#"
@@ -117,8 +132,6 @@ class Event:
             self.name,
             json.dumps(self.surface),
             self.dates,
-            self.entries,
-            self.finish,
             json.dumps(self.timetable),
             json.dumps(self.sections),
             self.created_at,
@@ -126,6 +139,9 @@ class Event:
             self.deleted_at
         )
 
-        # print(self.tuple)
+        try:
+            print(self.tuple)
+        except Exception as e:
+            print(e)
 
         return self.tuple

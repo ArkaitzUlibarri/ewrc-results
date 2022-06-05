@@ -1,13 +1,14 @@
 import os
-import sys
-import requests
 import sqlite3
-import definitions
+import sys
+
+import requests
 from pyquery import PyQuery as pq
 
+import definitions
 from config import app
-from models.scratch import Scratch
 from models.leader import Leader
+from models.scratch import Scratch
 
 
 def get_current_filename():
@@ -44,7 +45,7 @@ def insert_event_stats(event_ids_dict):
     for key in event_ids_dict:
         for event_id in event_ids_dict[key]:
 
-            url = app.base_url + "/" + get_current_filename() + "/" + str(event_id) + "/"
+            url = app.BASE_URL + "/" + get_current_filename() + "/" + str(event_id) + "/"
 
             try:
                 print(url)
@@ -65,7 +66,7 @@ def insert_event_stats(event_ids_dict):
                     scratches = doc("div.stats-wins").eq(0)
                     insert_scratches(connection, event_id, scratches('tr').items())
 
-                    # Eventstats - Leaders
+                    # Event stats - Leaders
                     leads = doc("div.stats-leads").eq(0)
                     insert_leaders(connection, event_id, leads('tr').items())
 

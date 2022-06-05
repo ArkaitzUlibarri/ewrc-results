@@ -34,6 +34,9 @@ class Leader:
             self.deleted_at
         )
 
-        # print(self.tuple)
+        try:
+            print(self.tuple)
+        except Exception as e:
+            print(e)
 
         return self.tuple

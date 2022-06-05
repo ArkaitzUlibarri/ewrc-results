@@ -1,10 +1,11 @@
 import os
-import sys
-import requests
 import sqlite3
-import definitions
+import sys
+
+import requests
 from pyquery import PyQuery as pq
 
+import definitions
 from config import app
 from models.driver import Driver
 
@@ -16,7 +17,7 @@ def get_current_filename():
 def insert_drivers(driver_list, category):
 	for driver_id in driver_list:
 
-		url = app.base_url + "/" + get_current_filename() + "/" + str(driver_id) + "/" + category
+		url = app.BASE_URL + "/" + get_current_filename() + "/" + str(driver_id) + "/" + category
 
 		try:
 			print(url)

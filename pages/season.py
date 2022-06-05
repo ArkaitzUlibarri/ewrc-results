@@ -1,11 +1,12 @@
-import os
-import sys
-import requests
-import sqlite3
 import datetime
-import definitions
+import os
+import sqlite3
+import sys
+
+import requests
 from pyquery import PyQuery as pq
 
+import definitions
 from config import app
 from models.event import Event
 
@@ -15,7 +16,7 @@ def get_current_filename():
 
 
 def get_seasons():
-    url = app.base_url + "/" + get_current_filename() + "/"
+    url = app.BASE_URL + "/" + get_current_filename() + "/"
 
     try:
         print(url)
@@ -46,7 +47,7 @@ def get_seasons():
 
 
 def insert_nationalities(season):
-    url = app.base_url + "/" + get_current_filename() + "/" + str(season) + "/"
+    url = app.BASE_URL + "/" + get_current_filename() + "/" + str(season) + "/"
 
     try:
         print(url)
@@ -92,7 +93,7 @@ def insert_nationalities(season):
 
 
 def insert_championships(season, nationality_code):
-    url = app.base_url + "/" + get_current_filename() + "/" + str(season) + "/" + '?nat=' + str(nationality_code)
+    url = app.BASE_URL + "/" + get_current_filename() + "/" + str(season) + "/" + '?nat=' + str(nationality_code)
 
     try:
         print(url)
@@ -140,7 +141,7 @@ def insert_championships(season, nationality_code):
 def insert_events(start_season, championship):
     for season in range(start_season, datetime.datetime.now().year + 1):
 
-        url = app.base_url + "/" + get_current_filename() + "/" + str(season) + "/" + championship + "/"
+        url = app.BASE_URL + "/" + get_current_filename() + "/" + str(season) + "/" + championship + "/"
 
         try:
             print(url)
@@ -153,25 +154,8 @@ def insert_events(start_season, championship):
 
             doc = pq(response.text)
 
-            connection = sqlite3.connect(definitions.DB_PATH)
-
-            try:
-
-                event_query = '''
-                    REPLACE INTO events
-                    (id,season,season_event_id,edition,name,surface,dates,entries,finish,timetable,championship,created_at,updated_at,deleted_at)
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
-
-                # Events
-                events = doc.items(".season-event")
-                for index, event in enumerate(events, start=1):
-                    rally = Event(season, event, index)
-                    connection.execute(event_query, rally.get_tuple())
-
-                connection.commit()
-
-            except Exception as e:
-                connection.rollback()
-                raise e
-            finally:
-                connection.close()
+            # Events
+            events = doc.items(".season-event")
+            for index, event in enumerate(events, start=1):
+                rally = Event()
+                rally.save(season, event, index)

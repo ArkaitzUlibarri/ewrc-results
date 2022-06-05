@@ -3,8 +3,8 @@ import os
 import shutil
 import sys
 
-from pyquery import PyQuery as pq
 import requests
+from pyquery import PyQuery as pq
 
 from config import app
 
@@ -33,7 +33,7 @@ class Image:
 
     def set_id(self, image_id):
         self.id = image_id
-        self.url = app.base_url + '/' + 'image' + '/' + self.id + '/'
+        self.url = app.BASE_URL + '/' + 'image' + '/' + self.id + '/'
 
     def set_event(self, event_id):
         self.event_id = event_id
@@ -55,8 +55,8 @@ class Image:
             aside = image_doc.find('aside')
             for aside_link in aside.find('a').items():
                 href = aside_link.attr('href')
-                if app.base_url in href:
-                    href = href.split(app.base_url)[1]
+                if app.BASE_URL in href:
+                    href = href.split(app.BASE_URL)[1]
                 if "coprofile" in href:
                     self.codriver_id = href.split('/')[2].split('-')[0]
                 elif "profile" in href:
@@ -65,7 +65,7 @@ class Image:
     def store_image(self, event_info):
         image_content = requests.get(self.content_url, stream=True)
 
-        # Create target Directory if don't exist
+        # Create target Directory if it doesn't exist
         file = self.id + '.' + self.extension
         storage_path = get_storage_path(event_info, file)
 
@@ -91,6 +91,9 @@ class Image:
             self.deleted_at
         )
 
-        # print(self.tuple)
+        try:
+            print(self.tuple)
+        except Exception as e:
+            print(e)
 
         return self.tuple
