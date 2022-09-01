@@ -16,7 +16,7 @@ def get_timetable(base_url, db_path, event_ids_dict):
 
             try:
                 print(url)
-                response = requests.get(url)
+                response = requests.get(url, verify=False)
             except requests.exceptions.RequestException as e:
                 print(e)
                 sys.exit(1)

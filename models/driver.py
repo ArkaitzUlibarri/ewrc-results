@@ -2,7 +2,7 @@ import datetime
 
 
 def format_date(date):
-    return date.replace(". ", "-")
+    return date.replace(". ", "-").split('(')[0].strip()
 
 
 def has_numbers(input_string):

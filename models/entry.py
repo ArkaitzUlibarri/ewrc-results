@@ -31,7 +31,10 @@ class Entry:
         if car_number.text()[1:]:
             self.car_number = car_number.text()[1:]
 
-        self.driver_id = get_href_id(driver.find('a'))
+        self.driver_id = None
+        if row('div.startlist-driver:first > a').attr('href'):
+            self.driver_id = get_href_id(driver.find('a'))
+
         self.codriver_id = None
         if row('div.startlist-driver:last > a').attr('href'):
             self.codriver_id = get_href_id(codriver.find('a'))

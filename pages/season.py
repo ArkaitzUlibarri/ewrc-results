@@ -17,7 +17,7 @@ def insert_events(base_url, db_path, db_name, start_season):
 
 		try:
 			print(url)
-			response = requests.get(url)
+			response = requests.get(url, verify=False)
 		except requests.exceptions.RequestException as e:
 			print(e)
 			sys.exit(1)
