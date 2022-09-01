@@ -22,7 +22,7 @@ def insert_entries(event_ids_dict, championship_list):
 
             try:
                 print(url)
-                response = requests.get(url)
+                response = requests.get(url, verify=False)
             except requests.exceptions.RequestException as e:
                 print(e)
                 sys.exit(1)
@@ -39,8 +39,8 @@ def insert_entries(event_ids_dict, championship_list):
                     startlist('td.entry-sct > span.text-danger').parents('tr').remove()  # Remove course cars
 
                     insert = '''INSERT INTO entries 
-                            (event_id,car_number,driver_id,codriver_id,car,team,plate,tyres,category,startlist_m,championship,created_at,updated_at,deleted_at)
-                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
+                                (event_id,car_number,driver_id,codriver_id,car,team,plate,tyres,category,startlist_m,championship,created_at,updated_at,deleted_at)
+                                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
 
                     for tr in startlist('tr').items():
                         entry = Entry(event_id, tr, championship_list)

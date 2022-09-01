@@ -97,7 +97,7 @@ def insert_championships(season, nationality_code):
 
     try:
         print(url)
-        response = requests.get(url)
+        response = requests.get(url, verify=False)
     except requests.exceptions.RequestException as e:
         print(e)
         sys.exit(1)
@@ -125,8 +125,8 @@ def insert_championships(season, nationality_code):
                     'deleted_at': None
                 }
                 replace_statement = '''REPLACE INTO championships 
-                (id,code,name,created_at,updated_at,deleted_at) 
-                VALUES (?,?,?,?,?,?)'''
+                    (id,code,name,created_at,updated_at,deleted_at) 
+                    VALUES (?,?,?,?,?,?)'''
                 connection.execute(replace_statement, tuple(championship_dict.values()))
 
             connection.commit()

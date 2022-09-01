@@ -21,7 +21,7 @@ def insert_codrivers(codriver_list, category):
 
         try:
             print(url)
-            response = requests.get(url)
+            response = requests.get(url, verify=False)
         except requests.exceptions.RequestException as e:
             print(e)
             sys.exit(1)
@@ -38,8 +38,8 @@ def insert_codrivers(codriver_list, category):
                     # Header - Codriver Info
                     codriver = Driver(doc, codriver_id)
                     connection.execute('''REPLACE INTO codrivers 
-                    (id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at) 
-                    VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.get_tuple())
+                        (id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at) 
+                        VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.get_tuple())
 
                 connection.commit()
 
