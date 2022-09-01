@@ -20,7 +20,7 @@ def get_seasons():
 
     try:
         print(url)
-        response = requests.get(url)
+        response = requests.get(url,verify=False)
     except requests.exceptions.RequestException as e:
         print(e)
         sys.exit(1)
@@ -51,7 +51,7 @@ def insert_nationalities(season):
 
     try:
         print(url)
-        response = requests.get(url)
+        response = requests.get(url,verify=False)
     except requests.exceptions.RequestException as e:
         print(e)
         sys.exit(1)
@@ -145,7 +145,7 @@ def insert_events(start_season, championship):
 
         try:
             print(url)
-            response = requests.get(url)
+            response = requests.get(url,verify=False)
         except requests.exceptions.RequestException as e:
             print(e)
             sys.exit(1)
