@@ -42,7 +42,7 @@ class Image:
 
         try:
             print(self.url)
-            image_response = requests.get(self.url)
+            image_response = requests.get(self.url, verify=False)
         except requests.exceptions.RequestException as e:
             print(e)
             sys.exit(1)
@@ -63,7 +63,7 @@ class Image:
                     self.driver_id = href.split('/')[2].split('-')[0]
 
     def store_image(self, event_info):
-        image_content = requests.get(self.content_url, stream=True)
+        image_content = requests.get(self.content_url, verify=False, stream=True)
 
         # Create target Directory if it doesn't exist
         file = self.id + '.' + self.extension

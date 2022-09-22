@@ -53,7 +53,7 @@ def insert_event_photos(event_ids_dict):
                         connection.execute(insert_query, image.get_tuple())
                         connection.commit()
 
-                        image.store_image(event_info)
+                        # image.store_image(event_info)
 
                 except Exception as e:
                     connection.rollback()
