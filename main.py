@@ -55,20 +55,20 @@ print('Seeders End'.center(50, '-'))
 season_list = season_page.get_seasons()
 start_season = season_list[-1]
 
-# Insert nationalities
-for item in season_list:
-    season_page.insert_nationalities(item)
+# # Insert nationalities
+# for item in season_list:
+#     season_page.insert_nationalities(item)
 
-# Select nationalities
-nationality_list = nationality_service.select_nationalities()
+# # Select nationalities
+# nationality_list = nationality_service.select_nationalities()
 
-# Insert championships
-for item in season_list:
-    for index, row in enumerate(nationality_list, start=1):
-        season_page.insert_championships(item, row['id'])
+# # Insert championships
+# for item in season_list:
+#     for index, row in enumerate(nationality_list, start=1):
+#         season_page.insert_championships(item, row['id'])
 
 # Insert Events
-season_page.insert_events(start_season, "1-wrc")
+season_page.insert_events(start_season, app.EVENTS_TYPE)
 
 # Select Events Data
 championship_list = championship_service.select_championships()

@@ -10,3 +10,6 @@ DATABASE = "ewrc-results"
 
 # profile category
 CATEGORY = "1"
+
+# type of events
+EVENTS_TYPE = "1-wrc"
