@@ -9,7 +9,8 @@ from pyquery import PyQuery as pq
 import definitions
 from config import app
 from models.event import Event
-
+from services import nationality_service
+from services import championship_service
 
 def get_current_filename():
     return os.path.splitext(os.path.basename(__file__))[0]
@@ -20,7 +21,7 @@ def get_seasons():
 
     try:
         print(url)
-        response = requests.get(url,verify=False)
+        response = requests.get(url)
     except requests.exceptions.RequestException as e:
         print(e)
         sys.exit(1)
@@ -51,7 +52,7 @@ def insert_nationalities(season):
 
     try:
         print(url)
-        response = requests.get(url,verify=False)
+        response = requests.get(url)
     except requests.exceptions.RequestException as e:
         print(e)
         sys.exit(1)
@@ -60,36 +61,21 @@ def insert_nationalities(season):
 
         doc = pq(response.text)
 
-        connection = sqlite3.connect(definitions.DB_PATH)
+        header = doc('.justify-content-start.season-nat')
+        badges = header.find('a.badge').items()
 
-        try:
-            header = doc('.justify-content-start.season-nat')
-            badges = header.find('a.badge').items()
+        for index, badge in enumerate(badges, start=1):
+            code = badge.attr('href').split('/')[3].replace('?nat=', '')
+            nationality = badge.text()
+            nationality_dict = {
+                'id': code,
+                'name': nationality,
+                'created_at': datetime.datetime.now(),
+                'updated_at': datetime.datetime.now(),
+                'deleted_at': None
+            }
 
-            for index, badge in enumerate(badges, start=1):
-                code = badge.attr('href').split('/')[3].replace('?nat=', '')
-                nationality = badge.text()
-                nationality_dict = {
-                    'id': code,
-                    'name': nationality,
-                    'created_at': datetime.datetime.now(),
-                    'updated_at': datetime.datetime.now(),
-                    'deleted_at': None
-                }
-
-                replace_statement = '''REPLACE INTO nationalities 
-                (id,name,created_at,updated_at,deleted_at) 
-                VALUES (?,?,?,?,?)'''
-
-                connection.execute(replace_statement, tuple(nationality_dict.values()))
-
-            connection.commit()
-
-        except Exception as e:
-            connection.rollback()
-            raise e
-        finally:
-            connection.close()
+            nationality_service.replace_nationalities(tuple(nationality_dict.values()))
 
 
 def insert_championships(season, nationality_code):
@@ -97,7 +83,7 @@ def insert_championships(season, nationality_code):
 
     try:
         print(url)
-        response = requests.get(url, verify=False)
+        response = requests.get(url)
     except requests.exceptions.RequestException as e:
         print(e)
         sys.exit(1)
@@ -106,36 +92,23 @@ def insert_championships(season, nationality_code):
 
         doc = pq(response.text)
 
-        connection = sqlite3.connect(definitions.DB_PATH)
+        header = doc('.justify-content-start.season-sct')
+        badges = header.find('.season-sct-item').find('a.badge').items()
 
-        try:
-            header = doc('.justify-content-start.season-sct')
-            badges = header.find('.season-sct-item').find('a.badge').items()
-
-            for index, badge in enumerate(badges, start=1):
-                code = badge.attr('href').split('/')[3]
-                championship_id = code.split('-')[0]
-                championship = badge.text()
-                championship_dict = {
-                    'id': championship_id,
-                    'code': code,
-                    'name': championship,
-                    'created_at': datetime.datetime.now(),
-                    'updated_at': datetime.datetime.now(),
-                    'deleted_at': None
-                }
-                replace_statement = '''REPLACE INTO championships 
-                    (id,code,name,created_at,updated_at,deleted_at) 
-                    VALUES (?,?,?,?,?,?)'''
-                connection.execute(replace_statement, tuple(championship_dict.values()))
-
-            connection.commit()
-
-        except Exception as e:
-            connection.rollback()
-            raise e
-        finally:
-            connection.close()
+        for index, badge in enumerate(badges, start=1):
+            code = badge.attr('href').split('/')[3]
+            championship_id = code.split('-')[0]
+            championship = badge.text()
+            championship_dict = {
+                'id': championship_id,
+                'code': code,
+                'name': championship,
+                'created_at': datetime.datetime.now(),
+                'updated_at': datetime.datetime.now(),
+                'deleted_at': None
+            }
+            
+            championship_service.replace_championships(tuple(championship_dict.values()))
 
 
 def insert_events(start_season, championship):
@@ -145,7 +118,7 @@ def insert_events(start_season, championship):
 
         try:
             print(url)
-            response = requests.get(url,verify=False)
+            response = requests.get(url)
         except requests.exceptions.RequestException as e:
             print(e)
             sys.exit(1)

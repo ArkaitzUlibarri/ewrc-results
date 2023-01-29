@@ -16,7 +16,7 @@ def get_entry_info(event_id, entry_info_id):
 
     try:
         print(url)
-        response = requests.get(url,verify=False)
+        response = requests.get(url)
     except requests.exceptions.RequestException as e:
         print(e)
         sys.exit(1)

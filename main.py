@@ -25,11 +25,11 @@ from services import entry_service
 from services import event_service
 from services import nationality_service
 
-# Clear console
 os.system("cls")
 
 print('Execution Start'.center(50, '-'))
 
+# DATABASE MIGRATION & SEEDING
 print('Migrations Start'.center(50, '-'))
 
 events_migration.up()
@@ -51,6 +51,8 @@ points_seeder.run()
 
 print('Seeders End'.center(50, '-'))
 
+# NATIONALITIES & CHAMPIONSHIPS
+
 # Season Options
 season_list = season_page.get_seasons()
 start_season = season_list[-1]
@@ -67,37 +69,43 @@ start_season = season_list[-1]
 #     for index, row in enumerate(nationality_list, start=1):
 #         season_page.insert_championships(item, row['id'])
 
+# EVENTS
+
 # Insert Events
-season_page.insert_events(start_season, app.EVENTS_TYPE)
+# season_page.insert_events(start_season, app.EVENTS_TYPE)
 
 # Select Events Data
 championship_list = championship_service.select_championships()
 event_ids_dict = event_service.select_events(start_season)
 
 # Insert Event Photos
-event_photos_page.insert_event_photos(event_ids_dict)
+# event_photos_page.insert_event_photos(event_ids_dict)
 
 # Event Stats
-event_stats_page.insert_event_stats(event_ids_dict)
+# event_stats_page.insert_event_stats(event_ids_dict)
 
 # Event Timetable
-event_timetable_page.insert_timetable(event_ids_dict)
+# event_timetable_page.insert_timetable(event_ids_dict)
+
+# ENTRIES
 
 # Entries
-entry_page.insert_entries(event_ids_dict, championship_list)
+# entry_page.insert_entries(event_ids_dict, championship_list)
 
 # Results
 events_list = entry_service.select_events_without_results()
 result_page.insert_results(events_list)
 
-# Select Entries Data
-driver_list = entry_service.select_drivers()
-codriver_list = entry_service.select_codrivers()
+# # Select Entries Data
+# driver_list = entry_service.select_drivers()
+# codriver_list = entry_service.select_codrivers()
 
-# Drivers
-profile_page.insert_drivers(driver_list, app.CATEGORY)
+# # DRIVERS & CODRIVERS
 
-# Codrivers
-coprofile_page.insert_codrivers(codriver_list, app.CATEGORY)
+# # Drivers
+# profile_page.insert_drivers(driver_list, app.CATEGORY)
+
+# # Codrivers
+# coprofile_page.insert_codrivers(codriver_list, app.CATEGORY)
 
 print('Execution Finish'.center(50, '-'))

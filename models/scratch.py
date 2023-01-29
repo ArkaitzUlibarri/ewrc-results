@@ -40,3 +40,5 @@ class Scratch:
             print(e)
 
         return self.tuple
+
+    

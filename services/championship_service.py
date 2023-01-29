@@ -20,3 +20,22 @@ def select_championships():
         raise e
     finally:
         connection.close()
+
+def replace_championships(championship_tuple):
+
+    connection = sqlite3.connect(definitions.DB_PATH)
+
+    try:
+        replace_statement = '''REPLACE INTO championships 
+                    (id,code,name,created_at,updated_at,deleted_at) 
+                    VALUES (?,?,?,?,?,?)'''
+
+        connection.execute(replace_statement, championship_tuple)
+
+        connection.commit()
+
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()

@@ -77,3 +77,51 @@ def select_events_without_results():
         raise e
     finally:
         connection.close()
+
+def update_entries_with_result(result_tuple):
+
+    connection = sqlite3.connect(definitions.DB_PATH)
+
+    try:
+
+        cursor = connection.cursor()
+
+        update_statement = '''UPDATE entries
+                        SET result = :result,
+                            entry_info_id = :entry_info_id,
+                            updated_at = :updated_at
+                        WHERE driver_id = :driver_id 
+                        AND codriver_id = :codriver_id 
+                        AND event_id = :event_id;'''
+
+        cursor.execute(update_statement, result_tuple)
+
+        connection.commit()
+
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()
+
+def insert_entries(entry_tuple):
+
+    connection = sqlite3.connect(definitions.DB_PATH)
+
+    try:
+
+        cursor = connection.cursor()
+
+        insert = '''INSERT INTO entries 
+                    (event_id,car_number,driver_id,codriver_id,car,team,plate,tyres,category,startlist_m,championship,created_at,updated_at,deleted_at)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''
+
+        connection.execute(insert, entry_tuple)
+
+        connection.commit()
+
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()

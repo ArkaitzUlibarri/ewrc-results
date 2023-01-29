@@ -49,7 +49,7 @@ def insert_event_stats(event_ids_dict):
 
             try:
                 print(url)
-                response = requests.get(url, verify=False)
+                response = requests.get(url)
             except requests.exceptions.RequestException as e:
                 print(e)
                 sys.exit(1)
