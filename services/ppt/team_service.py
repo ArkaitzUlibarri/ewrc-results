@@ -11,7 +11,7 @@ def get_season_stats(season, table):
         connection.row_factory = sqlite3.Row
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT ee.team,COUNT(s.driver_id) as count
+        cursor.execute("""SELECT ee.team,COUNT(s.driver_id) AS count
             FROM """ + table + """ AS s
             LEFT JOIN events AS e on s.event_id = e.id
             LEFT JOIN entries AS ee on e.id = ee.event_id AND s.driver_id = ee.driver_id
@@ -50,7 +50,7 @@ def get_season_results(season, code):
         connection.row_factory = sqlite3.Row
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT e.car,e.team,COUNT(e.team) as count
+        cursor.execute("""SELECT e.car,e.team,COUNT(e.team) AS count
         FROM entries AS e
         INNER JOIN events AS ev ON e.event_id = ev.id AND ev.season is :season
         WHERE """ + condition + """

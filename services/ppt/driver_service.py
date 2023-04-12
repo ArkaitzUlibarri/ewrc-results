@@ -11,7 +11,7 @@ def get_season_stats(season, table):
         connection.row_factory = sqlite3.Row
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT d.fullname,COUNT(stage_name) as count
+        cursor.execute("""SELECT d.fullname,COUNT(stage_name) AS count
             FROM """ + table + """ 
             INNER JOIN drivers AS d on d.id = """ + table + """.driver_id
             WHERE event_id in (select id from events where season = :season)
@@ -49,7 +49,7 @@ def get_season_results(season, code):
         connection.row_factory = sqlite3.Row
         cursor = connection.cursor()
 
-        cursor.execute("""SELECT d.fullname,COUNT(e.result) as count
+        cursor.execute("""SELECT d.fullname,COUNT(e.result) AS count
             FROM entries AS e
             INNER JOIN drivers AS d on d.id = e.driver_id
             INNER JOIN events AS ev on e.event_id = ev.id AND ev.season is :season
@@ -132,6 +132,34 @@ def get_driver_season_results(season, driver_id):
     finally:
         connection.close()
 
+def get_driver_season_resume(season, driver_id):
+    connection = sqlite3.connect(definitions.DB_PATH)
+    try:
+
+        connection.row_factory = sqlite3.Row
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            SELECT 
+            COUNT(ev.id) AS events, 
+            COUNT(e.id) AS entries, 
+            SUM(CASE WHEN e.result = '1' THEN 1 ELSE 0 END) AS wins,
+            SUM(CASE WHEN e.result = '1' or e.result = '2' or e.result = '3' THEN 1 ELSE 0 END) AS podiums,
+            SUM(CASE WHEN CAST(e.result AS INTEGER) <= 10 AND e.result GLOB '*[0-9]*' THEN 1 ELSE 0 END) AS point_position,
+            SUM(CASE WHEN e.result GLOB '*[^0-9]*' THEN 1 ELSE 0 END) AS DNFs
+            FROM events AS ev
+            LEFT JOIN entries AS e ON ev.id = e.event_id AND e.driver_id = :driver_id
+            LEFT JOIN drivers AS d ON e.driver_id = d.id
+            LEFT JOIN codrivers AS co ON e.codriver_id = co.id 
+            WHERE ev.season = :season""", {"season": season, "driver_id": driver_id})
+
+        return cursor.fetchall()
+
+    except Exception as e:
+        connection.rollback()
+        raise e
+    finally:
+        connection.close()
 
 def get_full_season_winners(season):
     connection = sqlite3.connect(definitions.DB_PATH)
@@ -140,7 +168,7 @@ def get_full_season_winners(season):
         cursor = connection.cursor()
 
         cursor.execute("""SELECT 
-            ev.season_event_id as ID,
+            ev.season_event_id AS ID,
             ev.edition,
             ev.name,
             d.fullname,
