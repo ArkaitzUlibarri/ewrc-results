@@ -8,7 +8,7 @@ from pyquery import PyQuery as pq
 import definitions
 from config import app
 from models.driver import Driver
-
+from services import driver_service
 
 def get_current_filename():
     return os.path.splitext(os.path.basename(__file__))[0]
@@ -30,21 +30,7 @@ def insert_codrivers(codriver_list, category):
 
             doc = pq(response.text)
 
-            connection = sqlite3.connect(definitions.DB_PATH)
-
-            try:
-
-                if doc("main > div").eq(0).hasClass("profile"):
-                    # Header - Codriver Info
-                    codriver = Driver(doc, codriver_id)
-                    connection.execute('''REPLACE INTO codrivers 
-                        (id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at) 
-                        VALUES (?,?,?,?,?,?,?,?,?,?)''', codriver.get_tuple())
-
-                connection.commit()
-
-            except Exception as e:
-                connection.rollback()
-                raise e
-            finally:
-                connection.close()
+            if doc("main > div").eq(0).hasClass("profile"):
+                # Header - Codriver Info
+                codriver = Driver(doc, codriver_id)
+          	    driver_service.insert_codrivers(codriver.get_tuple())

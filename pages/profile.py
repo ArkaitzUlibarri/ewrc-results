@@ -8,6 +8,7 @@ from pyquery import PyQuery as pq
 import definitions
 from config import app
 from models.driver import Driver
+from services import driver_service
 
 
 def get_current_filename():
@@ -30,22 +31,10 @@ def insert_drivers(driver_list, category):
 
 			doc = pq(response.text)
 
-			connection = sqlite3.connect(definitions.DB_PATH)
+			if doc("main > div").eq(0).hasClass("profile"):
 
-			try:
+				# Header - Driver Info
+				driver = Driver(doc, driver_id)
 
-				if doc("main > div").eq(0).hasClass("profile"):
-
-					# Header - Driver Info
-					driver = Driver(doc, driver_id)
-					connection.execute('''REPLACE INTO drivers 
-					(id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at)
-					VALUES (?,?,?,?,?,?,?,?,?,?)''', driver.get_tuple())
-
-				connection.commit()
-
-			except Exception as e:
-				connection.rollback()
-				raise e
-			finally:
-				connection.close()
+				# Save
+				driver_service.insert_drivers(driver.get_tuple())

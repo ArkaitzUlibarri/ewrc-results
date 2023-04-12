@@ -98,7 +98,7 @@ def get_teams_in_points(season, points_position):
     finally:
         connection.close()
 
-
+# FIXME
 def get_team_season_results(season, team):
     connection = sqlite3.connect(definitions.DB_PATH)
     try:

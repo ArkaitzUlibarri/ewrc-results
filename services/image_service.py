@@ -7,11 +7,11 @@ def insert_images(image_tuple):
 
     try:
 
-        insert_query = '''INSERT INTO images 
+        statement = '''INSERT INTO images 
             (id,event_id,driver_id,codriver_id,content_url,extension,created_at,updated_at,deleted_at) 
             VALUES (?,?,?,?,?,?,?,?,?)'''
 
-        connection.execute(insert_query, image_tuple)
+        connection.execute(statement, image_tuple)
         connection.commit()
 
     except Exception as e:

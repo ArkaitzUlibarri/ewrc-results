@@ -110,8 +110,6 @@ def insert_entries(entry_tuple):
 
     try:
 
-        cursor = connection.cursor()
-
         insert = '''INSERT INTO entries 
                     (event_id,car_number,driver_id,codriver_id,car,team,plate,tyres,category,startlist_m,championship,created_at,updated_at,deleted_at)
                     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)'''

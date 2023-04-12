@@ -18,27 +18,27 @@ def get_current_filename():
 def insert_scratches(connection, event_id, items):
     for index, tr in enumerate(items, start=1):
         scratch = Scratch(tr, event_id, index, pq)
-        scratch_insert_query = '''INSERT INTO scratchs
+        statement = '''INSERT INTO scratchs
 				(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
 				VALUES (?,?,?,?,?,?,?)'''
         if scratch.drivers is not None:
             for driver_id in scratch.drivers:
-                connection.execute(scratch_insert_query, scratch.get_tuple(driver_id))
+                connection.execute(statement, scratch.get_tuple(driver_id))
         else:
-            connection.execute(scratch_insert_query, scratch.get_tuple(None))
+            connection.execute(statement, scratch.get_tuple(None))
 
 
 def insert_leaders(connection, event_id, items):
     for index, tr in enumerate(items, start=1):
         leader = Leader(tr, event_id, index, pq)
-        leader_insert_query = '''INSERT INTO leaders
+        statement = '''INSERT INTO leaders
 				(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
 				VALUES (?,?,?,?,?,?,?)'''
         if leader.drivers is not None:
             for driver_id in leader.drivers:
-                connection.execute(leader_insert_query, leader.get_tuple(driver_id))
+                connection.execute(statement, leader.get_tuple(driver_id))
         else:
-            connection.execute(leader_insert_query, leader.get_tuple(None))
+            connection.execute(statement, leader.get_tuple(None))
 
 
 def insert_event_stats(event_ids_dict):

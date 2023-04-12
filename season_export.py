@@ -5,11 +5,11 @@ from pptx import Presentation
 from pptx.util import Pt
 
 import definitions
-from services import driver_service
+from services.ppt import driver_service
 from services import event_service
 from services import point_service
-from services import ppt_service
-from services import team_service
+from services.ppt import ppt_service
+from services.ppt import team_service
 
 
 def get_points(position, points_dict):
@@ -161,7 +161,7 @@ teams_points_system_dict = json.loads(point_service.championship_points_system(s
 lowest_position = len(teams_points_system_dict)
 teams_in_points_list = team_service.get_teams_in_points(season, lowest_position)
 
-# TODO: Team standings
+# FIXME: Team standings
 # Full championship standings
 full_championship_standings = list()
 for index, team_data in enumerate(teams_in_points_list, start=1):
