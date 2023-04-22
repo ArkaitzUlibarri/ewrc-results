@@ -301,7 +301,7 @@ if len(team_standings):
 if not os.path.exists(definitions.EXPORT_FOLDER):
     os.makedirs(definitions.EXPORT_FOLDER)
 
-export_path = os.path.join(definitions.ROOT_DIR, 'storage', 'exports', 'WRC_' + season + '.pptx')
+export_path = os.path.join(definitions.ROOT_DIR, '../storage', 'exports', 'WRC_' + season + '.pptx')
 prs.save(export_path)
 
 print('Finished ' + export_path + ' export')
