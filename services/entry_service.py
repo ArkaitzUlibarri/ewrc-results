@@ -35,7 +35,7 @@ def select_codrivers():
 
         cursor = connection.cursor()
 
-        cursor.execute("SELECT DISTINCT codriver_id FROM entries")
+        cursor.execute("SELECT DISTINCT codriver_id FROM entries ORDER BY codriver_id ASC")
 
         rows = cursor.fetchall()
 

@@ -8,7 +8,8 @@ from pyquery import PyQuery as pq
 import definitions
 from config import app
 from models.driver import Driver
-from services import driver_service
+from services import codriver_service
+
 
 def get_current_filename():
     return os.path.splitext(os.path.basename(__file__))[0]
@@ -17,7 +18,7 @@ def get_current_filename():
 def insert_codrivers(codriver_list):
     for codriver_id in codriver_list:
 
-        url = app.BASE_URL + "/" + get_current_filename() + "/" + str(codriver_id)
+        url = app.BASE_URL + "/" + get_current_filename() + "/" + str(codriver_id) + "/"
 
         try:
             print(url)
@@ -31,6 +32,9 @@ def insert_codrivers(codriver_list):
             doc = pq(response.text)
 
             if doc("main > div").eq(0).hasClass("profile"):
+
                 # Header - Codriver Info
                 codriver = Driver(doc, codriver_id)
-                driver_service.insert_codrivers(codriver.get_tuple())
+                codriver_service.insert_codrivers(codriver.get_tuple())
+        else:
+            print("Not found: " + str(codriver_id))

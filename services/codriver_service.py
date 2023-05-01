@@ -9,7 +9,7 @@ def insert_codrivers(table_tuple):
 
     try:
 
-        statement = '''REPLACE INTO drivers 
+        statement = '''REPLACE INTO codrivers 
                         (id,fullname,name,lastname,birthdate,deathdate,nationality,created_at,updated_at,deleted_at) 
                         VALUES (?,?,?,?,?,?,?,?,?,?)'''
 
