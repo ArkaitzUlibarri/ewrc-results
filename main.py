@@ -52,9 +52,9 @@ codriver_list = entry_service.select_codrivers()
 # DRIVERS & CODRIVERS
 
 # Drivers
-profile_page.insert_drivers(driver_list, app.CATEGORY)
+profile_page.insert_drivers(driver_list)
 
 # Codrivers
-coprofile_page.insert_codrivers(codriver_list, app.CATEGORY)
+coprofile_page.insert_codrivers(codriver_list)
 
 print('Execution Finish'.center(50, '-'))

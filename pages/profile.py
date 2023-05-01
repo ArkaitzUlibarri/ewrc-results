@@ -15,10 +15,10 @@ def get_current_filename():
 	return os.path.splitext(os.path.basename(__file__))[0]
 
 
-def insert_drivers(driver_list, category):
+def insert_drivers(driver_list):
 	for driver_id in driver_list:
 
-		url = app.BASE_URL + "/" + get_current_filename() + "/" + str(driver_id) + "/" + category
+		url = app.BASE_URL + "/" + get_current_filename() + "/" + str(driver_id)
 
 		try:
 			print(url)

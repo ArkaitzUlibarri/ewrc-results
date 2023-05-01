@@ -14,10 +14,10 @@ def get_current_filename():
     return os.path.splitext(os.path.basename(__file__))[0]
 
 
-def insert_codrivers(codriver_list, category):
+def insert_codrivers(codriver_list):
     for codriver_id in codriver_list:
 
-        url = app.BASE_URL + "/" + get_current_filename() + "/" + str(codriver_id) + "/" + category
+        url = app.BASE_URL + "/" + get_current_filename() + "/" + str(codriver_id)
 
         try:
             print(url)
@@ -33,4 +33,4 @@ def insert_codrivers(codriver_list, category):
             if doc("main > div").eq(0).hasClass("profile"):
                 # Header - Codriver Info
                 codriver = Driver(doc, codriver_id)
-          	    driver_service.insert_codrivers(codriver.get_tuple())
+                driver_service.insert_codrivers(codriver.get_tuple())
