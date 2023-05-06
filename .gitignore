@@ -6,5 +6,7 @@ storage/exports/*
 *.db-journal
 *.pptx
 *.sql
+*.rar
 /.idea/
 /.vscode/
+
