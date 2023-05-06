@@ -74,3 +74,5 @@ def insert_timetable(event_ids_dict):
                     timetable_list.append(timetable_item)
 
                 event_service.save_timetable(timetable_list, event_id)
+            else:
+                print("Page not available: " + url)

@@ -35,6 +35,6 @@ def insert_drivers(driver_list):
 
 				# Header - Driver Info
 				driver = Driver(doc, driver_id)
-
-				# Save
 				driver_service.insert_drivers(driver.get_tuple())
+		else:
+			print("Page not found: " + url)

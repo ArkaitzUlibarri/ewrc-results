@@ -77,3 +77,5 @@ def insert_event_stats(event_ids_dict):
                     raise e
                 finally:
                     connection.close()
+            else:
+                print("Page not available: " + url)

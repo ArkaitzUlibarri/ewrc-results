@@ -1,11 +1,9 @@
 import os
-import sqlite3
 import sys
 
 import requests
 from pyquery import PyQuery as pq
 
-import definitions
 from config import app
 from models.image import Image
 from services import event_service
@@ -46,3 +44,6 @@ def insert_event_photos(event_ids_dict):
                     image_service.insert_images(image.get_tuple())
 
                     # image.store_image(event_info)
+
+            else:
+                print("Page not available: " + url)

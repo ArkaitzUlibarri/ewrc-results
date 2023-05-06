@@ -1,11 +1,9 @@
 import os
-import sqlite3
 import sys
 
 import requests
 from pyquery import PyQuery as pq
 
-import definitions
 from config import app
 from models.entry import Entry
 from services import entry_service
@@ -40,4 +38,5 @@ def insert_entries(event_ids_dict, championship_list):
                     entry = Entry(event_id, tr, championship_list)
                     if entry.driver_id:
                         entry_service.insert_entries(entry.get_tuple())
-
+            else:
+                print("Page not available: " + url)

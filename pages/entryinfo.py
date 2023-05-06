@@ -40,3 +40,5 @@ def get_entry_info(event_id, entry_info_id):
 
         except Exception as e:
             raise e
+    else:
+        print("Page not available: " + url)

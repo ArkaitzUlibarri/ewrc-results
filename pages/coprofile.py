@@ -1,11 +1,9 @@
 import os
-import sqlite3
 import sys
 
 import requests
 from pyquery import PyQuery as pq
 
-import definitions
 from config import app
 from models.driver import Driver
 from services import codriver_service
@@ -37,4 +35,4 @@ def insert_codrivers(codriver_list):
                 codriver = Driver(doc, codriver_id)
                 codriver_service.insert_codrivers(codriver.get_tuple())
         else:
-            print("Not found: " + str(codriver_id))
+            print("Page not available: " + url)

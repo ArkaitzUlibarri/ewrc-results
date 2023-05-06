@@ -1,12 +1,10 @@
 import datetime
 import os
-import sqlite3
 import sys
 
 import requests
 from pyquery import PyQuery as pq
 
-import definitions
 from config import app
 from pages import entryinfo as entry_info_page
 from services import entry_service
@@ -60,3 +58,5 @@ def insert_results(events_list):
                     "updated_at": datetime.datetime.now()
                 })
 
+        else:
+            print("Page not available: " + url)

@@ -1,16 +1,15 @@
 import datetime
 import os
-import sqlite3
 import sys
 
 import requests
 from pyquery import PyQuery as pq
 
-import definitions
 from config import app
 from models.event import Event
-from services import nationality_service
 from services import championship_service
+from services import nationality_service
+
 
 def get_current_filename():
     return os.path.splitext(os.path.basename(__file__))[0]
@@ -45,6 +44,8 @@ def get_seasons():
         except Exception as e:
             print(str(e))
             return list()
+    else:
+        print("Page not available: " + url)
 
 
 def insert_nationalities(season):
@@ -76,6 +77,8 @@ def insert_nationalities(season):
             }
 
             nationality_service.replace_nationalities(tuple(nationality_dict.values()))
+    else:
+        print("Page not available: " + url)
 
 
 def insert_championships(season, nationality_code):
@@ -107,8 +110,10 @@ def insert_championships(season, nationality_code):
                 'updated_at': datetime.datetime.now(),
                 'deleted_at': None
             }
-            
+
             championship_service.replace_championships(tuple(championship_dict.values()))
+    else:
+        print("Page not available: " + url)
 
 
 def insert_events(start_season, championship):
@@ -132,3 +137,5 @@ def insert_events(start_season, championship):
             for index, event in enumerate(events, start=1):
                 rally = Event()
                 rally.save(season, event, index)
+        else:
+            print("Page not available: " + url)
