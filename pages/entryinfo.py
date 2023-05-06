@@ -2,7 +2,7 @@ import os
 import sys
 
 import requests
-from pyquery import PyQuery as pq
+from pyquery import PyQuery as pyQuery
 
 from config import app
 
@@ -23,7 +23,7 @@ def get_entry_info(event_id, entry_info_id):
 
     if response.status_code == 200:
 
-        doc = pq(response.text)
+        doc = pyQuery(response.text)
 
         try:
             driver = doc("div.driver")

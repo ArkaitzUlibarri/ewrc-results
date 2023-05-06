@@ -7,13 +7,13 @@ def get_href_id(a_tag):
 
 class Leader:
 
-    def __init__(self, tr, event_id, index, pq):
+    def __init__(self, tr, event_id, index, pyQuery):
         self.event_id = event_id
         # self.stage_number = tr("td:first > a").text()
         self.stage_number = 'SS' + str(index)
         self.stage_name = tr("td.stats-stage2 > a").text()
         self.drivers = None
-        drivers = set(tr("td:last > a").map(lambda i, e: get_href_id(pq(e))))
+        drivers = set(tr("td:last > a").map(lambda i, e: get_href_id(pyQuery(e))))
         if len(drivers):
             self.drivers = drivers
         self.set_timestamps()

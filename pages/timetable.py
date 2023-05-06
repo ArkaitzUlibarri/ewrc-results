@@ -2,7 +2,7 @@ import os
 import sys
 
 import requests
-from pyquery import PyQuery as pq
+from pyquery import PyQuery as pyQuery
 
 from config import app
 from services import event_service
@@ -27,7 +27,7 @@ def insert_timetable(event_ids_dict):
 
             if response.status_code == 200:
 
-                doc = pq(response.text)
+                doc = pyQuery(response.text)
 
                 timetable = doc('.harm-main')
 

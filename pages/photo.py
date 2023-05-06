@@ -2,7 +2,7 @@ import os
 import sys
 
 import requests
-from pyquery import PyQuery as pq
+from pyquery import PyQuery as pyQuery
 
 from config import app
 from models.image import Image
@@ -29,7 +29,7 @@ def insert_event_photos(event_ids_dict):
 
             if response.status_code == 200:
 
-                doc = pq(response.text)
+                doc = pyQuery(response.text)
 
                 event_info = event_service.select_events_info(event_id)
 

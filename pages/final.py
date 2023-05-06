@@ -3,7 +3,7 @@ import os
 import sys
 
 import requests
-from pyquery import PyQuery as pq
+from pyquery import PyQuery as pyQuery
 
 from config import app
 from pages import entryinfo as entry_info_page
@@ -28,7 +28,7 @@ def insert_results(events_list):
 
         if response.status_code == 200:
 
-            doc = pq(response.text)
+            doc = pyQuery(response.text)
            
             # Results table
             results = doc("div.final-results > table.results")

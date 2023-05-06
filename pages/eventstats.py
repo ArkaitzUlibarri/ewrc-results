@@ -3,7 +3,7 @@ import sqlite3
 import sys
 
 import requests
-from pyquery import PyQuery as pq
+from pyquery import PyQuery as pyQuery
 
 import definitions
 from config import app
@@ -17,7 +17,7 @@ def get_current_filename():
 
 def insert_scratches(connection, event_id, items):
     for index, tr in enumerate(items, start=1):
-        scratch = Scratch(tr, event_id, index, pq)
+        scratch = Scratch(tr, event_id, index, pyQuery)
         statement = '''INSERT INTO scratchs
 				(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
 				VALUES (?,?,?,?,?,?,?)'''
@@ -30,7 +30,7 @@ def insert_scratches(connection, event_id, items):
 
 def insert_leaders(connection, event_id, items):
     for index, tr in enumerate(items, start=1):
-        leader = Leader(tr, event_id, index, pq)
+        leader = Leader(tr, event_id, index, pyQuery)
         statement = '''INSERT INTO leaders
 				(event_id,stage_number,stage_name,driver_id,created_at,updated_at,deleted_at)
 				VALUES (?,?,?,?,?,?,?)'''
@@ -56,7 +56,7 @@ def insert_event_stats(event_ids_dict):
 
             if response.status_code == 200:
 
-                doc = pq(response.text)
+                doc = pyQuery(response.text)
 
                 connection = sqlite3.connect(definitions.DB_PATH)
 

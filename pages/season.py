@@ -3,7 +3,7 @@ import os
 import sys
 
 import requests
-from pyquery import PyQuery as pq
+from pyquery import PyQuery as pyQuery
 
 from config import app
 from models.event import Event
@@ -27,7 +27,7 @@ def get_seasons():
 
     if response.status_code == 200:
 
-        doc = pq(response.text)
+        doc = pyQuery(response.text)
 
         output = list()
 
@@ -60,7 +60,7 @@ def insert_nationalities(season):
 
     if response.status_code == 200:
 
-        doc = pq(response.text)
+        doc = pyQuery(response.text)
 
         header = doc('.justify-content-start.season-nat')
         badges = header.find('a.badge').items()
@@ -93,7 +93,7 @@ def insert_championships(season, nationality_code):
 
     if response.status_code == 200:
 
-        doc = pq(response.text)
+        doc = pyQuery(response.text)
 
         header = doc('.justify-content-start.season-sct')
         badges = header.find('.season-sct-item').find('a.badge').items()
@@ -130,7 +130,7 @@ def insert_events(start_season, championship):
 
         if response.status_code == 200:
 
-            doc = pq(response.text)
+            doc = pyQuery(response.text)
 
             # Events
             events = doc.items(".season-event")

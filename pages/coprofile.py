@@ -2,7 +2,7 @@ import os
 import sys
 
 import requests
-from pyquery import PyQuery as pq
+from pyquery import PyQuery as pyQuery
 
 from config import app
 from models.driver import Driver
@@ -27,7 +27,7 @@ def insert_codrivers(codriver_list):
 
         if response.status_code == 200:
 
-            doc = pq(response.text)
+            doc = pyQuery(response.text)
 
             if doc("main > div").eq(0).hasClass("profile"):
 

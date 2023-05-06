@@ -3,7 +3,7 @@ import sqlite3
 import sys
 
 import requests
-from pyquery import PyQuery as pq
+from pyquery import PyQuery as pyQuery
 
 import definitions
 from config import app
@@ -29,7 +29,7 @@ def insert_drivers(driver_list):
 
 		if response.status_code == 200:
 
-			doc = pq(response.text)
+			doc = pyQuery(response.text)
 
 			if doc("main > div").eq(0).hasClass("profile"):
 

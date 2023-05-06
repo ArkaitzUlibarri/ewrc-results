@@ -2,7 +2,7 @@ import os
 import sys
 
 import requests
-from pyquery import PyQuery as pq
+from pyquery import PyQuery as pyQuery
 
 from config import app
 from models.entry import Entry
@@ -28,7 +28,7 @@ def insert_entries(event_ids_dict, championship_list):
 
             if response.status_code == 200:
 
-                doc = pq(response.text)
+                doc = pyQuery(response.text)
 
                 # Entries
                 startlist = doc.find("table.results").eq(0)

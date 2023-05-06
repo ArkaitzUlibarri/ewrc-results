@@ -4,7 +4,7 @@ import shutil
 import sys
 
 import requests
-from pyquery import PyQuery as pq
+from pyquery import PyQuery as pyQuery
 
 from config import app
 
@@ -48,7 +48,7 @@ class Image:
             sys.exit(1)
 
         if image_response.status_code == 200:
-            image_doc = pq(image_response.text)
+            image_doc = pyQuery(image_response.text)
             self.content_url = image_doc.find('#main-photo').find('img').attr('src')
             self.extension = self.content_url.rsplit('.')[-1]
 
