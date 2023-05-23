@@ -1,9 +1,6 @@
 import os
-import sys
 
-import requests
-from pyquery import PyQuery as pyQuery
-
+import page
 from config import app
 from models.image import Image
 from services import event_service
@@ -20,16 +17,9 @@ def insert_event_photos(event_ids_dict):
 
             url = app.BASE_URL + "/" + get_current_filename() + "/" + str(event_id) + "/"
 
-            try:
-                print(url)
-                response = requests.get(url)
-            except requests.exceptions.RequestException as e:
-                print(e)
-                sys.exit(1)
+            doc = page.do_request(url)
 
-            if response.status_code == 200:
-
-                doc = pyQuery(response.text)
+            if doc is not None:
 
                 event_info = event_service.select_events_info(event_id)
 
@@ -44,6 +34,3 @@ def insert_event_photos(event_ids_dict):
                     image_service.insert_images(image.get_tuple())
 
                     # image.store_image(event_info)
-
-            else:
-                print("Page not available: " + url)

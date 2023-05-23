@@ -4,7 +4,7 @@ Web scraping with python package pyquery
 
 ### Prerequisites
 
-Python 3.6.3
+Python 3.10
 
 requests (Python module)
 
@@ -40,3 +40,8 @@ python-pptx (Python library)
 ## Authors
 
 * **Arkaitz Ulibarri** - (https://github.com/ArkaitzUlibarri/)
+
+## Future improvements
+* Logs in file
+* ORM
+* Images download with the ppt

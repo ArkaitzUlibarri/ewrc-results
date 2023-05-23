@@ -1,11 +1,6 @@
 import os
-import sqlite3
-import sys
 
-import requests
-from pyquery import PyQuery as pyQuery
-
-import definitions
+import page
 from config import app
 from models.driver import Driver
 from services import driver_service
@@ -20,21 +15,10 @@ def insert_drivers(driver_list):
 
 		url = app.BASE_URL + "/" + get_current_filename() + "/" + str(driver_id)
 
-		try:
-			print(url)
-			response = requests.get(url)
-		except requests.exceptions.RequestException as e:
-			print(e)
-			sys.exit(1)
+		doc = page.do_request(url)
 
-		if response.status_code == 200:
+		if doc is not None and doc("main > div").eq(0).hasClass("profile"):
 
-			doc = pyQuery(response.text)
-
-			if doc("main > div").eq(0).hasClass("profile"):
-
-				# Header - Driver Info
-				driver = Driver(doc, driver_id)
-				driver_service.insert_drivers(driver.get_tuple())
-		else:
-			print("Page not found: " + url)
+			# Header - Driver Info
+			driver = Driver(doc, driver_id)
+			driver_service.insert_drivers(driver.get_tuple())

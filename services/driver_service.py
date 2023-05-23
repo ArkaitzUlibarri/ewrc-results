@@ -3,7 +3,7 @@ import sqlite3
 import definitions
 
 
-def insert_codrivers(table_tuple):
+def insert_drivers(table_tuple):
 
     connection = sqlite3.connect(definitions.DB_PATH)
 

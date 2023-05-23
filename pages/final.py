@@ -1,10 +1,7 @@
 import datetime
 import os
-import sys
 
-import requests
-from pyquery import PyQuery as pyQuery
-
+import page
 from config import app
 from pages import entryinfo as entry_info_page
 from services import entry_service
@@ -19,17 +16,10 @@ def insert_results(events_list):
 
         url = app.BASE_URL + "/" + get_current_filename() + "/" + str(event_id) + "/"
 
-        try:
-            print(url)
-            response = requests.get(url)
-        except requests.exceptions.RequestException as e:
-            print(e)
-            sys.exit(1)
+        doc = page.do_request(url)
 
-        if response.status_code == 200:
+        if doc is not None:
 
-            doc = pyQuery(response.text)
-           
             # Results table
             results = doc("div.final-results > table.results")
             for tr in results('tr').items():
@@ -58,5 +48,3 @@ def insert_results(events_list):
                     "updated_at": datetime.datetime.now()
                 })
 
-        else:
-            print("Page not available: " + url)

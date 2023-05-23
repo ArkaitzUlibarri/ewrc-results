@@ -1,10 +1,7 @@
 import datetime
 import os
-import sys
 
-import requests
-from pyquery import PyQuery as pyQuery
-
+import page
 from config import app
 from models.event import Event
 from services import championship_service
@@ -18,16 +15,9 @@ def get_current_filename():
 def get_seasons():
     url = app.BASE_URL + "/" + get_current_filename() + "/"
 
-    try:
-        print(url)
-        response = requests.get(url)
-    except requests.exceptions.RequestException as e:
-        print(e)
-        sys.exit(1)
+    doc = page.do_request(url)
 
-    if response.status_code == 200:
-
-        doc = pyQuery(response.text)
+    if doc is not None:
 
         output = list()
 
@@ -44,23 +34,14 @@ def get_seasons():
         except Exception as e:
             print(str(e))
             return list()
-    else:
-        print("Page not available: " + url)
 
 
 def insert_nationalities(season):
     url = app.BASE_URL + "/" + get_current_filename() + "/" + str(season) + "/"
 
-    try:
-        print(url)
-        response = requests.get(url)
-    except requests.exceptions.RequestException as e:
-        print(e)
-        sys.exit(1)
+    doc = page.do_request(url)
 
-    if response.status_code == 200:
-
-        doc = pyQuery(response.text)
+    if doc is not None:
 
         header = doc('.justify-content-start.season-nat')
         badges = header.find('a.badge').items()
@@ -77,23 +58,14 @@ def insert_nationalities(season):
             }
 
             nationality_service.replace_nationalities(tuple(nationality_dict.values()))
-    else:
-        print("Page not available: " + url)
 
 
 def insert_championships(season, nationality_code):
     url = app.BASE_URL + "/" + get_current_filename() + "/" + str(season) + "/" + '?nat=' + str(nationality_code)
 
-    try:
-        print(url)
-        response = requests.get(url)
-    except requests.exceptions.RequestException as e:
-        print(e)
-        sys.exit(1)
+    doc = page.do_request(url)
 
-    if response.status_code == 200:
-
-        doc = pyQuery(response.text)
+    if doc is not None:
 
         header = doc('.justify-content-start.season-sct')
         badges = header.find('.season-sct-item').find('a.badge').items()
@@ -112,8 +84,6 @@ def insert_championships(season, nationality_code):
             }
 
             championship_service.replace_championships(tuple(championship_dict.values()))
-    else:
-        print("Page not available: " + url)
 
 
 def insert_events(start_season, championship):
@@ -121,21 +91,12 @@ def insert_events(start_season, championship):
 
         url = app.BASE_URL + "/" + get_current_filename() + "/" + str(season) + "/" + championship + "/"
 
-        try:
-            print(url)
-            response = requests.get(url)
-        except requests.exceptions.RequestException as e:
-            print(e)
-            sys.exit(1)
+        doc = page.do_request(url)
 
-        if response.status_code == 200:
-
-            doc = pyQuery(response.text)
+        if doc is not None:
 
             # Events
             events = doc.items(".season-event")
             for index, event in enumerate(events, start=1):
                 rally = Event()
                 rally.save(season, event, index)
-        else:
-            print("Page not available: " + url)

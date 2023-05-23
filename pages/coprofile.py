@@ -1,9 +1,6 @@
 import os
-import sys
 
-import requests
-from pyquery import PyQuery as pyQuery
-
+import page
 from config import app
 from models.driver import Driver
 from services import codriver_service
@@ -18,21 +15,9 @@ def insert_codrivers(codriver_list):
 
         url = app.BASE_URL + "/" + get_current_filename() + "/" + str(codriver_id) + "/"
 
-        try:
-            print(url)
-            response = requests.get(url)
-        except requests.exceptions.RequestException as e:
-            print(e)
-            sys.exit(1)
+        doc = page.do_request(url)
 
-        if response.status_code == 200:
-
-            doc = pyQuery(response.text)
-
-            if doc("main > div").eq(0).hasClass("profile"):
-
-                # Header - Codriver Info
-                codriver = Driver(doc, codriver_id)
-                codriver_service.insert_codrivers(codriver.get_tuple())
-        else:
-            print("Page not available: " + url)
+        if doc is not None and doc("main > div").eq(0).hasClass("profile"):
+            # Header - Codriver Info
+            codriver = Driver(doc, codriver_id)
+            codriver_service.insert_codrivers(codriver.get_tuple())

@@ -1,11 +1,10 @@
 import os
 import sqlite3
-import sys
 
-import requests
 from pyquery import PyQuery as pyQuery
 
 import definitions
+import page
 from config import app
 from models.leader import Leader
 from models.scratch import Scratch
@@ -47,16 +46,9 @@ def insert_event_stats(event_ids_dict):
 
             url = app.BASE_URL + "/" + get_current_filename() + "/" + str(event_id) + "/"
 
-            try:
-                print(url)
-                response = requests.get(url)
-            except requests.exceptions.RequestException as e:
-                print(e)
-                sys.exit(1)
+            doc = page.do_request(url)
 
-            if response.status_code == 200:
-
-                doc = pyQuery(response.text)
+            if doc is not None:
 
                 connection = sqlite3.connect(definitions.DB_PATH)
 
@@ -77,5 +69,3 @@ def insert_event_stats(event_ids_dict):
                     raise e
                 finally:
                     connection.close()
-            else:
-                print("Page not available: " + url)
