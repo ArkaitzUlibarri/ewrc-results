@@ -6,7 +6,7 @@
 BASE_URL = "https://www.ewrc-results.com"
 
 # database name
-DATABASE = "ewrc-results-belgium"
+DATABASE = "ewrc-results-wrc"
 
 # type of events
-EVENTS_TYPE = "26-belgium"
+EVENTS_TYPE = "1-wrc"

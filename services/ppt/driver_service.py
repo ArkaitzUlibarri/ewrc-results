@@ -108,7 +108,7 @@ def get_driver_season_results(season, driver_id):
         cursor.execute("""
             SELECT 
                 ev.id AS event_id,
-                ev.season_event_id,
+                ev.season_order,
                 ev.edition,
                 ev.name,
                 e.car_number,
@@ -168,7 +168,7 @@ def get_full_season_winners(season):
         cursor = connection.cursor()
 
         cursor.execute("""SELECT 
-            ev.season_event_id AS ID,
+            ev.season_order AS ID,
             ev.edition,
             ev.name,
             d.fullname,
@@ -178,7 +178,7 @@ def get_full_season_winners(season):
             LEFT JOIN entries AS e on ev.id = e.event_id 
             LEFT JOIN drivers AS d on e.driver_id = d.id 
             WHERE ev.season=? and e.result like '1' 
-            ORDER BY ev.season_event_id""", (season,))
+            ORDER BY ev.season_order""", (season,))
 
         return cursor.fetchall()
 

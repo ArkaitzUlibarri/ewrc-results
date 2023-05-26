@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 
 import definitions
@@ -14,7 +15,7 @@ def up():
         cursor.execute('''CREATE TABLE IF NOT EXISTS events(
             id INTEGER NOT NULL PRIMARY KEY,
             season INTEGER NOT NULL,
-            season_event_id INTEGER NOT NULL,
+            season_order INTEGER NOT NULL,
             edition INTEGER,
             name TEXT NOT NULL,
             surface JSON NOT NULL,
@@ -31,5 +32,5 @@ def up():
         connection.rollback()
         raise e
     finally:
-        print("Events table created")
+        logging.info("Events table created")
         connection.close()

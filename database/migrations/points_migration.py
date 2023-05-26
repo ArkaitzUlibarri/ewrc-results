@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 
 import definitions
@@ -29,5 +30,5 @@ def up():
         connection.rollback()
         raise e
     finally:
-        print("Points table created")
+        logging.info("Points table created")
         connection.close()

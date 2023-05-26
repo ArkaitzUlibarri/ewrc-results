@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 
 import page
@@ -32,7 +33,7 @@ def get_seasons():
             return output
 
         except Exception as e:
-            print(str(e))
+            logging.info(str(e))
             return list()
 
 

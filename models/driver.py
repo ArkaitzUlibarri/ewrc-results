@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 
 def format_date(date):
@@ -48,8 +49,8 @@ class Driver:
         )
 
         try:
-            print(self.tuple)
+            logging.info(self.tuple)
         except Exception as e:
-            print(e)
+            logging.error(e)
 
         return self.tuple

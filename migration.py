@@ -1,4 +1,4 @@
-import os
+import logging
 
 from database.migrations import championship_migration
 from database.migrations import codrivers_migration
@@ -12,12 +12,16 @@ from database.migrations import points_migration
 from database.migrations import scratchs_migration
 from database.seeds import points_seeder
 
-os.system("cls")
-
-print('Execution Start'.center(50, '-'))
+logging.basicConfig(
+    filename='storage/logs/migrations.log',
+    encoding='utf-8',
+    level=logging.DEBUG,
+    format="%(asctime)s;%(levelname)s;%(message)s"
+)
+logging.info('Execution Start')
 
 # DATABASE MIGRATION & SEEDING
-print('Migrations Start'.center(50, '-'))
+logging.info('Migrations Start')
 
 events_migration.up()
 drivers_migration.up()
@@ -30,10 +34,10 @@ points_migration.up()
 nationalities_migration.up()
 championship_migration.up()
 
-print('Migrations End'.center(50, '-'))
+logging.info('Migrations End')
 
-print('Seeders Start'.center(50, '-'))
+logging.info('Seeders Start')
 
 points_seeder.run()
 
-print('Seeders End'.center(50, '-'))
+logging.info('Seeders End')

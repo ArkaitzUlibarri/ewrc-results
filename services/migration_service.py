@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 
 import definitions
@@ -18,5 +19,5 @@ def drop_table(table):
         connection.rollback()
         raise e
     finally:
-        print(table.capitalize() + " table dropped")
+        logging.info(table.capitalize() + " table dropped")
         connection.close()

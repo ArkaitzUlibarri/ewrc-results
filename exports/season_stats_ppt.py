@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 
 from pptx import Presentation
@@ -55,7 +56,7 @@ def get_driver_standings(driver_data, results, points_dict):
         output['total_points'] += int(points)
         output['results'].append({
             "event_id": entry['event_id'],
-            "season_event_id": entry['season_event_id'],
+            "season_order": entry['season_order'],
             "result": entry['result'],
             "position": position,
             "points": points
@@ -304,4 +305,4 @@ if not os.path.exists(definitions.EXPORT_FOLDER):
 export_path = os.path.join(definitions.ROOT_DIR, '../storage', 'exports', 'WRC_' + season + '.pptx')
 prs.save(export_path)
 
-print('Finished ' + export_path + ' export')
+logging.info('Finished ' + export_path + ' export')

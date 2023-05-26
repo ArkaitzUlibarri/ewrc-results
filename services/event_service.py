@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import sqlite3
 
 import definitions
@@ -18,7 +19,7 @@ def select_event(event_id):
 
         row = cursor.fetchone()
 
-        print(row)
+        logging.debug(row)
 
         event_ids_dict[row[1]] = [row[0]]
 
@@ -60,7 +61,7 @@ def select_events(start_season):
 
         for season in range(start_season, datetime.datetime.now().year + 1):
 
-            cursor.execute("SELECT id FROM events WHERE season=? ORDER BY season_event_id", (season,))
+            cursor.execute("SELECT id FROM events WHERE season=? ORDER BY season_order", (season,))
 
             rows = cursor.fetchall()
 
@@ -89,11 +90,11 @@ def get_season_events(season):
         cursor.execute("""
             SELECT 
                 ev.id,
-                ev.season_event_id,
+                ev.season_order,
                 ev.name
             FROM events AS ev
             WHERE ev.season=?
-            ORDER BY ev.season_event_id""", (season,))
+            ORDER BY ev.season_order""", (season,))
 
         return cursor.fetchall()
 

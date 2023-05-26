@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 
 import definitions
@@ -29,5 +30,5 @@ def up():
         connection.rollback()
         raise e
     finally:
-        print("Drivers table created")
+        logging.info("Drivers table created")
         connection.close()

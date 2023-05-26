@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import os
 import sqlite3
 
@@ -47,4 +48,4 @@ def run():
     # Closing file 
     f.close()
 
-    print("Points seeder completed")
+    logging.info("Points seeder completed")

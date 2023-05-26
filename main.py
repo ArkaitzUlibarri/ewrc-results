@@ -1,4 +1,5 @@
-import os
+import logging
+
 from config import app
 from pages import coprofile as coprofile_page
 from pages import entries as entry_page
@@ -12,49 +13,60 @@ from services import championship_service
 from services import entry_service
 from services import event_service
 
-os.system("cls")
 
-# Season Options
-season_list = season_page.get_seasons()
-start_season = season_list[-1]
+def main():
+    logging.basicConfig(
+        filename='storage/logs/main.log',
+        encoding='utf-8',
+        level=logging.DEBUG,
+        format="%(asctime)s;%(levelname)s;%(message)s"
+    )
 
-# EVENTS
+    # Season Options
+    season_list = season_page.get_seasons()
+    start_season = season_list[-1]
 
-# Insert Events
-season_page.insert_events(start_season, app.EVENTS_TYPE)
+    # EVENTS
 
-# Select Events Data
-championship_list = championship_service.select_championships()
-event_ids_dict = event_service.select_events(start_season)
+    # Insert Events
+    season_page.insert_events(start_season, app.EVENTS_TYPE)
 
-# Insert Event Photos
-event_photos_page.insert_event_photos(event_ids_dict)
+    # Select Events Data
+    championship_list = championship_service.select_championships()
+    event_ids_dict = event_service.select_events(start_season)
 
-# Event Stats
-event_stats_page.insert_event_stats(event_ids_dict)
+    # Insert Event Photos
+    event_photos_page.insert_event_photos(event_ids_dict)
 
-# Event Timetable
-event_timetable_page.insert_timetable(event_ids_dict)
+    # Event Stats
+    event_stats_page.insert_event_stats(event_ids_dict)
 
-# ENTRIES
+    # Event Timetable
+    event_timetable_page.insert_timetable(event_ids_dict)
 
-# Entries
-entry_page.insert_entries(event_ids_dict, championship_list)
+    # ENTRIES
 
-# Results
-events_list = entry_service.select_events_without_results()
-result_page.insert_results(events_list)
+    # Entries
+    entry_page.insert_entries(event_ids_dict, championship_list)
 
-# Select Entries Data
-driver_list = entry_service.select_drivers()
-codriver_list = entry_service.select_codrivers()
+    # Results
+    events_list = entry_service.select_events_without_results()
+    result_page.insert_results(events_list)
 
-# DRIVERS & CODRIVERS
+    # Select Entries Data
+    driver_list = entry_service.select_drivers()
+    codriver_list = entry_service.select_codrivers()
 
-# Drivers
-profile_page.insert_drivers(driver_list)
+    # DRIVERS & CODRIVERS
 
-# Codrivers
-coprofile_page.insert_codrivers(codriver_list)
+    # Drivers
+    profile_page.insert_drivers(driver_list)
 
-print('Execution Finish'.center(50, '-'))
+    # Codrivers
+    coprofile_page.insert_codrivers(codriver_list)
+
+    logging.info('Execution Finish')
+
+
+if __name__ == '__main__':
+    main()

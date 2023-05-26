@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 
 def get_href_id(a_tag):
@@ -66,8 +67,8 @@ class Result:
         )
 
         try:
-            print(self.tuple)
+            logging.info(self.tuple)
         except Exception as e:
-            print(e)
+            logging.error(e)
 
         return self.tuple

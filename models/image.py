@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 import shutil
 import sys
@@ -11,7 +12,7 @@ from config import app
 
 def get_storage_path(event, file):
     season_folder = str(event['season'])
-    event_folder = str(event['season_event_id']) + ' - ' + str(event['id']) + ' - ' + event['name']
+    event_folder = str(event['season_order']) + ' - ' + str(event['id']) + ' - ' + event['name']
     file_folder = os.path.join('storage', 'photos', season_folder, event_folder)
     if not os.path.exists(file_folder):
         os.makedirs(file_folder)
@@ -41,10 +42,10 @@ class Image:
     def get_driver_codriver(self):
 
         try:
-            print(self.url)
+            logging.info(self.url)
             image_response = requests.get(self.url)
         except requests.exceptions.RequestException as e:
-            print(e)
+            logging.error(e)
             sys.exit(1)
 
         if image_response.status_code == 200:
@@ -92,8 +93,8 @@ class Image:
         )
 
         try:
-            print(self.tuple)
+            logging.info(self.tuple)
         except Exception as e:
-            print(e)
+            logging.error(e)
 
         return self.tuple

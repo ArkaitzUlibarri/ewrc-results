@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import sqlite3
 import definitions
 
@@ -10,7 +11,7 @@ class Event:
         self.connection = sqlite3.connect(definitions.DB_PATH)
         self.event_id = None
         self.season = None
-        self.season_event_id = None
+        self.season_order = None
         self.edition = None
         self.name = None
         self.dates = None
@@ -32,7 +33,7 @@ class Event:
 
             self.get_event_id(item)
             self.season = str(season)
-            self.season_event_id = index
+            self.season_order = index
             self.get_event_name(item)
             self.get_event_surface(item)
             self.get_event_championships(item)
@@ -40,7 +41,7 @@ class Event:
 
             replace_statement = '''
                 REPLACE INTO events
-                (id,season,season_event_id,edition,name,surface,dates,timetable,championship,created_at,updated_at,deleted_at)
+                (id,season,season_order,edition,name,surface,dates,timetable,championship,created_at,updated_at,deleted_at)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?)'''
 
             self.connection.execute(replace_statement, self.get_tuple())
@@ -127,7 +128,7 @@ class Event:
         self.tuple = (
             self.event_id,
             self.season,
-            self.season_event_id,
+            self.season_order,
             self.edition,
             self.name,
             json.dumps(self.surface),
@@ -140,8 +141,8 @@ class Event:
         )
 
         try:
-            print(self.tuple)
+            logging.info(self.tuple)
         except Exception as e:
-            print(e)
+            logging.error(e)
 
         return self.tuple

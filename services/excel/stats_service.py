@@ -10,9 +10,9 @@ def get_all_time_winners():
         cursor = connection.cursor()
 
         cursor.execute("""SELECT 
-    ROW_NUMBER () OVER (ORDER BY ev.season ,ev.season_event_id) id,
+    ROW_NUMBER () OVER (ORDER BY ev.season ,ev.season_order) id,
     ev.season,
-    ev.season_event_id,
+    ev.season_order,
     ev.edition,
     ev.name as rallye,
     d.fullname as driver,
@@ -91,7 +91,7 @@ def global_results_by_driver(driver_id):
         cursor.execute("""
             SELECT 
                 ev.season,
-                ev.season_event_id,
+                ev.season_order,
                 ev.edition,
                 ev.name,
                 e.car_number,
@@ -107,7 +107,7 @@ def global_results_by_driver(driver_id):
             LEFT JOIN drivers AS d ON e.driver_id = d.id
             LEFT JOIN codrivers AS co ON e.codriver_id = co.id 
 			WHERE e.driver_id = :driver_id
-			ORDER BY ev.season,ev.season_event_id
+			ORDER BY ev.season,ev.season_order
 			--scratchs&leaderships""", {"driver_id": driver_id})
 
         return cursor.fetchall()

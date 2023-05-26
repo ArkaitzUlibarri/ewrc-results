@@ -45,3 +45,4 @@ python-pptx (Python library)
 * Logs in file
 * ORM
 * Images download with the ppt
+* Excel stats
