@@ -7,3 +7,5 @@ storage/exports/*
 *.pptx
 /.idea/
 /.vscode/
+.vscode/
+venv/
