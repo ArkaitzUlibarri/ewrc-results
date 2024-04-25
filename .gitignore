@@ -4,6 +4,8 @@ storage/photos/*
 storage/exports/*
 *.db
 *.db-journal
+*.csv
+*.xlsx
 *.pptx
 /.idea/
 /.vscode/
