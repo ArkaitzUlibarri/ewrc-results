@@ -7,6 +7,9 @@ storage/exports/*
 *.csv
 *.xlsx
 *.pptx
+*.rar
+*.sql
+*.log
 /.idea/
 /.vscode/
 .vscode/
