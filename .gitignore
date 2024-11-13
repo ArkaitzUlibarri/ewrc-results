@@ -4,10 +4,14 @@ storage/photos/*
 storage/exports/*
 *.db
 *.db-journal
+*.csv
+*.xlsx
 *.pptx
+*.rar
 *.sql
 *.rar
 *.log
 /.idea/
 /.vscode/
-
+.vscode/
+venv/
